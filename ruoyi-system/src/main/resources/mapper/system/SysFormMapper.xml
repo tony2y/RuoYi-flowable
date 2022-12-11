@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysFormMapper">
+    
+    <resultMap type="SysForm" id="SysFormResult">
+        <result property="formId"    column="form_id"    />
+        <result property="formName"    column="form_name"    />
+        <result property="formContent"    column="form_content"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectSysFormVo">
+        select form_id, form_name, form_content, create_time, update_time, create_by, update_by, remark from sys_form
+    </sql>
+
+    <select id="selectSysFormList" parameterType="SysForm" resultMap="SysFormResult">
+        <include refid="selectSysFormVo"/>
+        <where>  
+            <if test="formName != null  and formName != ''"> and form_name like concat('%', #{formName}, '%')</if>
+            <if test="formContent != null  and formContent != ''"> and form_content = #{formContent}</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectSysFormById" parameterType="Long" resultMap="SysFormResult">
+        <include refid="selectSysFormVo"/>
+        where form_id = #{formId}
+    </select>
+        
+    <insert id="insertSysForm" parameterType="SysForm" useGeneratedKeys="true" keyProperty="formId">
+        insert into sys_form
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="formName != null">form_name,</if>
+            <if test="formContent != null">form_content,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="formName != null">#{formName},</if>
+            <if test="formContent != null">#{formContent},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysForm" parameterType="SysForm">
+        update sys_form
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="formName != null">form_name = #{formName},</if>
+            <if test="formContent != null">form_content = #{formContent},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where form_id = #{formId}
+    </update>
+
+    <delete id="deleteSysFormById" parameterType="Long">
+        delete from sys_form where form_id = #{formId}
+    </delete>
+
+    <delete id="deleteSysFormByIds" parameterType="String">
+        delete from sys_form where form_id in 
+        <foreach item="formId" collection="array" open="(" separator="," close=")">
+            #{formId}
+        </foreach>
+    </delete>
+</mapper>

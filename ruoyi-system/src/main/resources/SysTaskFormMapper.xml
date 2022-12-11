@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysTaskFormMapper">
+    
+    <resultMap type="SysTaskForm" id="SysTaskFormResult">
+        <result property="id"    column="id"    />
+        <result property="formId"    column="form_id"    />
+        <result property="taskId"    column="task_id"    />
+    </resultMap>
+
+    <sql id="selectSysTaskFormVo">
+        select id, form_id, task_id from sys_task_form
+    </sql>
+
+    <select id="selectSysTaskFormList" parameterType="SysTaskForm" resultMap="SysTaskFormResult">
+        <include refid="selectSysTaskFormVo"/>
+        <where>  
+            <if test="formId != null "> and form_id = #{formId}</if>
+            <if test="taskId != null  and taskId != ''"> and task_id = #{taskId}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysTaskFormById" parameterType="Long" resultMap="SysTaskFormResult">
+        <include refid="selectSysTaskFormVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysTaskForm" parameterType="SysTaskForm" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_task_form
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="formId != null">form_id,</if>
+            <if test="taskId != null">task_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="formId != null">#{formId},</if>
+            <if test="taskId != null">#{taskId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysTaskForm" parameterType="SysTaskForm">
+        update sys_task_form
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="formId != null">form_id = #{formId},</if>
+            <if test="taskId != null">task_id = #{taskId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysTaskFormById" parameterType="Long">
+        delete from sys_task_form where id = #{id}
+    </delete>
+
+    <delete id="deleteSysTaskFormByIds" parameterType="String">
+        delete from sys_task_form where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
