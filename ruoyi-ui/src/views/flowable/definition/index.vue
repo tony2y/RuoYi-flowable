@@ -170,7 +170,18 @@
         </div>
         <div class="el-upload__tip" slot="tip">
           流程名称：<el-input v-model="upload.name"/>
-          流程分类：<el-input v-model="upload.category"/>
+          流程分类：
+          <div>
+<!--          <el-input v-model="upload.category"/>-->
+            <el-select v-model="upload.category" placeholder="请选择流程分类">
+              <el-option
+                v-for="dict in dict.type.sys_process_category"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></el-option>
+            </el-select>
+          </div>
         </div>
         <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“bpmn20.xml”格式文件！</div>
       </el-upload>
@@ -242,6 +253,7 @@ import flow from '@/views/flowable/task/record/flow'
 
 export default {
   name: "Definition",
+  dicts: ['sys_process_category'],
   components: {
     Parser,
     flow
