@@ -378,13 +378,14 @@ export default {
     },
     /** 流程流转记录 */
     getFlowRecordList(procInsId, deployId) {
+      const that = this
       const params = {procInsId: procInsId, deployId: deployId}
       flowRecord(params).then(res => {
-        this.flowRecordList = res.data.flowList;
+        that.flowRecordList = res.data.flowList;
         // 流程过程中不存在初始化表单 直接读取的流程变量中存储的表单值
         if (res.data.formData) {
-          this.formConf = res.data.formData;
-          this.formConfOpen = true
+          that.formConf = res.data.formData;
+          that.formConfOpen = true
         }
       }).catch(res => {
         this.goBack();
@@ -403,7 +404,6 @@ export default {
       if (taskId) {
         // 提交流程申请时填写的表单存入了流程变量中后续任务处理时需要展示
         getProcessVariables(taskId).then(res => {
-          // this.variables = res.data.variables;
           this.variablesData = res.data.variables;
           this.variableOpen = true
         });

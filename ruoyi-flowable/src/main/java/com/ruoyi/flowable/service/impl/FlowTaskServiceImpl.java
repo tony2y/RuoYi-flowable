@@ -315,28 +315,58 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
      */
     @Override
     public AjaxResult findReturnTaskList(FlowTaskVo flowTaskVo) {
+//        // 当前任务 task
+//        Task task = taskService.createTaskQuery().taskId(flowTaskVo.getTaskId()).singleResult();
+//        // 从流程历史任务中获取可退回节点
+////        List<HistoricActivityInstance> hisActIns = historyService.createHistoricActivityInstanceQuery()
+////                .executionId(task.getExecutionId())
+////                .activityType("userTask")
+////                .orderByHistoricActivityInstanceStartTime()
+////                .finished()
+////                .desc()
+////                .list();
+////
+////        // 可回退的节点列表
+////        List<ReturnTaskNodeVo> returnTaskNodeList = new ArrayList<>();
+////        ReturnTaskNodeVo returnTaskNodeVo;
+////        for (HistoricActivityInstance activityInstance : hisActIns) {
+////            returnTaskNodeVo = new ReturnTaskNodeVo();
+////            returnTaskNodeVo.setId(activityInstance.getActivityId());
+////            // 根据流程节点处理时间校验改节点是否已完成
+////            returnTaskNodeVo.setName(activityInstance.getActivityName());
+////            returnTaskNodeList.add(returnTaskNodeVo);
+////        }
+//        List<UserTask> userTaskList = new ArrayList<>();
+//        // 获取流程定义信息
+//        ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(task.getProcessDefinitionId()).singleResult();
+//        // 获取所有节点信息，暂不考虑子流程情况
+//        Process process = repositoryService.getBpmnModel(processDefinition.getId()).getProcesses().get(0);
+//        Collection<FlowElement> flowElements = process.getFlowElements();
+//        // 获取当前任务节点元素
+//        UserTask source = null;
+//        if (flowElements != null) {
+//            for (FlowElement flowElement : flowElements) {
+//                // 类型为用户节点
+//                if (flowElement.getId().equals(task.getTaskDefinitionKey())) {
+//                    source = (UserTask) flowElement;
+//                }
+//            }
+//        }
+//        // 获取节点的所有路线
+//        List<List<UserTask>> roads = FlowableUtils.findRoad(source, null, null, null);
+//
+//        for (List<UserTask> road : roads) {
+//            if (userTaskList.size() == 0) {
+//                // 还没有可回退节点直接添加
+//                userTaskList = road;
+//            } else {
+//                // 如果已有回退节点，则比对取交集部分
+//                userTaskList.retainAll(road);
+//            }
+//        }
+//        return AjaxResult.success(userTaskList);
         // 当前任务 task
         Task task = taskService.createTaskQuery().taskId(flowTaskVo.getTaskId()).singleResult();
-        // 从流程历史任务中获取可退回节点
-//        List<HistoricActivityInstance> hisActIns = historyService.createHistoricActivityInstanceQuery()
-//                .executionId(task.getExecutionId())
-//                .activityType("userTask")
-//                .orderByHistoricActivityInstanceStartTime()
-//                .finished()
-//                .desc()
-//                .list();
-//
-//        // 可回退的节点列表
-//        List<ReturnTaskNodeVo> returnTaskNodeList = new ArrayList<>();
-//        ReturnTaskNodeVo returnTaskNodeVo;
-//        for (HistoricActivityInstance activityInstance : hisActIns) {
-//            returnTaskNodeVo = new ReturnTaskNodeVo();
-//            returnTaskNodeVo.setId(activityInstance.getActivityId());
-//            // 根据流程节点处理时间校验改节点是否已完成
-//            returnTaskNodeVo.setName(activityInstance.getActivityName());
-//            returnTaskNodeList.add(returnTaskNodeVo);
-//        }
-        List<UserTask> userTaskList = new ArrayList<>();
         // 获取流程定义信息
         ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(task.getProcessDefinitionId()).singleResult();
         // 获取所有节点信息，暂不考虑子流程情况
@@ -354,7 +384,8 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
         }
         // 获取节点的所有路线
         List<List<UserTask>> roads = FlowableUtils.findRoad(source, null, null, null);
-
+        // 可回退的节点列表
+        List<UserTask> userTaskList = new ArrayList<>();
         for (List<UserTask> road : roads) {
             if (userTaskList.size() == 0) {
                 // 还没有可回退节点直接添加
@@ -465,13 +496,15 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
             flowTask.setCategory(pd.getCategory());
             flowTask.setProcDefVersion(pd.getVersion());
             // 当前所处流程 todo: 本地启动放开以下注释
-//            List<Task> taskList = taskService.createTaskQuery().processInstanceId(hisIns.getId()).list();
-//            if (CollectionUtils.isNotEmpty(taskList)) {
-//                flowTask.setTaskId(taskList.get(0).getId());
-//            } else {
-//                List<HistoricTaskInstance> historicTaskInstance = historyService.createHistoricTaskInstanceQuery().processInstanceId(hisIns.getId()).orderByHistoricTaskInstanceEndTime().desc().list();
-//                flowTask.setTaskId(historicTaskInstance.get(0).getId());
-//            }
+            List<Task> taskList = taskService.createTaskQuery().processInstanceId(hisIns.getId()).list();
+            if (CollectionUtils.isNotEmpty(taskList)) {
+                flowTask.setTaskId(taskList.get(0).getId());
+                flowTask.setTaskName(taskList.get(0).getName());
+            } else {
+                List<HistoricTaskInstance> historicTaskInstance = historyService.createHistoricTaskInstanceQuery().processInstanceId(hisIns.getId()).orderByHistoricTaskInstanceEndTime().desc().list();
+                flowTask.setTaskId(historicTaskInstance.get(0).getId());
+                flowTask.setTaskName(historicTaskInstance.get(0).getName());
+            }
             flowList.add(flowTask);
         }
         page.setRecords(flowList);
