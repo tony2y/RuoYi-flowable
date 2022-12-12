@@ -164,4 +164,11 @@ public interface IFlowTaskService {
      * @return
      */
     AjaxResult getNextFlowNode(FlowTaskVo flowTaskVo);
+
+    /**
+     * 流程初始化表单
+     * @param deployId
+     * @return
+     */
+    AjaxResult flowFormData(String deployId);
 }

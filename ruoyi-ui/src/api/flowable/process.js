@@ -10,6 +10,14 @@ export function myProcessList(query) {
   })
 }
 
+export function flowFormData(query) {
+  return request({
+    url: '/flowable/task/flowFormData',
+    method: 'get',
+    params: query
+  })
+}
+
 // 完成任务
 export function complete(data) {
   return request({

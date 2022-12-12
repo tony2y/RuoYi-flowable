@@ -142,13 +142,12 @@ export default {
     },
     // 跳转到处理页面
     handleProcess(row){
-      this.$router.push({ path: '/flowable/task/record/index',
+      this.$router.push({ path: '/flowable/task/todo/detail/index',
         query: {
           procInsId: row.procInsId,
           executionId: row.executionId,
           deployId: row.deployId,
           taskId: row.taskId,
-          finished: true
         }})
     },
     // 取消按钮

@@ -73,6 +73,13 @@ public class FlowTaskController {
         return flowTaskService.flowRecord(procInsId, deployId);
     }
 
+
+    @ApiOperation(value = "流程初始化表单", response = FlowTaskDto.class)
+    @GetMapping(value = "/flowFormData")
+    public AjaxResult flowFormData(String deployId) {
+        return flowTaskService.flowFormData(deployId);
+    }
+
     @ApiOperation(value = "获取流程变量", response = FlowTaskDto.class)
     @GetMapping(value = "/processVariables/{taskId}")
     public AjaxResult processVariables(@ApiParam(value = "流程任务Id") @PathVariable(value = "taskId") String taskId) {

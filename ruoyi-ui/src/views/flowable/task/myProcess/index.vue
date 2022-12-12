@@ -311,11 +311,10 @@ export default {
     },
     /**  发起流程申请 */
     handleStartProcess(row){
-      this.$router.push({ path: '/flowable/task/record/index',
+      this.$router.push({ path: '/flowable/task/myProcess/send/index',
         query: {
           deployId: row.deploymentId,
-          procDefId: row.id,
-          finished: true
+          procDefId: row.id
           }
       })
     },
@@ -331,12 +330,11 @@ export default {
     },
     /** 流程流转记录 */
     handleFlowRecord(row){
-      this.$router.push({ path: '/flowable/task/record/index',
+      this.$router.push({ path: '/flowable/task/myProcess/detail/index',
         query: {
           procInsId: row.procInsId,
           deployId: row.deployId,
-          taskId: row.taskId,
-          finished: false
+          taskId: row.taskId
       }})
     },
     /** 修改按钮操作 */

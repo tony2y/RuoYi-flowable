@@ -204,12 +204,11 @@ export default {
     },
     /** 流程流转记录 */
     handleFlowRecord(row){
-      this.$router.push({ path: '/flowable/task/record/index',
+      this.$router.push({ path: '/flowable/task/finished/detail/index',
         query: {
           procInsId: row.procInsId,
           deployId: row.deployId,
           taskId: row.taskId,
-          finished: false
       }})
     },
     /** 撤回任务 */

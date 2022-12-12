@@ -1001,6 +1001,26 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
     }
 
     /**
+     * 流程初始化表单
+     *
+     * @param deployId
+     * @return
+     */
+    @Override
+    public AjaxResult flowFormData(String deployId) {
+        // 第一次申请获取初始化表单
+        if (StringUtils.isNotBlank(deployId)) {
+            SysForm sysForm = sysInstanceFormService.selectSysDeployFormByDeployId(deployId);
+            if (Objects.isNull(sysForm)) {
+                return AjaxResult.error("请先配置流程表单!");
+            }
+            return AjaxResult.success(JSONObject.parseObject(sysForm.getFormContent()));
+        } else {
+            return AjaxResult.error("参数错误!");
+        }
+    }
+
+    /**
      * 流程完成时间处理
      *
      * @param ms
