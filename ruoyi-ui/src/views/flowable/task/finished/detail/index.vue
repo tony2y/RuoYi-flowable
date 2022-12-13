@@ -75,20 +75,16 @@
 <script>
 import {flowRecord} from "@/api/flowable/finished";
 import Parser from '@/components/parser/Parser'
-import {definitionStart, getProcessVariables, readXml, getFlowViewer} from "@/api/flowable/definition";
-import {complete, rejectTask, returnList, returnTask, getNextFlowNode, delegate} from "@/api/flowable/todo";
+import {getProcessVariables, readXml, getFlowViewer} from "@/api/flowable/definition";
 import flow from '@/views/flowable/task/record/flow'
-import {treeselect} from "@/api/system/dept";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import Treeselect from "@riophae/vue-treeselect";
-import {listUser} from "@/api/system/user";
 
 export default {
   name: "Record",
   components: {
     Parser,
     flow,
-    Treeselect
   },
   props: {},
   data() {

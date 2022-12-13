@@ -8,6 +8,7 @@
       :modeler="modeler"
       :users="users"
       :groups="groups"
+      :exps="exps"
       :categorys="categorys"
       @dataType="dataType"
     />
@@ -37,6 +38,10 @@ export default {
     categorys: {
       type: Array,
       required: true
+    },
+    exps: {
+      type: Array,
+      default: () => []
     },
     modeler: {
       type: Object,

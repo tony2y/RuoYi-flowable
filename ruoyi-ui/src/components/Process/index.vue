@@ -41,7 +41,7 @@
           <div ref="canvas" class="canvas" />
         </el-main>
         <el-aside style="width: 400px; min-height: 650px; background-color: #f0f2f5">
-          <panel v-if="modeler" :modeler="modeler" :users="users" :groups="groups" :categorys="categorys" @dataType="dataType" />
+          <panel v-if="modeler" :modeler="modeler" :users="users" :groups="groups" :exps="exps" :categorys="categorys" @dataType="dataType" />
         </el-aside>
       </el-container>
     </el-container>
@@ -76,6 +76,10 @@ export default {
       default: () => []
     },
     categorys: {
+      type: Array,
+      default: () => []
+    },
+    exps: {
       type: Array,
       default: () => []
     },

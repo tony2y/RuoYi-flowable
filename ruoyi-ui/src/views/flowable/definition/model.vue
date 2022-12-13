@@ -6,6 +6,7 @@
       :users="users"
       :groups="groups"
       :categorys="categorys"
+      :exps="exps"
       :is-view="false"
       @save="save"
       @showXML="showXML"
@@ -24,7 +25,7 @@
   </div>
 </template>
 <script>
-import {readXml, roleList, saveXml, userList} from "@/api/flowable/definition";
+import {readXml, roleList, saveXml, userList,expList} from "@/api/flowable/definition";
 import bpmnModeler from '@/components/Process/index'
 import vkbeautify from 'vkbeautify'
 import Hljs from 'highlight.js'
@@ -55,6 +56,7 @@ export default {
       users: [],
       groups: [],
       categorys: [],
+      exps: [],
 
     };
   },
@@ -112,12 +114,14 @@ export default {
         })
         this.groups = res.data;
       });
+      expList().then(res =>{
+        this.exps = res.data;
+      });
     },
     /** 展示xml */
     showXML(data){
       this.xmlTitle = 'xml查看';
       this.xmlOpen = true;
-      debugger
       this.xmlContent = vkbeautify.xml(data);
     },
     /** 获取数据类型 */

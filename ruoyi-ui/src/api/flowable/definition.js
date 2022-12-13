@@ -53,6 +53,15 @@ export function roleList(query) {
   })
 }
 
+// 指定流程表达式
+export function expList(query) {
+  return request({
+    url: '/flowable/definition/expList',
+    method: 'get',
+    params: query
+  })
+}
+
 // 读取xml文件
 export function readXml(deployId) {
   return request({

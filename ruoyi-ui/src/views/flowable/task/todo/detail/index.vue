@@ -5,7 +5,6 @@
           <span class="el-icon-document">基础信息</span>
           <el-button style="float: right;" type="primary" @click="goBack">返回</el-button>
         </div>
-
       <!--流程处理表单模块-->
       <el-col :span="16" :offset="6">
           <div>
@@ -65,12 +64,6 @@
                         {{item.comment.comment}}
                       </el-descriptions-item>
                     </el-descriptions>
-
-<!--                    <p  v-if="item.comment">-->
-<!--                      <el-tag type="success" v-if="item.comment.type === '1'">  {{item.comment.comment}}</el-tag>-->
-<!--                      <el-tag type="warning" v-if="item.comment.type === '2'">  {{item.comment.comment}}</el-tag>-->
-<!--                      <el-tag type="danger" v-if="item.comment.type === '3'">  {{item.comment.comment}}</el-tag>-->
-<!--                    </p>-->
                   </el-card>
                 </el-timeline-item>
               </el-timeline>
@@ -86,60 +79,62 @@
 
     <!--审批正常流程-->
     <el-dialog :title="completeTitle" :visible.sync="completeOpen" :width="checkSendUser? '60%':'40%'" append-to-body>
-      <el-form ref="taskForm" :model="taskForm" label-width="80px" >
-        <el-form-item  v-if="checkSendUser" prop="targetKey">
-          <el-row :gutter="20">
-            <!--部门数据-->
-            <el-col :span="6" :xs="24">
-              <h6>部门列表</h6>
-              <div class="head-container">
-                <el-input
-                  v-model="deptName"
-                  placeholder="请输入部门名称"
-                  clearable
-                  size="small"
-                  prefix-icon="el-icon-search"
-                  style="margin-bottom: 20px"
-                />
-              </div>
-              <div class="head-container">
-                <el-tree
-                  :data="deptOptions"
-                  :props="defaultProps"
-                  :expand-on-click-node="false"
-                  :filter-node-method="filterNode"
-                  ref="tree"
-                  default-expand-all
-                  @node-click="handleNodeClick"
-                />
-              </div>
-            </el-col>
-            <el-col :span="10" :xs="24">
-              <h6>待选人员</h6>
-              <el-table
-                ref="singleTable"
-                :data="userList"
-                border
-                style="width: 100%"
-                @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="50" align="center" />
-                <el-table-column label="用户名" align="center" prop="nickName" />
-                <el-table-column label="部门" align="center" prop="dept.deptName" />
-              </el-table>
-            </el-col>
-            <el-col :span="8" :xs="24">
-              <h6>已选人员</h6>
-              <el-tag
-                v-for="(user,index) in userData"
-                :key="index"
-                closable
-                @close="handleClose(user)">
-                {{user.nickName}} {{user.dept.deptName}}
-              </el-tag>
-            </el-col>
+      <el-form ref="taskForm" :model="taskForm">
+        <el-form-item v-if="checkSendUser" prop="targetKey">
+          <el-row :gutter="24">
+<!--            <flow-user @handleUserSelect="handleUserSelect"></flow-user>-->
+            <flow-role @handleRoleSelect="handleRoleSelect"></flow-role>
+<!--            &lt;!&ndash;部门数据&ndash;&gt;-->
+<!--            <el-col :span="6" :xs="24">-->
+<!--              <h6>部门列表</h6>-->
+<!--              <div class="head-container">-->
+<!--                <el-input-->
+<!--                  v-model="deptName"-->
+<!--                  placeholder="请输入部门名称"-->
+<!--                  clearable-->
+<!--                  size="small"-->
+<!--                  prefix-icon="el-icon-search"-->
+<!--                  style="margin-bottom: 20px"-->
+<!--                />-->
+<!--              </div>-->
+<!--              <div class="head-container">-->
+<!--                <el-tree-->
+<!--                  :data="deptOptions"-->
+<!--                  :props="defaultProps"-->
+<!--                  :expand-on-click-node="false"-->
+<!--                  :filter-node-method="filterNode"-->
+<!--                  ref="tree"-->
+<!--                  default-expand-all-->
+<!--                  @node-click="handleNodeClick"-->
+<!--                />-->
+<!--              </div>-->
+<!--            </el-col>-->
+<!--            <el-col :span="10" :xs="24">-->
+<!--              <h6>待选人员</h6>-->
+<!--              <el-table-->
+<!--                ref="singleTable"-->
+<!--                :data="userList"-->
+<!--                border-->
+<!--                style="width: 100%"-->
+<!--                @selection-change="handleSelectionChange">-->
+<!--                <el-table-column type="selection" width="50" align="center" />-->
+<!--                <el-table-column label="用户名" align="center" prop="nickName" />-->
+<!--                <el-table-column label="部门" align="center" prop="dept.deptName" />-->
+<!--              </el-table>-->
+<!--            </el-col>-->
+<!--            <el-col :span="8" :xs="24">-->
+<!--              <h6>已选人员</h6>-->
+<!--              <el-tag-->
+<!--                v-for="(user,index) in userData"-->
+<!--                :key="index"-->
+<!--                closable-->
+<!--                @close="handleClose(user)">-->
+<!--                {{user.nickName}} {{user.dept.deptName}}-->
+<!--              </el-tag>-->
+<!--            </el-col>-->
           </el-row>
         </el-form-item>
-        <el-form-item label="处理意见" prop="comment" :rules="[{ required: true, message: '请输入处理意见', trigger: 'blur' }]">
+        <el-form-item label="处理意见" label-width="80px" prop="comment" :rules="[{ required: true, message: '请输入处理意见', trigger: 'blur' }]">
           <el-input type="textarea" v-model="taskForm.comment" placeholder="请输入处理意见"/>
         </el-form-item>
       </el-form>
@@ -188,6 +183,8 @@
 
 <script>
 import {flowRecord} from "@/api/flowable/finished";
+import FlowUser from '@/components/flow/User'
+import FlowRole from '@/components/flow/Role'
 import Parser from '@/components/parser/Parser'
 import {definitionStart, getProcessVariables, readXml, getFlowViewer} from "@/api/flowable/definition";
 import {complete, rejectTask, returnList, returnTask, getNextFlowNode, delegate} from "@/api/flowable/todo";
@@ -202,7 +199,9 @@ export default {
   components: {
     Parser,
     flow,
-    Treeselect
+    Treeselect,
+    FlowUser,
+    FlowRole,
   },
   props: {},
   data() {
@@ -330,7 +329,25 @@ export default {
       }
     },
     // 多选框选中数据
-    handleSelectionChange(selection) {
+    handleUserSelect(selection) {
+      console.log(selection,"handleUserSelect")
+      if (selection) {
+        this.userData = selection
+        const selectVal = selection.map(item => item.userId);
+        if (selectVal instanceof Array) {
+          this.taskForm.values = {
+            "approval": selectVal.join(',')
+          }
+        } else {
+          this.taskForm.values = {
+            "approval": selectVal
+          }
+        }
+      }
+    },
+    // 多选框选中数据
+    handleRoleSelect(selection) {
+      console.log(selection,"handleRoleSelect")
       if (selection) {
         this.userData = selection
         const selectVal = selection.map(item => item.userId);
@@ -421,7 +438,7 @@ export default {
     /** 审批任务选择 */
     handleComplete() {
       this.completeOpen = true;
-      this.completeTitle = "审批流程";
+      this.completeTitle = "流程审批";
       this.getTreeselect();
     },
     /** 审批任务 */

@@ -41,10 +41,19 @@ export function userTaskParse(obj) {
   for (const key in obj) {
     if (key === 'candidateUsers') {
       obj.userType = 'candidateUsers'
-      obj[key] = obj[key]?.split(',') || []
+      // if (obj[key].toString().indexOf(",") !== -1) {
+      //
+      // }else {
+      //   obj[key] = obj[key].toString()?.split(',') || []
+      // }
     } else if (key === 'candidateGroups') {
       obj.userType = 'candidateGroups'
       obj[key] = obj[key]?.split(',') || []
+      // if (obj[key].toString().indexOf(",") !== -1) {
+      //
+      // }else {
+      //   obj[key] = obj[key].toString()?.split(',') || []
+      // }
     } else if (key === 'assignee') {
       obj.userType = 'assignee'
     }

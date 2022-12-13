@@ -3,9 +3,12 @@ package com.ruoyi.flowable.controller;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.system.domain.FlowProcDefDto;
 import com.ruoyi.flowable.domain.dto.FlowSaveXmlVo;
 import com.ruoyi.flowable.service.IFlowDefinitionService;
+import com.ruoyi.system.domain.SysExpression;
+import com.ruoyi.system.service.ISysExpressionService;
 import com.ruoyi.system.service.ISysRoleService;
 import com.ruoyi.system.service.ISysUserService;
 import io.swagger.annotations.Api;
@@ -13,6 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -50,14 +54,15 @@ public class FlowDefinitionController {
 
     @Resource
     private ISysRoleService sysRoleService;
-
+    @Resource
+    private ISysExpressionService sysExpressionService;
 
     @GetMapping(value = "/list")
     @ApiOperation(value = "流程定义列表", response = FlowProcDefDto.class)
     public AjaxResult list(@ApiParam(value = "当前页码", required = true) @RequestParam Integer pageNum,
                            @ApiParam(value = "每页条数", required = true) @RequestParam Integer pageSize,
                            @ApiParam(value = "流程名称", required = false) @RequestParam(required = false) String name) {
-        return AjaxResult.success(flowDefinitionService.list(name,pageNum, pageSize));
+        return AjaxResult.success(flowDefinitionService.list(name, pageNum, pageSize));
     }
 
 
@@ -186,6 +191,13 @@ public class FlowDefinitionController {
     @GetMapping("/roleList")
     public AjaxResult roleList(SysRole role) {
         List<SysRole> list = sysRoleService.selectRoleList(role);
+        return AjaxResult.success(list);
+    }
+
+    @ApiOperation(value = "指定流程达式列表")
+    @GetMapping("/expList")
+    public AjaxResult expList(SysExpression sysExpression) {
+        List<SysExpression> list = sysExpressionService.selectSysExpressionList(sysExpression);
         return AjaxResult.success(list);
     }
 

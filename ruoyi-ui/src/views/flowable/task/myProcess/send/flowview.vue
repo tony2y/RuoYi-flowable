@@ -157,10 +157,6 @@ export default {
 };
 </script>
 <style lang="scss">
-  @import "../../../../../node_modules/bpmn-js/dist/assets/diagram-js.css";
-  @import "../../../../../node_modules/bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
-  @import "../../../../../node_modules/bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css";
-  @import "../../../../../node_modules/bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css";
   .bjs-powered-by {
     display: none;
   }
