@@ -39,7 +39,9 @@
           <!--候选角色-->
 <!--          <el-button slot="append" size="mini" icon="el-icon-user" @click="singleRoleCheck"></el-button>-->
 <!--          <el-divider direction="vertical"></el-divider>-->
-          <el-button slot="append" size="mini" icon="el-icon-tickets" @click="multipleRoleCheck"></el-button>
+          <el-button slot="append" size="mini" icon="el-icon-user" @click="multipleRoleCheck"></el-button>
+          <!--选择表达式-->
+          <el-button slot="append" size="mini" icon="el-icon-tickets" @click="singleExpCheck('candidateGroups')"></el-button>
         </el-input>
       </template>
     </x-form>
@@ -628,6 +630,8 @@ export default {
         this.updateProperties({'flowable:assignee': selection.id.toString()});
       }else if ("candidateUsers" === this.expType) {
         this.updateProperties({'flowable:candidateUsers': selection.id.toString()});
+      }else if ("candidateGroups" === this.expType) {
+        this.updateProperties({'flowable:candidateGroups': selection.id.toString()});
       }
       this.checkValues = selection.name;
       this.expType = null;

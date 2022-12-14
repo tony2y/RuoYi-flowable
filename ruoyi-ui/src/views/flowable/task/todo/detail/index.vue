@@ -443,18 +443,17 @@ export default {
     },
     /** 审批任务 */
     taskComplete() {
-      const that = this
-      if (!that.taskForm.values && that.checkSendUser){
-        that.msgError("请选择流程接收人员");
+      if (!this.taskForm.values && this.checkSendUser){
+        this.msgError("请选择流程接收人员");
         return;
       }
-      if (!that.taskForm.comment){
-        that.msgError("请输入审批意见");
+      if (!this.taskForm.comment){
+        this.msgError("请输入审批意见");
         return;
       }
-      complete(that.taskForm).then(response => {
-        that.msgSuccess(response.msg);
-        that.goBack();
+      complete(this.taskForm).then(response => {
+        this.msgSuccess(response.msg);
+        this.goBack();
       });
     },
     /** 委派任务 */
