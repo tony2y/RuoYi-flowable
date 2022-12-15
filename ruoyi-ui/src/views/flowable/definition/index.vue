@@ -72,7 +72,7 @@
       <el-table-column label="流程编号" align="center" prop="deploymentId" :show-overflow-tooltip="true"/>
       <el-table-column label="流程标识" align="center" prop="flowKey" :show-overflow-tooltip="true" />
       <el-table-column label="流程分类" align="center" prop="category" />
-      <el-table-column label="流程名称" align="center" :show-overflow-tooltip="true">
+      <el-table-column label="流程名称" align="center" width="120" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <el-button type="text" @click="handleReadImage(scope.row.deploymentId)">
             <span>{{ scope.row.name }}</span>
@@ -99,30 +99,13 @@
         </template>
       </el-table-column>
       <el-table-column label="部署时间" align="center" prop="deploymentTime" width="180"/>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" width="250" fixed="right"class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-dropdown>
-            <span class="el-dropdown-link">
-              更多操作<i class="el-icon-arrow-down el-icon--right"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item icon="el-icon-edit-outline" @click.native="handleLoadXml(scope.row)">
-                编辑
-              </el-dropdown-item>
-              <el-dropdown-item icon="el-icon-connection" @click.native="handleAddForm(scope.row)" v-if="scope.row.formId == null">
-                配置表单
-              </el-dropdown-item>
-              <el-dropdown-item icon="el-icon-video-pause" @click.native="handleUpdateSuspensionState(scope.row)" v-if="scope.row.suspensionState === 1">
-                挂起
-              </el-dropdown-item>
-              <el-dropdown-item icon="el-icon-video-play" @click.native="handleUpdateSuspensionState(scope.row)" v-if="scope.row.suspensionState === 2">
-                激活
-              </el-dropdown-item>
-              <el-dropdown-item icon="el-icon-delete" @click.native="handleDelete(scope.row)" v-hasPermi="['system:deployment:remove']">
-                删除
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+          <el-button @click="handleLoadXml(scope.row)" icon="el-icon-edit-outline" type="text" size="small">编辑</el-button>
+          <el-button @click="handleAddForm(scope.row)" type="text" size="small" v-if="scope.row.formId == null">配置表单</el-button>
+          <el-button @click="handleUpdateSuspensionState(scope.row)" icon="el-icon-video-pause" type="text" size="small" v-if="scope.row.suspensionState === 1">挂起</el-button>
+          <el-button @click="handleUpdateSuspensionState(scope.row)" icon="el-icon-video-play" type="text" size="small" v-if="scope.row.suspensionState === 2">激活</el-button>
+          <el-button @click="handleDelete(scope.row)" icon="el-icon-delete" type="text" size="small" v-hasPermi="['system:deployment:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

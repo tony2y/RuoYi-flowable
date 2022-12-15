@@ -52,7 +52,7 @@
       <el-table-column label="接收时间" align="center" prop="createTime" width="180"/>
       <el-table-column label="审批时间" align="center" prop="finishTime" width="180"/>
       <el-table-column label="耗时" align="center" prop="duration" width="180"/>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" width="150" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -63,7 +63,7 @@
            <el-button
             size="mini"
             type="text"
-            icon="el-icon-tickets"
+            icon="el-icon-refresh-left"
             @click="handleRevoke(scope.row)"
           >撤回
           </el-button>
