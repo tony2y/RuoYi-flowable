@@ -53,7 +53,7 @@
             <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
           </el-form-item>
         </el-form>
-        <el-table v-if="selectType === 'multiple'" v-loading="loading" :data="userList" @selection-change="handleMultipleUserSelect">
+        <el-table v-if="selectType === 'multiple'" ref="dataTable" v-loading="loading" :data="userList" @selection-change="handleMultipleUserSelect">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
           <el-table-column label="登录账号" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
@@ -97,11 +97,13 @@ export default {
   components: { Treeselect },
   // 接受父组件的值
   props: {
+    // 回显数据传值
     selectValues: {
-      type: Number | String,
-      default: 0,
+      type: Number | String | Array,
+      default: null,
       required: false
     },
+    // 表格类型
     checkType: {
       type: String,
       default: 'multiple',
@@ -133,14 +135,6 @@ export default {
       open: false,
       // 部门名称
       deptName: undefined,
-      // 默认密码
-      initPassword: undefined,
-      // 日期范围
-      dateRange: [],
-      // 岗位选项
-      postOptions: [],
-      // 角色选项
-      roleOptions: [],
       // 表单参数
       form: {},
       defaultProps: {
@@ -166,7 +160,8 @@ export default {
         { key: 5, label: `状态`, visible: true },
         { key: 6, label: `创建时间`, visible: true }
       ],
-      radioSelected:null
+      radioSelected: null, // 单选框传值
+      selectUserList: null // 回显数据传值
     };
   },
   watch: {
@@ -175,25 +170,41 @@ export default {
       this.$refs.tree.filter(val);
     },
     selectValues: {
-      immediate: true,
       handler(newVal) {
-        console.log(newVal,"user-selectValues")
-        this.radioSelected = newVal
-      }
+        if (newVal instanceof Number) {
+          this.radioSelected = newVal
+        } else {
+          this.selectUserList = newVal;
+        }
+      },
+      immediate: true
+    },
+    userList: {
+      handler(newVal) {
+        if (newVal) {
+          this.$nextTick(() => {
+            this.$refs.dataTable.clearSelection();
+            this.selectUserList?.split(',').forEach(key => {
+              this.$refs.dataTable.toggleRowSelection(newVal.find(
+                item => key == item.userId
+              ), true)
+            });
+          });
+        }
+      },
+      immediate: true, // 立即生效
+      deep: true  //监听对象或数组的时候，要用到深度监听
     }
   },
   created() {
     this.getList();
     this.getDeptTree();
-    this.getConfigKey("sys.user.initPassword").then(response => {
-      this.initPassword = response.msg;
-    });
   },
   methods: {
     /** 查询用户列表 */
     getList() {
       this.loading = true;
-      listUser(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+      listUser(this.queryParams).then(response => {
           this.userList = response.rows;
           this.total = response.total;
           this.loading = false;

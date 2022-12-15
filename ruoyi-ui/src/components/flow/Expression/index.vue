@@ -57,9 +57,10 @@ export default {
   dicts: ['sys_common_status'],
   // 接受父组件的值
   props: {
+    // 回显数据传值
     selectValues: {
-      type: Number,
-      default: 0,
+      type: Number | String,
+      default: null,
       required: false
     }
   },
@@ -91,16 +92,15 @@ export default {
         expression: null,
         status: null,
       },
-      radioSelected: this.selectValues
+      radioSelected: null // 单选框传值
     };
   },
   watch: {
     selectValues: {
-      immediate: true,
       handler(newVal) {
-        console.log(newVal,"selectValues")
         this.radioSelected = newVal
-      }
+      },
+      immediate: true,
     }
   },
   created() {

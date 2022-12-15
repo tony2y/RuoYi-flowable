@@ -125,7 +125,7 @@ export default {
       })
       this.modeler.on('element.click', e => {
         const { element } = e
-        console.log(element)
+        // console.log(element)
         if (element.type === 'bpmn:Process') {
           this.element = element
         }

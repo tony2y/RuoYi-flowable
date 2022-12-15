@@ -12,6 +12,26 @@
         </div>
       </el-col>
     </el-card>
+
+    <!--审批正常流程-->
+    <el-dialog :title="completeTitle" :visible.sync="completeOpen" width="60%" append-to-body>
+      <el-form ref="taskForm" :model="taskForm">
+        <el-form-item prop="targetKey">
+          <!--          <el-row :gutter="24">-->
+          <flow-user v-if="checkSendUser" :checkType="checkType"  @handleUserSelect="handleUserSelect"></flow-user>
+          <flow-role v-if="checkSendRole" @handleRoleSelect="handleRoleSelect"></flow-role>
+          <!--          </el-row>-->
+        </el-form-item>
+        <el-form-item label="处理意见" label-width="80px" prop="comment" :rules="[{ required: true, message: '请输入处理意见', trigger: 'blur' }]">
+          <el-input type="textarea" v-model="taskForm.comment" placeholder="请输入处理意见"/>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="completeOpen = false">取 消</el-button>
+        <el-button type="primary" @click="taskComplete">确 定</el-button>
+      </span>
+    </el-dialog>
+
     <!--流程图-->
     <el-card class="box-card">
         <div slot="header" class="clearfix">
@@ -29,6 +49,7 @@ import flow from '@/views/flowable/task/record/flow'
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import {listUser} from "@/api/system/user";
 import {flowFormData} from "@/api/flowable/process";
+import {getNextFlowNodeByStart} from "@/api/flowable/todo";
 
 export default {
   name: "Record",
@@ -69,12 +90,18 @@ export default {
       },
       formConf: {}, // 默认表单数据
       variables: [], // 流程变量数据
+      completeTitle: null,
+      completeOpen: false,
+      checkSendUser: false, // 是否展示人员选择模块
+      checkSendRole: false,// 是否展示角色选择模块
+      checkType: 'single', // 选择类型
     };
   },
   created() {
     this.taskForm.deployId = this.$route.query && this.$route.query.deployId;
     // 初始化表单
     this.taskForm.procDefId  = this.$route.query && this.$route.query.procDefId;
+    this.getNextFlowNode(this.taskForm.deployId);
     this.getFlowFormData(this.taskForm.deployId);
     // 回显流程记录
     this.loadModelXml(this.taskForm.deployId);
@@ -143,11 +170,62 @@ export default {
         formData.formBtns = false;
         if (this.taskForm.procDefId) {
           variables.variables = formData;
-           // 启动流程并将表单数据加入流程变量
+          // 启动流程并将表单数据加入流程变量
           definitionStart(this.taskForm.procDefId, JSON.stringify(variables)).then(res => {
             this.msgSuccess(res.msg);
             this.goBack();
           })
+        }
+      }
+    },
+    /** 根据当前任务获取流程设计配置的下一步节点 */
+    getNextFlowNode(deploymentId) {
+      // 根据当前任务或者流程设计配置的下一步节点 todo 暂时未涉及到考虑网关、表达式和多节点情况
+      const params = {deploymentId: deploymentId}
+      getNextFlowNodeByStart(params).then(res => {
+        const data = res.data;
+        if (data) {
+          if (data.type === 'assignee') { // 指定人员
+            this.checkSendUser = true;
+            this.checkType = "single";
+          } else if (data.type === 'candidateUsers') {  // 候选人员(多个)
+            this.checkSendUser = true;
+            this.checkType = "multiple";
+          } else if (data.type === 'candidateGroups') { // 指定组(所属角色接收任务)
+            this.checkSendRole = true;
+          } else if (data.type === 'multiInstance') { // 会签?
+            this.checkSendUser = true;
+          }
+        }
+      })
+    },
+    // 用户信息选中数据
+    handleUserSelect(selection) {
+      if (selection) {
+        const selectVal = selection.map(item => item.userId);
+        if (selectVal instanceof Array) {
+          this.taskForm.values = {
+            "approval": selectVal.join(',')
+          }
+        } else {
+          this.taskForm.values = {
+            "approval": selectVal
+          }
+        }
+      }
+    },
+    // 角色信息选中数据
+    handleRoleSelect(selection) {
+      if (selection) {
+        if (selection instanceof Array) {
+          const selectVal = selection.map(item => item.roleId);
+          this.taskForm.values = {
+            "approval": selectVal.join(',')
+          }
+        } else {
+          this.taskForm.values = {
+            "approval": selection
+          }
         }
       }
     },

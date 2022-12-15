@@ -102,7 +102,7 @@
       <el-table-column label="操作" width="250" fixed="right"class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button @click="handleLoadXml(scope.row)" icon="el-icon-edit-outline" type="text" size="small">编辑</el-button>
-          <el-button @click="handleAddForm(scope.row)" type="text" size="small" v-if="scope.row.formId == null">配置表单</el-button>
+          <el-button @click="handleAddForm(scope.row)" icon="el-icon-edit-outline" type="text" size="small" v-if="scope.row.formId == null">配置表单</el-button>
           <el-button @click="handleUpdateSuspensionState(scope.row)" icon="el-icon-video-pause" type="text" size="small" v-if="scope.row.suspensionState === 1">挂起</el-button>
           <el-button @click="handleUpdateSuspensionState(scope.row)" icon="el-icon-video-play" type="text" size="small" v-if="scope.row.suspensionState === 2">激活</el-button>
           <el-button @click="handleDelete(scope.row)" icon="el-icon-delete" type="text" size="small" v-hasPermi="['system:deployment:remove']">删除</el-button>
@@ -401,7 +401,7 @@ export default {
     /** 启动流程 */
     handleDefinitionStart(row){
       definitionStart(row.id).then(res =>{
-        this.msgSuccess(res.msg);
+        this.$modal.msgSuccess(res.msg);
       })
     },
     /** 挂载表单弹框 */
@@ -435,7 +435,7 @@ export default {
     submitFormDeploy(row){
       this.formDeployParam.formId = row.formId;
       addDeployForm(this.formDeployParam).then(res =>{
-        this.msgSuccess(res.msg);
+        this.$modal.msgSuccess(res.msg);
         this.formDeployOpen = false;
         this.getList();
       })
@@ -456,7 +456,7 @@ export default {
         state: state
       }
       updateState(params).then(res => {
-        this.msgSuccess(res.msg);
+        this.$modal.msgSuccess(res.msg);
         this.getList();
       });
     },
@@ -476,13 +476,13 @@ export default {
         if (valid) {
           if (this.form.id != null) {
             updateDeployment(this.form).then(response => {
-              this.msgSuccess("修改成功");
+              this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
             addDeployment(this.form).then(response => {
-              this.msgSuccess("新增成功");
+              this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
             });
@@ -501,7 +501,7 @@ export default {
         return delDeployment(deploymentIds);
       }).then(() => {
         this.getList();
-        this.msgSuccess("删除成功");
+        this.$modal.msgSuccess("删除成功");
       })
     },
     /** 导出按钮操作 */

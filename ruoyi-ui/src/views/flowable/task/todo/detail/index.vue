@@ -272,7 +272,7 @@ export default {
     },
     // 用户信息选中数据
     handleUserSelect(selection) {
-      console.log(selection,"handleUserSelect")
+      // console.log(selection,"handleUserSelect")
       if (selection) {
         const selectVal = selection.map(item => item.userId);
         if (selectVal instanceof Array) {
@@ -288,7 +288,7 @@ export default {
     },
     // 角色信息选中数据
     handleRoleSelect(selection) {
-      console.log(selection,"handleRoleSelect")
+      // console.log(selection,"handleRoleSelect")
       if (selection) {
         if (selection instanceof Array) {
           const selectVal = selection.map(item => item.roleId);
@@ -381,7 +381,7 @@ export default {
         this.$modal.msgError("请输入审批意见!");
         return;
       }
-      console.log(this.taskForm,"流程审批提交表单数据")
+      // console.log(this.taskForm,"流程审批提交表单数据")
       complete(this.taskForm).then(response => {
         this.$modal.msgSuccess(response.msg);
         this.goBack();

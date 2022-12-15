@@ -5,16 +5,15 @@ import com.googlecode.aviator.Expression;
 //import com.greenpineyu.fel.FelEngine;
 //import com.greenpineyu.fel.FelEngineImpl;
 //import com.greenpineyu.fel.context.FelContext;
+import org.apache.commons.lang3.StringUtils;
 import org.flowable.bpmn.model.Process;
 import org.flowable.bpmn.model.*;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.TaskService;
+import org.flowable.engine.repository.Model;
 import org.flowable.engine.repository.ProcessDefinition;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Xuan xuan
@@ -41,6 +40,41 @@ public class FindNextNodeUtil {
         return data;
     }
 
+    /**
+     * 启动流程时获取下一步骤的用户任务
+     *
+     * @param repositoryService
+     * @param map
+     * @return
+     */
+    public static List<UserTask> getNextUserTasksByStart(RepositoryService repositoryService, ProcessDefinition processDefinition, Map<String, Object> map) {
+        List<UserTask> data = new ArrayList<>();
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinition.getId());
+        Process mainProcess = bpmnModel.getMainProcess();
+        Collection<FlowElement> flowElements = mainProcess.getFlowElements();
+        String key = null;
+        // 找到开始节点 并获取唯一key
+        for (FlowElement flowElement : flowElements) {
+            if (flowElement instanceof StartEvent) {
+                key = flowElement.getId();
+                break;
+            }
+        }
+        FlowElement flowElement = bpmnModel.getFlowElement(key);
+        next(flowElements, flowElement, map, data);
+        return data;
+    }
+
+
+
+    /**
+     * 查找下一节点
+     *
+     * @param flowElements
+     * @param flowElement
+     * @param map
+     * @param nextUser
+     */
     public static void next(Collection<FlowElement> flowElements, FlowElement flowElement, Map<String, Object> map, List<UserTask> nextUser) {
         //如果是结束节点
         if (flowElement instanceof EndEvent) {

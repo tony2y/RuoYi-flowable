@@ -32,6 +32,8 @@ public class FlowTaskVo {
     @ApiModelProperty("节点")
     private String targetKey;
 
+    private String deploymentId;
+
     @ApiModelProperty("流程变量信息")
     private Map<String, Object> values;
 

@@ -971,6 +971,45 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
     }
 
     /**
+     * 获取下一节点
+     *
+     * @param flowTaskVo 任务
+     * @return
+     */
+    @Override
+    public AjaxResult getNextFlowNodeByStart(FlowTaskVo flowTaskVo) {
+        ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().deploymentId(flowTaskVo.getDeploymentId()).singleResult();
+        // Step 1. 获取当前节点并找到下一步节点
+        FlowNextDto flowNextDto = new FlowNextDto();
+        // Step 2. 获取当前流程所有流程变量(网关节点时需要校验表达式)
+        List<UserTask> nextUserTask = FindNextNodeUtil.getNextUserTasksByStart(repositoryService, processDefinition, new HashMap<>());
+        if (CollectionUtils.isNotEmpty(nextUserTask)) {
+            for (UserTask userTask : nextUserTask) {
+                MultiInstanceLoopCharacteristics multiInstance = userTask.getLoopCharacteristics();
+                // 会签节点
+                if (Objects.nonNull(multiInstance)) {
+                    List<SysUser> list = sysUserService.selectUserList(new SysUser());
+                    flowNextDto.setVars(ProcessConstants.PROCESS_MULTI_INSTANCE_USER);
+                    flowNextDto.setType(ProcessConstants.PROCESS_MULTI_INSTANCE);
+                    flowNextDto.setUserList(list);
+                } else {
+                    // 读取自定义节点属性 判断是否是否需要动态指定任务接收人员、组
+                    String dataType = userTask.getAttributeValue(ProcessConstants.NAMASPASE, ProcessConstants.PROCESS_CUSTOM_DATA_TYPE);
+                    String userType = userTask.getAttributeValue(ProcessConstants.NAMASPASE, ProcessConstants.PROCESS_CUSTOM_USER_TYPE);
+                    flowNextDto.setVars(ProcessConstants.PROCESS_APPROVAL);
+                    flowNextDto.setType(userType);
+                    // 处理加载动态指定下一节点接收人员信息
+                    if (ProcessConstants.DYNAMIC.equals(dataType)) {
+                        flowNextDto.setVars(ProcessConstants.PROCESS_APPROVAL);
+                        flowNextDto.setType(userType);
+                    }
+                }
+            }
+        }
+        return AjaxResult.success(flowNextDto);
+    }
+
+    /**
      * 流程初始化表单
      *
      * @param deployId

@@ -18,30 +18,35 @@
       </template>
       <template #checkSingleUser>
           <el-input placeholder="请选择人员" class="input-with-select" v-model="checkValues">
-            <!--指定用户-->
-            <el-button slot="append" size="mini" icon="el-icon-user" @click="singleUserCheck"></el-button>
-            <el-divider direction="vertical"></el-divider>
-            <!--选择表达式-->
-            <el-button slot="append" size="mini" icon="el-icon-tickets" @click="singleExpCheck('assignee')"></el-button>
+              <template slot="append">
+                <!--指定用户-->
+                <el-button style="padding-left: 7px" size="mini" icon="el-icon-user" @click="singleUserCheck"/>
+                <el-divider direction="vertical"></el-divider>
+                <!--选择表达式-->
+                <el-button style="padding-right: 7px" size="mini" icon="el-icon-postcard" @click="singleExpCheck('assignee')"/>
+              </template>
           </el-input>
       </template>
       <template #checkMultipleUser>
           <el-input placeholder="请选择候选用户" class="input-with-select" v-model="checkValues">
-            <!--候选用户-->
-            <el-button slot="append" size="mini" icon="el-icon-user" @click="multipleUserCheck"></el-button>
-            <el-divider direction="vertical"></el-divider>
-            <!--选择表达式-->
-            <el-button slot="append" size="mini" icon="el-icon-tickets" @click="singleExpCheck('candidateUsers')"></el-button>
+            <template slot="append">
+              <!--候选用户-->
+              <el-button style="padding-left: 7px" size="mini" icon="el-icon-user" @click="multipleUserCheck"/>
+              <el-divider direction="vertical"></el-divider>
+              <!--选择表达式-->
+              <el-button style="padding-right: 7px" size="mini" icon="el-icon-postcard" @click="singleExpCheck('candidateUsers')"/>
+            </template>
           </el-input>
       </template>
       <template #checkRole>
         <el-input placeholder="请选择候选角色" class="input-with-select" v-model="checkValues">
+          <template slot="append">
           <!--候选角色-->
-<!--          <el-button slot="append" size="mini" icon="el-icon-user" @click="singleRoleCheck"></el-button>-->
-<!--          <el-divider direction="vertical"></el-divider>-->
-          <el-button slot="append" size="mini" icon="el-icon-user" @click="multipleRoleCheck"></el-button>
-          <!--选择表达式-->
-          <el-button slot="append" size="mini" icon="el-icon-tickets" @click="singleExpCheck('candidateGroups')"></el-button>
+            <el-button style="padding-left: 7px" size="mini" icon="el-icon-user" @click="multipleRoleCheck"/>
+            <el-divider direction="vertical"></el-divider>
+              <!--选择表达式-->
+            <el-button style="padding-right: 7px" size="mini" icon="el-icon-postcard" @click="singleExpCheck('candidateGroups')"/>
+          </template>
         </el-input>
       </template>
     </x-form>
@@ -99,7 +104,7 @@
       :close-on-press-escape="false"
       :show-close="false"
     >
-      <flow-role :checkType="checkType" @handleRoleSelect="handleRoleSelect"></flow-role>
+      <flow-role :checkType="checkType" :selectValues="selectValues" @handleRoleSelect="handleRoleSelect"></flow-role>
       <span slot="footer" class="dialog-footer">
       <el-button @click="roleVisible = false">取 消</el-button>
       <el-button type="primary" @click="checkRoleComplete">确 定</el-button>
@@ -169,6 +174,7 @@ export default {
       checkType: 'single',
       // 选中的值
       checkValues: null,
+      // 数据回显
       selectValues: null,
       // 用户列表
       userList: this.users,
@@ -219,49 +225,11 @@ export default {
             dic: _this.userTypeOption,
             show: !!_this.showConfig.userType
           },
-          // {
-          //   xType: 'radio',
-          //   name: 'dataType',
-          //   label: '指定方式',
-          //   dic: _this.dataTypeOption,
-          //   show: !!_this.showConfig.dataType,
-          //   rules: [{ required: true, message: '请指定方式' }]
-          // },
-          // {
-          //   xType: 'select',
-          //   name: 'assignee',
-          //   label: '指定人员',
-          //   allowCreate: true,
-          //   filterable: true,
-          //   dic: { data: _this.users, label: 'nickName', value: 'userId' },
-          //   show: !!_this.showConfig.assignee && _this.formData.userType === 'assignee'
-          // },
-          // {
-          //   xType: 'select',
-          //   name: 'candidateUsers',
-          //   label: '候选人员',
-          //   multiple: true,
-          //   allowCreate: true,
-          //   filterable: true,
-          //   dic: { data: _this.users, label: 'nickName', value: 'userId' },
-          //   show: !!_this.showConfig.candidateUsers && _this.formData.userType === 'candidateUsers'
-          // },
-          // {
-          //   xType: 'select',
-          //   name: 'candidateGroups',
-          //   label: '候选组',
-          //   multiple: true,
-          //   allowCreate: true,
-          //   filterable: true,
-          //   dic: { data: _this.groups, label: 'roleName', value: 'roleId' },
-          //   show: !!_this.showConfig.candidateGroups && _this.formData.userType === 'candidateGroups'
-          // },
           {
             xType: 'slot',
             name: 'checkSingleUser',
             label: '指定人员',
             // rules: [{ required: true, message: '指定人员不能为空' }],
-            // dic: { data: _this.users, label: 'nickName', value: 'userId' },
             show: !!_this.showConfig.assignee && _this.formData.userType === 'assignee'
           },
           {
@@ -385,47 +353,6 @@ export default {
       }
       this.updateProperties({'flowable:userType': val})
     },
-    // // 动态选择流程执行人
-    // 'formData.dataType': function(val) {
-    //   const that = this
-    //   this.updateProperties({'flowable:dataType': val})
-    //   if (val === 'dynamic') {
-    //     this.updateProperties({'flowable:userType': that.formData.userType})
-    //   }
-    //   // 切换时 删除之前选中的值
-    //   const types = ['assignee', 'candidateUsers', 'candidateGroups']
-    //   types.forEach(type => {
-    //     delete this.element.businessObject.$attrs[`flowable:${type}`]
-    //     delete this.formData[type]
-    //   })
-    //   // 传值到父组件
-    //   const params = {
-    //     dataType: val,
-    //     userType: this.formData.userType
-    //   }
-    //   this.$emit('dataType', params)
-    // },
-    // 'formData.assignee': function(val) {
-    //     if (this.formData.userType !== 'assignee') {
-    //       delete this.element.businessObject.$attrs[`flowable:assignee`]
-    //       return
-    //     }
-    //     this.updateProperties({'flowable:assignee': val})
-    // },
-    // 'formData.candidateUsers': function(val) {
-    //     if (this.formData.userType !== 'candidateUsers') {
-    //       delete this.element.businessObject.$attrs[`flowable:candidateUsers`]
-    //       return
-    //     }
-    //     this.updateProperties({'flowable:candidateUsers': val?.join(',')})
-    // },
-    // 'formData.candidateGroups': function(val) {
-    //     if (this.formData.userType !== 'candidateGroups') {
-    //       delete this.element.businessObject.$attrs[`flowable:candidateGroups`]
-    //       return
-    //     }
-    //     this.updateProperties({'flowable:candidateGroups': val?.join(',')})
-    // },
     'formData.async': function(val) {
       if (val === '') val = null
       this.updateProperties({ 'flowable:async': val })
@@ -504,10 +431,10 @@ export default {
         this.hasMultiInstance = false
       }
     },
-    // 数据回显
+    // 设计器右侧表单数据回显
     getCheckValues(){
       const that = this;
-      console.log(that.element.businessObject,"this.element.businessObject")
+      // console.log(that.element.businessObject,"this.element.businessObject")
       const attrs = that.element.businessObject.$attrs;
       const businessObject = that.element.businessObject;
       // 指定用户
@@ -526,33 +453,22 @@ export default {
         const val = attrs["flowable:candidateUsers"];
         if (attrs["flowable:dataType"] === "dynamic") {
           this.checkValues = that.expList.find(item => item.expression == val).name;
+          this.selectValues = that.expList.filter(item => item.expression == val).id;
         } else {
-          const array = [];
-          const vals = val.split(',');
-          vals.forEach(key => {
-            const user = that.userList.find(item => item.userId == key)
-            if (user) {
-              array.push(user.nickName);
-            }
-          })
-          this.checkValues = array.join(',');
-          this.selectValues = array.join(',');
+          const newArr = that.userList.filter(i => val.split(',').includes(i.userId))
+          this.checkValues =  newArr.map(item => item.nickName).join(',');
+          this.selectValues = newArr.map(item => item.userId).join(',');
         }
       } else if (businessObject.hasOwnProperty("candidateGroups")) {
         // 候选角色信息
         const val = businessObject["candidateGroups"];
         if (attrs["flowable:dataType"] === "dynamic") {
           this.checkValues = that.expList.find(item => item.expression == val).name;
+          this.selectValues = that.expList.filter(item => item.expression == val).id;
         } else {
-          const array = [];
-          const vals = val.split(',');
-          vals.forEach(key => {
-            const role = that.groupList.find(item => item.roleId == key)
-            if (role) {
-              array.push(role.roleName);
-            }
-          })
-          this.checkValues = array.join(',');
+          const newArr = that.groupList.filter(i => val.split(',').includes(i.roleId))
+          this.checkValues =  newArr.map(item => item.roleName).join(',');
+          this.selectValues = newArr.map(item => item.roleId).join(',');
         }
       }
     },

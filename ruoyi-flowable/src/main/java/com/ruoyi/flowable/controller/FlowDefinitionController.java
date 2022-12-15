@@ -155,7 +155,7 @@ public class FlowDefinitionController {
     }
 
 
-    @ApiOperation(value = "根据流程定义id启动流程实例")
+    @ApiOperation(value = "发起流程")
     @PostMapping("/start/{procDefId}")
     public AjaxResult start(@ApiParam(value = "流程定义id") @PathVariable(value = "procDefId") String procDefId,
                             @ApiParam(value = "变量集合,json对象") @RequestBody Map<String, Object> variables) {

@@ -165,6 +165,8 @@ public interface IFlowTaskService {
      */
     AjaxResult getNextFlowNode(FlowTaskVo flowTaskVo);
 
+    AjaxResult getNextFlowNodeByStart(FlowTaskVo flowTaskVo);
+
     /**
      * 流程初始化表单
      * @param deployId

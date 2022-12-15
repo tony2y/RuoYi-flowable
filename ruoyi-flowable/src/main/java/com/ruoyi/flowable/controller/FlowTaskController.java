@@ -153,6 +153,12 @@ public class FlowTaskController {
         return flowTaskService.getNextFlowNode(flowTaskVo);
     }
 
+    @ApiOperation(value = "流程发起时获取下一节点")
+    @PostMapping(value = "/nextFlowNodeByStart")
+    public AjaxResult getNextFlowNodeByStart(@RequestBody FlowTaskVo flowTaskVo) {
+        return flowTaskService.getNextFlowNodeByStart(flowTaskVo);
+    }
+
     /**
      * 生成流程图
      *

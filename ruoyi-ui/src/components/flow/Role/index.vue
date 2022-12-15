@@ -16,7 +16,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table v-if="selectType === 'multiple'" v-loading="loading" :data="roleList" @selection-change="handleMultipleRoleSelect">
+    <el-table v-if="selectType === 'multiple'" ref="dataTable"  v-loading="loading" :data="roleList" @selection-change="handleMultipleRoleSelect">
       <el-table-column type="selection" width="50" align="center" />
       <el-table-column label="角色编号" prop="roleId" width="120" />
       <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" width="150" />
@@ -66,9 +66,17 @@ export default {
   dicts: ['sys_normal_disable'],
   // 接受父组件的值
   props: {
-    checkType: String,
-    default: 'multiple',
-    required: false
+    // 回显数据传值
+    selectValues: {
+      type: Number | String | Array,
+      default: null,
+      required: false
+    },
+    checkType: {
+      type: String,
+      default: 'multiple',
+      required: true
+    },
   },
   data() {
     return {
@@ -91,41 +99,6 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
-      // 是否显示弹出层（数据权限）
-      openDataScope: false,
-      menuExpand: false,
-      menuNodeAll: false,
-      deptExpand: true,
-      deptNodeAll: false,
-      // 日期范围
-      dateRange: [],
-      // 数据范围选项
-      dataScopeOptions: [
-        {
-          value: "1",
-          label: "全部数据权限"
-        },
-        {
-          value: "2",
-          label: "自定数据权限"
-        },
-        {
-          value: "3",
-          label: "本部门数据权限"
-        },
-        {
-          value: "4",
-          label: "本部门及以下数据权限"
-        },
-        {
-          value: "5",
-          label: "仅本人数据权限"
-        }
-      ],
-      // 菜单列表
-      menuOptions: [],
-      // 部门列表
-      deptOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -136,12 +109,37 @@ export default {
       },
       // 表单参数
       form: {},
-      defaultProps: {
-        children: "children",
-        label: "label"
-      },
-      radioSelected:''
+      radioSelected: null, // 单选框传值
+      selectRoleList: null // 回显数据传值
     };
+  },
+  watch: {
+    selectValues: {
+      handler(newVal) {
+        if (newVal instanceof Number) {
+          this.radioSelected = newVal
+        } else {
+          this.selectRoleList = newVal;
+        }
+      },
+      immediate: true
+    },
+    roleList: {
+      handler(newVal) {
+        if (newVal) {
+          this.$nextTick(() => {
+            this.$refs.dataTable.clearSelection();
+            this.selectRoleList?.split(',').forEach(key => {
+              this.$refs.dataTable.toggleRowSelection(newVal.find(
+                item => key == item.roleId
+              ), true)
+            });
+          });
+        }
+      },
+      immediate: true, // 立即生效
+      deep: true  //监听对象或数组的时候，要用到深度监听
+    }
   },
   created() {
     this.getList();
@@ -150,7 +148,7 @@ export default {
     /** 查询角色列表 */
     getList() {
       this.loading = true;
-      listRole(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+      listRole(this.queryParams).then(response => {
           this.roleList = response.rows;
           this.total = response.total;
           this.loading = false;
@@ -158,26 +156,16 @@ export default {
       );
     },
     // 多选框选中数据
-    handleRoleSelect(selection) {
-      // this.ids = selection.map(item => item.userId);
-      this.radioSelected = selection.roleId;//点击当前行时,radio同样有选中效果
-      console.log(selection,"handleRoleSelect");
-      this.$emit('handleRoleSelect', selection);
-
-    },
-    // 多选框选中数据
     handleMultipleRoleSelect(selection) {
-      this.ids = selection.map(item => item.roleId);
+      const idList = selection.map(item => item.roleId);
       const nameList = selection.map(item => item.roleName);
-      console.log( this.ids,"handleRoleSelect");
-      this.$emit('handleRoleSelect',this.ids.join(','),nameList.join(','));
+      this.$emit('handleRoleSelect', idList.join(','), nameList.join(','));
     },
     // 单选框选中数据
     handleSingleRoleSelect(selection) {
-      this.radioSelected = selection.roleId;//点击当前行时,radio同样有选中效果
-      const name = selection.roleName;//点击当前行时,radio同样有选中效果
-      console.log(this.radioSelected.toString() ,"handleRoleSelect");
-      this.$emit('handleRoleSelect',this.radioSelected.toString(),name);
+      this.radioSelected = selection.roleId;
+      const roleName = selection.roleName;
+      this.$emit('handleRoleSelect', this.radioSelected.toString(), roleName);
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -186,7 +174,6 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = [];
       this.handleQuery();
     },
   }
