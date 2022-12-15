@@ -79,15 +79,17 @@ function formBtns(h) {
 }
 
 function renderFormItem(h, elementList) {
-  return elementList.map(scheme => {
-    const config = scheme.__config__
-    const layout = layouts[config.layout]
+  if (elementList) {
+    return elementList.map(scheme => {
+      const config = scheme.__config__
+      const layout = layouts[config.layout]
 
-    if (layout) {
-      return layout.call(this, h, scheme)
-    }
-    throw new Error(`没有与${config.layout}匹配的layout`)
-  })
+      if (layout) {
+        return layout.call(this, h, scheme)
+      }
+      throw new Error(`没有与${config.layout}匹配的layout`)
+    })
+  }
 }
 
 function renderChildren(h, scheme) {

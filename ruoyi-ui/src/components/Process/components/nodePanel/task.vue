@@ -71,7 +71,7 @@
       :close-on-press-escape="false"
       :show-close="false"
     >
-    <flow-user :checkType="checkType" @handleUserSelect="handleUserSelect"></flow-user>
+    <flow-user :checkType="checkType" :selectValues="selectValues" @handleUserSelect="handleUserSelect"></flow-user>
     <span slot="footer" class="dialog-footer">
       <el-button @click="userVisible = false">取 消</el-button>
       <el-button type="primary" @click="checkUserComplete">确 定</el-button>
@@ -85,7 +85,7 @@
       :close-on-press-escape="false"
       :show-close="false"
     >
-      <flow-exp @handleSingleExpSelect="handleSingleExpSelect"></flow-exp>
+      <flow-exp :selectValues="selectValues" @handleSingleExpSelect="handleSingleExpSelect"></flow-exp>
       <span slot="footer" class="dialog-footer">
       <el-button @click="expVisible = false">取 消</el-button>
       <el-button type="primary" @click="checkExpComplete">确 定</el-button>
@@ -169,6 +169,7 @@ export default {
       checkType: 'single',
       // 选中的值
       checkValues: null,
+      selectValues: null,
       // 用户列表
       userList: this.users,
       groupList: this.groups,
@@ -375,14 +376,14 @@ export default {
   },
   watch: {
     'formData.userType': function(val, oldVal) {
+      const types = ['assignee', 'candidateUsers', 'candidateGroups']
       if (oldVal) {
-        const types = ['assignee', 'candidateUsers', 'candidateGroups']
         types.forEach(type => {
           delete this.element.businessObject.$attrs[`flowable:${type}`]
           delete this.formData[type]
-          this.updateProperties({'flowable:userType': type})
         })
       }
+      this.updateProperties({'flowable:userType': val})
     },
     // // 动态选择流程执行人
     // 'formData.dataType': function(val) {
@@ -510,19 +511,21 @@ export default {
       const attrs = that.element.businessObject.$attrs;
       const businessObject = that.element.businessObject;
       // 指定用户
-      if (attrs.hasOwnProperty("flowable:assignee")){
+      if (attrs.hasOwnProperty("flowable:assignee")) {
         const val = attrs["flowable:assignee"];
         // 查找是否动态指定人员(选中流程表达式)
-        if (attrs["flowable:dataType"] === "dynamic"){
-          this.checkValues =  that.expList.find(item => item.id == val).name;
-        }else {
+        if (attrs["flowable:dataType"] === "dynamic") {
+          this.checkValues = that.expList.find(item => item.expression == val).name;
+          this.selectValues = that.expList.find(item => item.expression == val).id;
+        } else {
           this.checkValues = that.userList.find(item => item.userId == val).nickName;
+          this.selectValues = that.userList.find(item => item.userId == val).userId;
         }
         // 候选用户
       } else if (attrs.hasOwnProperty("flowable:candidateUsers")) {
         const val = attrs["flowable:candidateUsers"];
         if (attrs["flowable:dataType"] === "dynamic") {
-          this.checkValues = that.expList.find(item => item.id == val).name;
+          this.checkValues = that.expList.find(item => item.expression == val).name;
         } else {
           const array = [];
           const vals = val.split(',');
@@ -533,25 +536,13 @@ export default {
             }
           })
           this.checkValues = array.join(',');
-      }
-        // if (val.indexOf(",") !== -1) {
-        //   const vals = val.split(',');
-        //   vals.forEach(key => {
-        //     const user = that.userList.find(item => item.userId == key)
-        //     if (user) {
-        //       array.push(user.nickName);
-        //     }
-        //   })
-        //   this.checkValues = array.join(',');
-        // }else {
-        //   const user = that.userList.find(item => item.userId == val);
-        //   this.checkValues = user.nickName;
-        // }
-      } else if (businessObject.hasOwnProperty("candidateGroups")){
+          this.selectValues = array.join(',');
+        }
+      } else if (businessObject.hasOwnProperty("candidateGroups")) {
         // 候选角色信息
         const val = businessObject["candidateGroups"];
         if (attrs["flowable:dataType"] === "dynamic") {
-          this.checkValues = that.expList.find(item => item.id == val).name;
+          this.checkValues = that.expList.find(item => item.expression == val).name;
         } else {
           const array = [];
           const vals = val.split(',');
@@ -563,19 +554,6 @@ export default {
           })
           this.checkValues = array.join(',');
         }
-        // if (val.indexOf(",") !== -1) {
-        //   const vals = val.split(',');
-        //   vals.forEach(key => {
-        //     const role = that.groupList.find(item => item.roleId == key)
-        //     if (role) {
-        //       array.push(role.roleName);
-        //     }
-        //   })
-        //   this.checkValues = array.join(',');
-        // }else {
-        //   const role = that.groupList.find(item => item.roleId == val);
-        //   this.checkValues = role.roleName;
-        // }
       }
     },
     finishExecutionListener() {
@@ -622,44 +600,42 @@ export default {
       this.expType = expType;
     },
     // 选中表达式
-    handleSingleExpSelect(selection){
+    handleSingleExpSelect(selection) {
       this.deleteFlowAttar();
-      console.log(this.element.businessObject,"element.businessObject")
       this.updateProperties({'flowable:dataType': 'dynamic'})
-      if ("assignee" === this.expType){
-        this.updateProperties({'flowable:assignee': selection.id.toString()});
-      }else if ("candidateUsers" === this.expType) {
-        this.updateProperties({'flowable:candidateUsers': selection.id.toString()});
-      }else if ("candidateGroups" === this.expType) {
-        this.updateProperties({'flowable:candidateGroups': selection.id.toString()});
+      if ("assignee" === this.expType) {
+        this.updateProperties({'flowable:assignee': selection.expression});
+      } else if ("candidateUsers" === this.expType) {
+        this.updateProperties({'flowable:candidateUsers': selection.expression});
+      } else if ("candidateGroups" === this.expType) {
+        this.updateProperties({'flowable:candidateGroups': selection.expression});
       }
       this.checkValues = selection.name;
       this.expType = null;
     },
     // 用户选中数据
     handleUserSelect(selection) {
-      console.log(selection,"handleUserSelect")
       const that = this;
       if (selection) {
         that.deleteFlowAttar();
-        this.updateProperties({'flowable:dataType': 'fixed'})
-        if (selection instanceof Array){
+        that.updateProperties({'flowable:dataType': 'fixed'})
+        if (selection instanceof Array) {
           const userIds = selection.map(item => item.userId);
           const nickName = selection.map(item => item.nickName);
           that.updateProperties({'flowable:candidateUsers': userIds.join(',')})
           that.checkValues = nickName.join(',');
-        }else {
+        } else {
           that.updateProperties({'flowable:assignee': selection.userId})
           that.checkValues = selection.nickName;
         }
       }
     },
     // 角色选中数据
-    handleRoleSelect(selection,name) {
+    handleRoleSelect(selection, name) {
       const that = this;
       if (selection && name) {
         that.deleteFlowAttar();
-        this.updateProperties({'flowable:dataType': 'fixed'})
+        that.updateProperties({'flowable:dataType': 'fixed'})
         that.updateProperties({'flowable:candidateGroups': selection});
         that.checkValues = name;
       }

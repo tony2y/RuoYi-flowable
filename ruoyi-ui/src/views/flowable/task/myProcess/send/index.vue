@@ -26,9 +26,7 @@
 import Parser from '@/components/parser/Parser'
 import {definitionStart, readXml} from "@/api/flowable/definition";
 import flow from '@/views/flowable/task/record/flow'
-import {treeselect} from "@/api/system/dept";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import Treeselect from "@riophae/vue-treeselect";
 import {listUser} from "@/api/system/user";
 import {flowFormData} from "@/api/flowable/process";
 
@@ -37,7 +35,6 @@ export default {
   components: {
     Parser,
     flow,
-    Treeselect
   },
   props: {},
   data() {
@@ -83,12 +80,6 @@ export default {
     this.loadModelXml(this.taskForm.deployId);
   },
   methods: {
-    /** 查询部门下拉树结构 */
-    getTreeselect() {
-      treeselect().then(response => {
-        this.deptOptions = response.data;
-      });
-    },
     /** 查询用户列表 */
     getList() {
       listUser(this.addDateRange(this.queryParams, this.dateRange)).then(response => {

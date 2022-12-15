@@ -16,7 +16,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table  v-if="selectType === 'multiple'" v-loading="loading" :data="roleList" @selection-change="handleMultipleRoleSelect">
+    <el-table v-if="selectType === 'multiple'" v-loading="loading" :data="roleList" @selection-change="handleMultipleRoleSelect">
       <el-table-column type="selection" width="50" align="center" />
       <el-table-column label="角色编号" prop="roleId" width="120" />
       <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" width="150" />

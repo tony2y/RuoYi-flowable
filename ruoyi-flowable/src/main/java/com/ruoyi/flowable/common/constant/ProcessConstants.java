@@ -11,7 +11,7 @@ public class ProcessConstants {
     /**
      * 动态数据
      */
-    public static final String DATA_TYPE = "dynamic";
+    public static final String DYNAMIC = "dynamic";
 
     /**
      * 固定任务接收
@@ -21,19 +21,19 @@ public class ProcessConstants {
     /**
      * 单个审批人
      */
-    public static final String USER_TYPE_ASSIGNEE = "assignee";
+    public static final String ASSIGNEE = "assignee";
 
 
     /**
      * 候选人
      */
-    public static final String USER_TYPE_USERS = "candidateUsers";
+    public static final String CANDIDATE_USERS = "candidateUsers";
 
 
     /**
      * 审批组
      */
-    public static final String USER_TYPE_ROUPS = "candidateGroups";
+    public static final String CANDIDATE_GROUPS = "candidateGroups";
 
     /**
      * 单个审批人

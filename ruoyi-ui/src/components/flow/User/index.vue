@@ -97,9 +97,16 @@ export default {
   components: { Treeselect },
   // 接受父组件的值
   props: {
-    checkType: String,
-    default: 'multiple',
-    required: false
+    selectValues: {
+      type: Number | String,
+      default: 0,
+      required: false
+    },
+    checkType: {
+      type: String,
+      default: 'multiple',
+      required: true
+    },
   },
   data() {
     return {
@@ -166,6 +173,13 @@ export default {
     // 根据名称筛选部门树
     deptName(val) {
       this.$refs.tree.filter(val);
+    },
+    selectValues: {
+      immediate: true,
+      handler(newVal) {
+        console.log(newVal,"user-selectValues")
+        this.radioSelected = newVal
+      }
     }
   },
   created() {

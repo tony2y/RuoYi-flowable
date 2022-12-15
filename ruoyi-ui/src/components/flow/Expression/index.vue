@@ -50,11 +50,19 @@
 </template>
 
 <script>
-import { listExpression, getExpression, delExpression, addExpression, updateExpression } from "@/api/system/expression";
+import { listExpression } from "@/api/system/expression";
 
 export default {
   name: "Expression",
   dicts: ['sys_common_status'],
+  // 接受父组件的值
+  props: {
+    selectValues: {
+      type: Number,
+      default: 0,
+      required: false
+    }
+  },
   data() {
     return {
       // 遮罩层
@@ -83,8 +91,17 @@ export default {
         expression: null,
         status: null,
       },
-      radioSelected:null
+      radioSelected: this.selectValues
     };
+  },
+  watch: {
+    selectValues: {
+      immediate: true,
+      handler(newVal) {
+        console.log(newVal,"selectValues")
+        this.radioSelected = newVal
+      }
+    }
   },
   created() {
     this.getList();
@@ -112,7 +129,6 @@ export default {
     // 单选框选中数据
     handleSingleExpSelect(selection) {
       this.radioSelected = selection.id;//点击当前行时,radio同样有选中效果
-      // console.log( this.radioSelected ,"handleSingleExpSelect");
       this.$emit('handleSingleExpSelect',selection);
     },
   }

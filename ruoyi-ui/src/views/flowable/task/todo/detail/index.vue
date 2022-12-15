@@ -78,61 +78,13 @@
     </el-card>
 
     <!--审批正常流程-->
-    <el-dialog :title="completeTitle" :visible.sync="completeOpen" :width="checkSendUser? '60%':'40%'" append-to-body>
+    <el-dialog :title="completeTitle" :visible.sync="completeOpen" width="60%" append-to-body>
       <el-form ref="taskForm" :model="taskForm">
-        <el-form-item v-if="checkSendUser" prop="targetKey">
-          <el-row :gutter="24">
-<!--            <flow-user @handleUserSelect="handleUserSelect"></flow-user>-->
-            <flow-role @handleRoleSelect="handleRoleSelect"></flow-role>
-<!--            &lt;!&ndash;部门数据&ndash;&gt;-->
-<!--            <el-col :span="6" :xs="24">-->
-<!--              <h6>部门列表</h6>-->
-<!--              <div class="head-container">-->
-<!--                <el-input-->
-<!--                  v-model="deptName"-->
-<!--                  placeholder="请输入部门名称"-->
-<!--                  clearable-->
-<!--                  size="small"-->
-<!--                  prefix-icon="el-icon-search"-->
-<!--                  style="margin-bottom: 20px"-->
-<!--                />-->
-<!--              </div>-->
-<!--              <div class="head-container">-->
-<!--                <el-tree-->
-<!--                  :data="deptOptions"-->
-<!--                  :props="defaultProps"-->
-<!--                  :expand-on-click-node="false"-->
-<!--                  :filter-node-method="filterNode"-->
-<!--                  ref="tree"-->
-<!--                  default-expand-all-->
-<!--                  @node-click="handleNodeClick"-->
-<!--                />-->
-<!--              </div>-->
-<!--            </el-col>-->
-<!--            <el-col :span="10" :xs="24">-->
-<!--              <h6>待选人员</h6>-->
-<!--              <el-table-->
-<!--                ref="singleTable"-->
-<!--                :data="userList"-->
-<!--                border-->
-<!--                style="width: 100%"-->
-<!--                @selection-change="handleSelectionChange">-->
-<!--                <el-table-column type="selection" width="50" align="center" />-->
-<!--                <el-table-column label="用户名" align="center" prop="nickName" />-->
-<!--                <el-table-column label="部门" align="center" prop="dept.deptName" />-->
-<!--              </el-table>-->
-<!--            </el-col>-->
-<!--            <el-col :span="8" :xs="24">-->
-<!--              <h6>已选人员</h6>-->
-<!--              <el-tag-->
-<!--                v-for="(user,index) in userData"-->
-<!--                :key="index"-->
-<!--                closable-->
-<!--                @close="handleClose(user)">-->
-<!--                {{user.nickName}} {{user.dept.deptName}}-->
-<!--              </el-tag>-->
-<!--            </el-col>-->
-          </el-row>
+        <el-form-item prop="targetKey">
+<!--          <el-row :gutter="24">-->
+            <flow-user v-if="checkSendUser" :checkType="checkType"  @handleUserSelect="handleUserSelect"></flow-user>
+            <flow-role v-if="checkSendRole" @handleRoleSelect="handleRoleSelect"></flow-role>
+<!--          </el-row>-->
         </el-form-item>
         <el-form-item label="处理意见" label-width="80px" prop="comment" :rules="[{ required: true, message: '请输入处理意见', trigger: 'blur' }]">
           <el-input type="textarea" v-model="taskForm.comment" placeholder="请输入处理意见"/>
@@ -189,9 +141,7 @@ import Parser from '@/components/parser/Parser'
 import {definitionStart, getProcessVariables, readXml, getFlowViewer} from "@/api/flowable/definition";
 import {complete, rejectTask, returnList, returnTask, getNextFlowNode, delegate} from "@/api/flowable/todo";
 import flow from '@/views/flowable/task/record/flow'
-import {treeselect} from "@/api/system/dept";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import Treeselect from "@riophae/vue-treeselect";
 import {listUser} from "@/api/system/user";
 
 export default {
@@ -199,7 +149,6 @@ export default {
   components: {
     Parser,
     flow,
-    Treeselect,
     FlowUser,
     FlowRole,
   },
@@ -212,7 +161,6 @@ export default {
       // 部门名称
       deptName: undefined,
       // 部门树选项
-      deptOptions: undefined,
       // 用户表格数据
       userList: null,
       defaultProps: {
@@ -235,7 +183,6 @@ export default {
         delegateTaskShow: false, // 是否展示回退表单
         defaultTaskShow: true, // 默认处理
         sendUserShow: false, // 审批用户
-        multiple: false,
         comment:"", // 意见内容
         procInsId: "", // 流程实例编号
         instanceId: "", // 流程实例编号
@@ -245,7 +192,6 @@ export default {
         vars: "",
         targetKey:""
       },
-      userDataList:[], // 流程候选人
       assignee: null,
       formConf: {}, // 默认表单数据
       variables: [], // 流程变量数据
@@ -258,7 +204,9 @@ export default {
       rejectOpen: false,
       rejectTitle: null,
       userData:[],
-      checkSendUser: false // 是否展示选择人员模块
+      checkSendUser: false, // 是否展示人员选择模块
+      checkSendRole: false,// 是否展示角色选择模块
+      checkType: 'single', // 选择类型
     };
   },
   created() {
@@ -278,12 +226,6 @@ export default {
     this.getFlowRecordList(this.taskForm.procInsId, this.taskForm.deployId);
   },
   methods: {
-    /** 查询部门下拉树结构 */
-    getTreeselect() {
-      treeselect().then(response => {
-        this.deptOptions = response.data;
-      });
-    },
     /** 查询用户列表 */
     getList() {
       listUser(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
@@ -328,11 +270,10 @@ export default {
         return "#b3bdbb";
       }
     },
-    // 多选框选中数据
+    // 用户信息选中数据
     handleUserSelect(selection) {
       console.log(selection,"handleUserSelect")
       if (selection) {
-        this.userData = selection
         const selectVal = selection.map(item => item.userId);
         if (selectVal instanceof Array) {
           this.taskForm.values = {
@@ -345,27 +286,21 @@ export default {
         }
       }
     },
-    // 多选框选中数据
+    // 角色信息选中数据
     handleRoleSelect(selection) {
       console.log(selection,"handleRoleSelect")
       if (selection) {
-        this.userData = selection
-        const selectVal = selection.map(item => item.userId);
-        if (selectVal instanceof Array) {
+        if (selection instanceof Array) {
+          const selectVal = selection.map(item => item.roleId);
           this.taskForm.values = {
             "approval": selectVal.join(',')
           }
         } else {
           this.taskForm.values = {
-            "approval": selectVal
+            "approval": selection
           }
         }
       }
-    },
-    // 关闭标签
-    handleClose(tag) {
-      this.userData.splice(this.userData.indexOf(tag), 1);
-      this.$refs.singleTable.toggleRowSelection(tag, false)
     },
     /** 流程变量赋值 */
     handleCheckChange(val) {
@@ -413,46 +348,42 @@ export default {
       getNextFlowNode(params).then(res => {
         const data = res.data;
         if (data) {
-          this.checkSendUser = true
           if (data.type === 'assignee') { // 指定人员
-            this.userDataList = res.data.userList;
-          } else if (data.type === 'candidateUsers') {  // 指定人员(多个)
-            this.userDataList = res.data.userList;
-            this.taskForm.multiple = true;
+            this.checkSendUser = true;
+            this.checkType = "single";
+          } else if (data.type === 'candidateUsers') {  // 候选人员(多个)
+            this.checkSendUser = true;
+            this.checkType = "multiple";
           } else if (data.type === 'candidateGroups') { // 指定组(所属角色接收任务)
-            res.data.roleList.forEach(role => {
-              role.userId = role.roleId;
-              role.nickName = role.roleName;
-            })
-            this.userDataList = res.data.roleList;
-            this.taskForm.multiple = false;
+            this.checkSendRole = true;
           } else if (data.type === 'multiInstance') { // 会签?
-            this.userDataList = res.data.userList;
-            this.taskForm.multiple = true;
-          }else if (data.type === 'fixed') { // 已经固定人员接收下一任务
-            this.checkSendUser = false;
+            this.checkSendUser = true;
           }
         }
       })
     },
-    /** 审批任务选择 */
+    /** 加载审批任务弹框 */
     handleComplete() {
       this.completeOpen = true;
       this.completeTitle = "流程审批";
-      this.getTreeselect();
     },
-    /** 审批任务 */
+    /** 用户审批任务 */
     taskComplete() {
       if (!this.taskForm.values && this.checkSendUser){
-        this.msgError("请选择流程接收人员");
+        this.$modal.msgError("请选择流程接收人员!");
+        return;
+      }
+      if (!this.taskForm.values && this.checkSendRole){
+        this.$modal.msgError("请选择流程接收角色组!");
         return;
       }
       if (!this.taskForm.comment){
-        this.msgError("请输入审批意见");
+        this.$modal.msgError("请输入审批意见!");
         return;
       }
+      console.log(this.taskForm,"流程审批提交表单数据")
       complete(this.taskForm).then(response => {
-        this.msgSuccess(response.msg);
+        this.$modal.msgSuccess(response.msg);
         this.goBack();
       });
     },
@@ -504,7 +435,7 @@ export default {
           variables.variables = formData;
            // 启动流程并将表单数据加入流程变量
           definitionStart(that.taskForm.procDefId, JSON.stringify(variables)).then(res => {
-            that.msgSuccess(res.msg);
+            that.$modal.msgSuccess(res.msg);
             that.goBack();
           })
         }
@@ -520,7 +451,7 @@ export default {
       this.$refs["taskForm"].validate(valid => {
         if (valid) {
           rejectTask(this.taskForm).then(res => {
-            this.msgSuccess(res.msg);
+            this.$modal.msgSuccess(res.msg);
             this.goBack();
           });
         }
@@ -540,7 +471,7 @@ export default {
       this.$refs["taskForm"].validate(valid => {
         if (valid) {
           returnTask(this.taskForm).then(res => {
-            this.msgSuccess(res.msg);
+            this.$modal.msgSuccess(res.msg);
             this.goBack()
           });
         }
@@ -558,7 +489,7 @@ export default {
       this.$refs["taskForm"].validate(valid => {
         if (valid) {
           delegate(this.taskForm).then(response => {
-            this.msgSuccess(response.msg);
+            this.$modal.msgSuccess(response.msg);
             this.goBack();
           });
         }
