@@ -2,6 +2,10 @@ export default {
   // Labels
   'Activate the global connect tool': '激活全局连接工具',
   'Append {type}': '添加 {type}',
+  'Append Task': '添加任务',
+  'Append Gateway': '添加网关',
+  'Append EndEvent': '添加结束事件',
+  "Append Intermediate/Boundary Event": '添加开始事件',
   'Add Lane above': '在上面添加道',
   'Divide into two Lanes': '分割成两个道',
   'Divide into three Lanes': '分割成三个道',

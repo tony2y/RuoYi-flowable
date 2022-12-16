@@ -232,24 +232,6 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    /** 查询用户列表 */
-    getList() {
-      listUser(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.userList = response.rows;
-          this.total = response.total;
-        }
-      );
-    },
-    // 筛选节点
-    filterNode(value, data) {
-      if (!value) return true;
-      return data.label.indexOf(value) !== -1;
-    },
-    // 节点单击事件
-    handleNodeClick(data) {
-      this.queryParams.deptId = data.id;
-      this.getList();
-    },
     /** xml 文件 */
     getModelDetail(deployId) {
       // 发送请求，获取xml
@@ -360,8 +342,13 @@ export default {
             this.checkType = "multiple";
           } else if (data.type === 'candidateGroups') { // 指定组(所属角色接收任务)
             this.checkSendRole = true;
-          } else if (data.type === 'multiInstance') { // 会签?
-            this.checkSendUser = true;
+          } else if (data.type === 'multiInstance') { // 会签
+            listUser().then(response => {
+                this.taskForm.values = {
+                  "userList": response.rows
+                }
+              }
+            );
           }
         }
       })
@@ -425,24 +412,6 @@ export default {
           variables.push(variableData)
         })
         this.variables = variables;
-      }
-    },
-    /** 申请流程表单数据提交 */
-    submitForm(data) {
-      const that = this
-      if (data) {
-        const variables = data.valData;
-        const formData = data.formData;
-        formData.disabled = true;
-        formData.formBtns = false;
-        if (that.taskForm.procDefId) {
-          variables.variables = formData;
-           // 启动流程并将表单数据加入流程变量
-          definitionStart(that.taskForm.procDefId, JSON.stringify(variables)).then(res => {
-            that.$modal.msgSuccess(res.msg);
-            that.goBack();
-          })
-        }
       }
     },
     /** 驳回任务 */

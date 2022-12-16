@@ -10,39 +10,39 @@
       :is-view="false"
       @save="save"
       @showXML="showXML"
-      @dataType="dataType"
     />
     <!--在线查看xml-->
-    <el-dialog :title="xmlTitle" :visible.sync="xmlOpen" width="60%" append-to-body>
-      <div>
-        <pre v-highlight>
-           <code class="xml">
-                {{xmlContent}}
-           </code>
-        </pre>
-      </div>
+    <el-dialog :title="xmlTitle" :visible.sync="xmlOpen" width="70%" class="showAll_dialog">
+      <!-- 设置对话框内容高度 -->
+        <el-scrollbar>
+            <pre v-highlight>
+               <code class="xml">
+                    {{xmlData}}
+               </code>
+            </pre>
+        </el-scrollbar>
     </el-dialog>
   </div>
 </template>
 <script>
 import {readXml, roleList, saveXml, userList,expList} from "@/api/flowable/definition";
 import bpmnModeler from '@/components/Process/index'
-import vkbeautify from 'vkbeautify'
-import Hljs from 'highlight.js'
-import 'highlight.js/styles/atom-one-dark.css'
+import vkBeautify from 'vkbeautify'
+import highlight from 'highlight.js'
+import 'highlight.js/styles/atelier-savanna-dark.css'
 
 export default {
   name: "Model",
   components: {
     bpmnModeler,
-    vkbeautify
+    vkBeautify
   },
   // 自定义指令
   directives: {
     highlight:(el) => {
       let blocks = el.querySelectorAll('pre code');
       blocks.forEach((block) => {
-        Hljs.highlightBlock(block)
+        highlight.highlightBlock(block)
       })
     }
   },
@@ -52,7 +52,7 @@ export default {
       modeler:"",
       xmlOpen: false,
       xmlTitle: '',
-      xmlContent: '',
+      xmlData: '',
       users: [],
       groups: [],
       categorys: [],
@@ -122,28 +122,59 @@ export default {
     showXML(data){
       this.xmlTitle = 'xml查看';
       this.xmlOpen = true;
-      this.xmlContent = vkbeautify.xml(data);
+      this.xmlData = vkBeautify.xml(data);
     },
-    /** 获取数据类型 */
-    dataType(data){
-      this.users = [];
-      this.groups = [];
-      if (data) {
-        if (data.dataType === 'dynamic') {
-          if (data.userType === 'assignee') {
-            this.users = [{nickName: "${INITIATOR}", userId: "${INITIATOR}"},
-                          {nickName: "#{approval}", userId: "#{approval}"}
-              ]
-          } else if (data.userType === 'candidateUsers') {
-            this.users = [ {nickName: "#{approval}", userId: "#{approval}"}]
-          } else {
-            this.groups = [{roleName: "#{approval}", roleId: "#{approval}"}]
-          }
-        } else {
-          this.getDataList()
-        }
-      }
-    }
+    // /** 获取数据类型 */
+    // dataType(data){
+    //   this.users = [];
+    //   this.groups = [];
+    //   if (data) {
+    //     if (data.dataType === 'dynamic') {
+    //       if (data.userType === 'assignee') {
+    //         this.users = [{nickName: "${INITIATOR}", userId: "${INITIATOR}"},
+    //                       {nickName: "#{approval}", userId: "#{approval}"}
+    //           ]
+    //       } else if (data.userType === 'candidateUsers') {
+    //         this.users = [ {nickName: "#{approval}", userId: "#{approval}"}]
+    //       } else {
+    //         this.groups = [{roleName: "#{approval}", roleId: "#{approval}"}]
+    //       }
+    //     } else {
+    //       this.getDataList()
+    //     }
+    //   }
+    // }
   },
 };
 </script>
+<style lang="scss" scoped>
+.content-box{
+  line-height: 10px;
+}
+// 修改对话框高度
+.showAll_dialog {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  ::v-deep .el-dialog {
+    margin: 0 auto !important;
+    height: 80%;
+    overflow: hidden;
+    background-color: #ffffff;
+    .el-dialog__body {
+      position: absolute;
+      left: 0;
+      top: 54px;
+      bottom: 0;
+      right: 0;
+      z-index: 1;
+      overflow: hidden;
+      overflow-y: auto;
+      // 下边设置字体，我的需求是黑底白字
+      color: #ffffff;
+      padding: 0 15px;
+    }
+  }
+}
+</style>

@@ -41,7 +41,7 @@
           <div ref="canvas" class="canvas" />
         </el-main>
         <el-aside style="width: 400px; min-height: 650px; background-color: #f0f2f5">
-          <panel v-if="modeler" :modeler="modeler" :users="users" :groups="groups" :exps="exps" :categorys="categorys" @dataType="dataType" />
+          <panel v-if="modeler" :modeler="modeler" :users="users" :groups="groups" :exps="exps" :categorys="categorys" />
         </el-aside>
       </el-container>
     </el-container>
@@ -56,7 +56,7 @@ import panel from './PropertyPanel'
 import BpmData from './BpmData'
 import getInitStr from './flowable/init'
 // 引入flowable的节点文件
-import flowableModdle from './flowable/flowable.json'
+import FlowableModule from './flowable/flowable.json'
 export default {
   name: 'WorkflowBpmnModeler',
   components: {
@@ -115,8 +115,8 @@ export default {
           translate: ['value', customTranslate]
         }
       ],
-      moddleExtensions: {
-        flowable: flowableModdle
+      moduleExtensions: {
+        flowable: FlowableModule
       }
     })
     // 新增流程定义
@@ -356,17 +356,13 @@ export default {
       return false
     },
     downloadFile(filename, data, type) {
-      var a = document.createElement('a')
-      var url = window.URL.createObjectURL(new Blob([data], { type: type }))
+      const a = document.createElement('a');
+      const url = window.URL.createObjectURL(new Blob([data], {type: type}));
       a.href = url
       a.download = filename
       a.click()
       window.URL.revokeObjectURL(url)
     },
-    /** 获取数据类型 */
-    dataType(data){
-      this.$emit('dataType', data)
-    }
   }
 }
 </script>
