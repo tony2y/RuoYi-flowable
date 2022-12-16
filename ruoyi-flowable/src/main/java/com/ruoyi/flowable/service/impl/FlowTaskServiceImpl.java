@@ -90,12 +90,12 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
         }
         if (DelegationState.PENDING.equals(task.getDelegationState())) {
             taskService.addComment(taskVo.getTaskId(), taskVo.getInstanceId(), FlowComment.DELEGATE.getType(), taskVo.getComment());
-            taskService.resolveTask(taskVo.getTaskId(), taskVo.getValues());
+            taskService.resolveTask(taskVo.getTaskId(), taskVo.getVariables());
         } else {
             taskService.addComment(taskVo.getTaskId(), taskVo.getInstanceId(), FlowComment.NORMAL.getType(), taskVo.getComment());
             Long userId = SecurityUtils.getLoginUser().getUser().getUserId();
             taskService.setAssignee(taskVo.getTaskId(), userId.toString());
-            taskService.complete(taskVo.getTaskId(), taskVo.getValues());
+            taskService.complete(taskVo.getTaskId(), taskVo.getVariables());
         }
         return AjaxResult.success();
     }
@@ -616,6 +616,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
     @Override
     public AjaxResult todoList(Integer pageNum, Integer pageSize) {
         Page<FlowTaskDto> page = new Page<>();
+        // 只查看自己的数据
         Long userId = SecurityUtils.getLoginUser().getUser().getUserId();
         TaskQuery taskQuery = taskService.createTaskQuery()
                 .active()
@@ -648,8 +649,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
                     .processInstanceId(task.getProcessInstanceId())
                     .singleResult();
             SysUser startUser = sysUserService.selectUserById(Long.parseLong(historicProcessInstance.getStartUserId()));
-//            SysUser startUser = sysUserService.selectUserById(Long.parseLong(task.getAssignee()));
-            flowTask.setStartUserId(startUser.getNickName());
+            flowTask.setStartUserId(startUser.getUserId().toString());
             flowTask.setStartUserName(startUser.getNickName());
             flowTask.setStartDeptName(startUser.getDept().getDeptName());
             flowList.add(flowTask);
@@ -916,6 +916,11 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
      */
     @Override
     public AjaxResult processVariables(String taskId) {
+//        HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery()
+//                .processInstanceId(task.getProcessInstanceId())
+//                .singleResult();
+//        SysUser startUser = sysUserService.selectUserById(Long.parseLong(historicProcessInstance.getStartUserId()));
+
         // 流程变量
         HistoricTaskInstance historicTaskInstance = historyService.createHistoricTaskInstanceQuery().includeProcessVariables().finished().taskId(taskId).singleResult();
         if (Objects.nonNull(historicTaskInstance)) {
@@ -946,10 +951,8 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
                     MultiInstanceLoopCharacteristics multiInstance = userTask.getLoopCharacteristics();
                     // 会签节点
                     if (Objects.nonNull(multiInstance)) {
-                        List<SysUser> list = sysUserService.selectUserList(new SysUser());
                         flowNextDto.setVars(ProcessConstants.PROCESS_MULTI_INSTANCE_USER);
                         flowNextDto.setType(ProcessConstants.PROCESS_MULTI_INSTANCE);
-                        flowNextDto.setUserList(list);
                     } else {
                         // 读取自定义节点属性 判断是否是否需要动态指定任务接收人员、组
                         String dataType = userTask.getAttributeValue(ProcessConstants.NAMASPASE, ProcessConstants.PROCESS_CUSTOM_DATA_TYPE);
@@ -982,16 +985,14 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
         // Step 1. 获取当前节点并找到下一步节点
         FlowNextDto flowNextDto = new FlowNextDto();
         // Step 2. 获取当前流程所有流程变量(网关节点时需要校验表达式)
-        List<UserTask> nextUserTask = FindNextNodeUtil.getNextUserTasksByStart(repositoryService, processDefinition, new HashMap<>());
+        List<UserTask> nextUserTask = FindNextNodeUtil.getNextUserTasksByStart(repositoryService, processDefinition, flowTaskVo.getVariables());
         if (CollectionUtils.isNotEmpty(nextUserTask)) {
             for (UserTask userTask : nextUserTask) {
                 MultiInstanceLoopCharacteristics multiInstance = userTask.getLoopCharacteristics();
                 // 会签节点
                 if (Objects.nonNull(multiInstance)) {
-                    List<SysUser> list = sysUserService.selectUserList(new SysUser());
                     flowNextDto.setVars(ProcessConstants.PROCESS_MULTI_INSTANCE_USER);
                     flowNextDto.setType(ProcessConstants.PROCESS_MULTI_INSTANCE);
-                    flowNextDto.setUserList(list);
                 } else {
                     // 读取自定义节点属性 判断是否是否需要动态指定任务接收人员、组
                     String dataType = userTask.getAttributeValue(ProcessConstants.NAMASPASE, ProcessConstants.PROCESS_CUSTOM_DATA_TYPE);

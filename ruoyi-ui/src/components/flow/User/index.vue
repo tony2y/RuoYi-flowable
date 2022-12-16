@@ -35,7 +35,7 @@
               v-model="queryParams.userName"
               placeholder="请输入用户名称"
               clearable
-              style="width: 240px"
+              style="width: 150px"
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
@@ -44,7 +44,7 @@
               v-model="queryParams.phonenumber"
               placeholder="请输入手机号码"
               clearable
-              style="width: 240px"
+              style="width: 150px"
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
@@ -181,7 +181,7 @@ export default {
     },
     userList: {
       handler(newVal) {
-        if (newVal) {
+        if (newVal && this.selectUserList) {
           this.$nextTick(() => {
             this.$refs.dataTable.clearSelection();
             this.selectUserList?.split(',').forEach(key => {
@@ -234,7 +234,7 @@ export default {
     // 单选框选中数据
     handleSingleUserSelect(selection) {
       this.radioSelected = selection.userId;//点击当前行时,radio同样有选中效果
-      this.$emit('handleUserSelect', selection.toString());
+      this.$emit('handleUserSelect', selection);
     },
     /** 搜索按钮操作 */
     handleQuery() {

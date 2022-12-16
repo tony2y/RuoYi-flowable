@@ -75,7 +75,7 @@ export default {
     checkType: {
       type: String,
       default: 'multiple',
-      required: true
+      required: false
     },
   },
   data() {
@@ -126,7 +126,7 @@ export default {
     },
     roleList: {
       handler(newVal) {
-        if (newVal) {
+        if (newVal && this.selectRoleList) {
           this.$nextTick(() => {
             this.$refs.dataTable.clearSelection();
             this.selectRoleList?.split(',').forEach(key => {

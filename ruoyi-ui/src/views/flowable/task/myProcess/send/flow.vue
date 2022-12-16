@@ -6,7 +6,7 @@
       :is-view="true"
       :taskList="taskData"
     />-->
-    <flow-view :xmlData="xmlData" :taskList="taskData"/>
+    <flow-view :xmlData="xmlData"/>
   </div>
 </template>
 <script>
@@ -24,10 +24,6 @@ export default {
       type: String,
       default: ''
     },
-    taskData: {
-      type: Array,
-      default: () => []
-    }
   },
   data() {
     return {};

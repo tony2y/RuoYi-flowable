@@ -3,7 +3,7 @@
     <el-card class="box-card" >
         <div slot="header" class="clearfix">
           <span class="el-icon-document">基础信息</span>
-          <el-button style="float: right;" type="primary" @click="goBack">返回</el-button>
+          <el-button style="float: right;" type="primary" @click="goBack">关闭</el-button>
         </div>
 
       <!--流程处理表单模块-->

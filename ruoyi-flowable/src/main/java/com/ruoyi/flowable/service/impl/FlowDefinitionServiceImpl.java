@@ -181,7 +181,7 @@ public class FlowDefinitionServiceImpl extends FlowServiceFactory implements IFl
     /**
      * 根据流程定义ID启动流程实例
      *
-     * @param procDefId 流程定义Id
+     * @param procDefId 流程模板ID
      * @param variables 流程变量
      * @return
      */
@@ -193,13 +193,15 @@ public class FlowDefinitionServiceImpl extends FlowServiceFactory implements IFl
             if (Objects.nonNull(processDefinition) && processDefinition.isSuspended()) {
                 return AjaxResult.error("流程已被挂起,请先激活流程");
             }
-//           variables.put("skip", true);
-//           variables.put(ProcessConstants.FLOWABLE_SKIP_EXPRESSION_ENABLED, true);
+
             // 设置流程发起人Id到流程中
             SysUser sysUser = SecurityUtils.getLoginUser().getUser();
             identityService.setAuthenticatedUserId(sysUser.getUserId().toString());
-            variables.put(ProcessConstants.PROCESS_INITIATOR, "");
-            ProcessInstance processInstance = runtimeService.startProcessInstanceById(procDefId, variables);
+            variables.put(ProcessConstants.PROCESS_INITIATOR, sysUser.getUserId());
+            runtimeService.startProcessInstanceById(procDefId, variables);
+//            variables.put(ProcessConstants.PROCESS_INITIATOR, sysUser.getUserId());
+            //          variables.put("skip", true);
+//           variables.put(ProcessConstants.FLOWABLE_SKIP_EXPRESSION_ENABLED, true);
 //            // 给第一步申请人节点设置任务执行人和意见 todo:第一个节点不设置为申请人节点有点问题？
 //            Task task = taskService.createTaskQuery().processInstanceId(processInstance.getProcessInstanceId()).singleResult();
 //            if (Objects.nonNull(task)) {

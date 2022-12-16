@@ -35,7 +35,7 @@ public class FlowTaskVo {
     private String deploymentId;
 
     @ApiModelProperty("流程变量信息")
-    private Map<String, Object> values;
+    private Map<String, Object> variables;
 
     @ApiModelProperty("审批人")
     private String assignee;

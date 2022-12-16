@@ -44,7 +44,7 @@
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="任务编号" align="center" prop="taskId" :show-overflow-tooltip="true"/>
       <el-table-column label="流程名称" align="center" prop="procDefName"/>
-      <el-table-column label="任务节点" align="center" prop="taskName"/>
+      <el-table-column label="当前节点" align="center" prop="taskName"/>
       <el-table-column label="流程版本" align="center">
         <template slot-scope="scope">
           <el-tag size="medium" >v{{scope.row.procDefVersion}}</el-tag>
@@ -148,6 +148,8 @@ export default {
           executionId: row.executionId,
           deployId: row.deployId,
           taskId: row.taskId,
+          taskName: row.taskName,
+          startUser: row.startUserName + '-' + row.startDeptName,
         }})
     },
     // 取消按钮

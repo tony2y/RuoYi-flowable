@@ -1,24 +1,21 @@
 <template>
   <div class="app-container">
     <el-card class="box-card" >
-        <div slot="header" class="clearfix">
-          <span class="el-icon-document">基础信息</span>
-          <el-button style="float: right;" type="primary" @click="goBack">返回</el-button>
-        </div>
-
-      <!--流程处理表单模块-->
-      <el-col :span="16" :offset="6" v-if="variableOpen">
-          <div>
-            <parser :key="new Date().getTime()" :form-conf="variablesData" />
-          </div>
-     </el-col>
-    </el-card>
-
-    <!--流程流转记录-->
-    <el-card class="box-card" v-if="flowRecordList">
-          <div slot="header" class="clearfix">
-            <span class="el-icon-notebook-1">审批记录</span>
-          </div>
+      <div slot="header" class="clearfix">
+        <span class="el-icon-document">办结任务</span>
+        <el-button style="float: right;" size="mini" type="primary" @click="goBack">关闭</el-button>
+      </div>
+      <el-tabs  tab-position="top" @tab-click="handleClick">
+        <!--表单信息-->
+        <el-tab-pane label="表单信息">
+          <el-col :span="16" :offset="4" v-if="variableOpen">
+            <div class="test-form">
+              <parser :key="new Date().getTime()" :form-conf="variablesData" />
+            </div>
+          </el-col>
+        </el-tab-pane>
+        <!--流程流转记录-->
+        <el-tab-pane label="流转记录">
           <el-col :span="16" :offset="4" >
             <div class="block">
               <el-timeline>
@@ -62,12 +59,12 @@
               </el-timeline>
             </div>
           </el-col>
-      </el-card>
-    <el-card class="box-card">
-        <div slot="header" class="clearfix">
-          <span class="el-icon-picture-outline">流程图</span>
-        </div>
-        <flow :xmlData="xmlData" :taskData="taskList"></flow>
+        </el-tab-pane>
+        <el-tab-pane label="流程图">
+          <flow :xmlData="xmlData" :taskData="taskList"></flow>
+        </el-tab-pane>
+      </el-tabs>
+      <el-button style="position: absolute;right:35px;top:35px;"  type="primary" @click="goBack">关闭</el-button>
     </el-card>
   </div>
 </template>
@@ -76,7 +73,7 @@
 import {flowRecord} from "@/api/flowable/finished";
 import Parser from '@/components/parser/Parser'
 import {getProcessVariables, readXml, getFlowViewer} from "@/api/flowable/definition";
-import flow from '@/views/flowable/task/record/flow'
+import flow from '@/views/flowable/task/finished/detail/flow'
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import Treeselect from "@riophae/vue-treeselect";
 
@@ -137,6 +134,9 @@ export default {
     this.getFlowRecordList( this.taskForm.procInsId, this.taskForm.deployId);
   },
   methods: {
+    handleClick(tab, event) {
+      console.log(tab, event);
+    },
     /** xml 文件 */
     getModelDetail(deployId) {
       // 发送请求，获取xml
