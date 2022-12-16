@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { beautifierConf } from '@/utils/index'
+import { beautifierConf } from '@/utils'
 import ClipboardJS from 'clipboard'
 import { saveAs } from 'file-saver'
 import loadMonaco from '@/utils/loadMonaco'

@@ -64,6 +64,7 @@
     "vkbeautify": "^0.99.3"
   },
   "devDependencies": {
+    "@babel/parser": "^7.20.5",
     "@vue/cli-plugin-babel": "4.4.6",
     "@vue/cli-plugin-eslint": "4.4.6",
     "@vue/cli-service": "4.4.6",

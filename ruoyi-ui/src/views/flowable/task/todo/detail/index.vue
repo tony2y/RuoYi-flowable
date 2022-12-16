@@ -40,7 +40,7 @@
                   <el-card :body-style="{ padding: '10px' }">
                     <el-descriptions class="margin-top" :column="1" size="small" border>
                       <el-descriptions-item v-if="item.assigneeName" label-class-name="my-label">
-                        <template slot="label"><i class="el-icon-user"></i>实际办理</template>
+                        <template slot="label"><i class="el-icon-user"></i>办理人</template>
                         {{item.assigneeName}}
                         <el-tag type="info" size="mini">{{item.deptName}}</el-tag>
                       </el-descriptions-item>
@@ -76,8 +76,7 @@
         <flow :xmlData="xmlData" :taskData="taskList"></flow>
       </el-tab-pane>
       </el-tabs>
-<!--      <el-button style="position: absolute;right:35px;top:35px;"  type="primary" @click="goBack">关闭</el-button>-->
-      <!--审批正常流程-->
+      <!--审批任务-->
       <el-dialog :title="completeTitle" :visible.sync="completeOpen" width="60%" append-to-body>
         <el-form ref="taskForm" :model="taskForm">
           <el-form-item prop="targetKey">

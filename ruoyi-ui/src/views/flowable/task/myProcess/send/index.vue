@@ -17,7 +17,7 @@
         </el-tab-pane>
         <!--流程图-->
         <el-tab-pane label="流程图">
-              <flow :xmlData="xmlData"></flow>
+           <flow :xmlData="xmlData"/>
         </el-tab-pane>
       </el-tabs>
       <el-button style="position: absolute;right:35px;top:35px;"  type="primary" @click="goBack">关闭</el-button>
@@ -37,7 +37,7 @@
 <script>
 import Parser from '@/components/parser/Parser'
 import {definitionStart, readXml} from "@/api/flowable/definition";
-import flow from '@/views/flowable/task/myProcess/send/flow'
+import flow from './flow'
 import {flowFormData} from "@/api/flowable/process";
 import {getNextFlowNodeByStart} from "@/api/flowable/todo";
 import FlowUser from '@/components/flow/User'
@@ -174,7 +174,7 @@ export default {
         //     variables.variables = formData;
         //     // 启动流程并将表单数据加入流程变量
         //     definitionStart(this.taskForm.procDefId, JSON.stringify(variables)).then(res => {
-        //       this.msgSuccess(res.msg);
+        //      this.$modal.msgSuccess(res.msg);
         //       this.goBack();
         //     })
         //   }

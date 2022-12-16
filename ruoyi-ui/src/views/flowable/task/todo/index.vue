@@ -216,7 +216,7 @@ export default {
         return delDeployment(ids);
       }).then(() => {
         this.getList();
-        this.msgSuccess("删除成功");
+       this.$modal.msgSuccess("删除成功");
       })
     },
     /** 导出按钮操作 */

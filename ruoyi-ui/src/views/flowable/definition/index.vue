@@ -102,7 +102,7 @@
       <el-table-column label="操作" width="250" fixed="right"class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button @click="handleLoadXml(scope.row)" icon="el-icon-edit-outline" type="text" size="small">编辑</el-button>
-          <el-button @click="handleAddForm(scope.row)" icon="el-icon-edit-outline" type="text" size="small" v-if="scope.row.formId == null">配置表单</el-button>
+          <el-button @click="handleAddForm(scope.row)" icon="el-icon-edit-el-icon-s-promotion" type="text" size="small" v-if="scope.row.formId == null">配置表单</el-button>
           <el-button @click="handleUpdateSuspensionState(scope.row)" icon="el-icon-video-pause" type="text" size="small" v-if="scope.row.suspensionState === 1">挂起</el-button>
           <el-button @click="handleUpdateSuspensionState(scope.row)" icon="el-icon-video-play" type="text" size="small" v-if="scope.row.suspensionState === 2">激活</el-button>
           <el-button @click="handleDelete(scope.row)" icon="el-icon-delete" type="text" size="small" v-hasPermi="['system:deployment:remove']">删除</el-button>
@@ -130,7 +130,6 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-
 
     <!-- bpmn20.xml导入对话框 -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body>
@@ -232,7 +231,7 @@ import { listDefinition, updateState, delDeployment, addDeployment, updateDeploy
 import { getToken } from "@/utils/auth";
 import { getForm, addDeployForm ,listForm } from "@/api/flowable/form";
 import Parser from '@/components/parser/Parser'
-import flow from '@/views/flowable/task/record/flow'
+import flow from '@/views/flowable/task/myProcess/send/flow'
 
 export default {
   name: "Definition",

@@ -29,7 +29,7 @@
                   <el-card :body-style="{ padding: '10px' }">
                     <el-descriptions class="margin-top" :column="1" size="small" border>
                       <el-descriptions-item v-if="item.assigneeName" label-class-name="my-label">
-                        <template slot="label"><i class="el-icon-user"></i>实际办理</template>
+                        <template slot="label"><i class="el-icon-user"></i>办理人</template>
                         {{item.assigneeName}}
                         <el-tag type="info" size="mini">{{item.deptName}}</el-tag>
                       </el-descriptions-item>

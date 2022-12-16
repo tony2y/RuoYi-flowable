@@ -47,7 +47,7 @@
                   <el-card :body-style="{ padding: '10px' }">
                     <el-descriptions class="margin-top" :column="1" size="small" border>
                       <el-descriptions-item v-if="item.assigneeName" label-class-name="my-label">
-                        <template slot="label"><i class="el-icon-user"></i>实际办理</template>
+                        <template slot="label"><i class="el-icon-user"></i>办理人</template>
                         {{item.assigneeName}}
                         <el-tag type="info" size="mini">{{item.deptName}}</el-tag>
                       </el-descriptions-item>
@@ -455,7 +455,7 @@ export default {
         return;
       }
       complete(this.taskForm).then(response => {
-        this.msgSuccess(response.msg);
+       this.$modal.msgSuccess(response.msg);
         this.goBack();
       });
     },
@@ -506,7 +506,7 @@ export default {
           variables.variables = formData;
            // 启动流程并将表单数据加入流程变量
           definitionStart(this.taskForm.procDefId, JSON.stringify(variables)).then(res => {
-            this.msgSuccess(res.msg);
+           this.$modal.msgSuccess(res.msg);
             this.goBack();
           })
         }
@@ -522,7 +522,7 @@ export default {
       this.$refs["taskForm"].validate(valid => {
         if (valid) {
           rejectTask(this.taskForm).then(res => {
-            this.msgSuccess(res.msg);
+           this.$modal.msgSuccess(res.msg);
             this.goBack();
           });
         }
@@ -542,7 +542,7 @@ export default {
       this.$refs["taskForm"].validate(valid => {
         if (valid) {
           returnTask(this.taskForm).then(res => {
-            this.msgSuccess(res.msg);
+           this.$modal.msgSuccess(res.msg);
             this.goBack()
           });
         }
@@ -560,7 +560,7 @@ export default {
       this.$refs["taskForm"].validate(valid => {
         if (valid) {
           delegate(this.taskForm).then(response => {
-            this.msgSuccess(response.msg);
+           this.$modal.msgSuccess(response.msg);
             this.goBack();
           });
         }

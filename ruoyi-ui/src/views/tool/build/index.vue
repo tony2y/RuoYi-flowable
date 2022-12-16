@@ -41,11 +41,11 @@
 
     <div class="center-board">
       <div class="action-bar">
-        <el-button icon="el-icon-plus" type="text" @click="handleForm">
-          保存
-        </el-button>
         <el-button icon="el-icon-video-play" type="text" @click="run">
           运行
+        </el-button>
+        <el-button icon="el-icon-plus" type="text" @click="handleForm">
+          保存
         </el-button>
         <el-button icon="el-icon-view" type="text" @click="showJson">
           查看json
@@ -274,9 +274,6 @@ export default {
       that.drawingList = drawingDefault
     }
     this.activeFormItem(that.drawingList[0])
-    // // if (formConfInDB) {
-    // //   this.formConf = formConfInDB
-    // // }
     that.drawingList = [];
     const formId =  that.$route.query && that.$route.query.formId;
     if (formId) {
@@ -534,11 +531,11 @@ export default {
         if (valid) {
           if (this.form.formId != null) {
             updateForm(this.form).then(response => {
-              this.msgSuccess("修改成功");
+              this.$modal.msgSuccess("修改成功");
             });
           } else {
             addForm(this.form).then(response => {
-              this.msgSuccess("新增成功");
+              this.$modal.msgSuccess("新增成功");
             });
           }
           this.drawingList = []
@@ -555,5 +552,5 @@ export default {
 </script>
 
 <style lang='scss'>
-@import '@/styles/home';
+@import '@/styles/home.scss';
 </style>

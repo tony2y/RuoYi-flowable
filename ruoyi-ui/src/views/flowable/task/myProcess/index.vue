@@ -311,7 +311,7 @@ export default {
         instanceId: row.procInsId
       }
       stopProcess(params).then( res => {
-        this.msgSuccess(res.msg);
+       this.$modal.msgSuccess(res.msg);
         this.getList();
       });
     },
@@ -340,13 +340,13 @@ export default {
         if (valid) {
           if (this.form.id != null) {
             updateDeployment(this.form).then(response => {
-              this.msgSuccess("修改成功");
+             this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
             addDeployment(this.form).then(response => {
-              this.msgSuccess("新增成功");
+             this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
             });
@@ -366,7 +366,7 @@ export default {
         return delDeployment(ids);
       }).then(() => {
         this.getList();
-        this.msgSuccess("删除成功");
+       this.$modal.msgSuccess("删除成功");
       })
     },
     /** 导出按钮操作 */

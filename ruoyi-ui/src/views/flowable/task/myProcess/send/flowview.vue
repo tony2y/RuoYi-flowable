@@ -48,7 +48,7 @@ export default {
     this.bpmnViewer && this.bpmnViewer.destroy();
     this.bpmnViewer = new BpmnViewer({
       container: this.$refs.flowCanvas,
-      height: 'calc(100vh - 200px)',
+      height: 'calc(85vh - 200px)',
     });
   },
   methods: {

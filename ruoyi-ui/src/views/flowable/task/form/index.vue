@@ -254,13 +254,13 @@ export default {
         if (valid) {
           if (this.form.formId != null) {
             updateForm(this.form).then(response => {
-              this.msgSuccess("修改成功");
+             this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
             addForm(this.form).then(response => {
-              this.msgSuccess("新增成功");
+             this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
             });
@@ -279,7 +279,7 @@ export default {
         return delForm(formIds);
       }).then(() => {
         this.getList();
-        this.msgSuccess("删除成功");
+       this.$modal.msgSuccess("删除成功");
       })
     },
     /** 导出按钮操作 */
