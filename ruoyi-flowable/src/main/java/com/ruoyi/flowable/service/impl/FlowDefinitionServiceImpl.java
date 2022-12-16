@@ -193,7 +193,8 @@ public class FlowDefinitionServiceImpl extends FlowServiceFactory implements IFl
             if (Objects.nonNull(processDefinition) && processDefinition.isSuspended()) {
                 return AjaxResult.error("流程已被挂起,请先激活流程");
             }
-
+//            // 加入多实例用户到流程变量中
+//            variables.put("userList", sysUserService.selectUserList(null));
             // 设置流程发起人Id到流程中
             SysUser sysUser = SecurityUtils.getLoginUser().getUser();
             identityService.setAuthenticatedUserId(sysUser.getUserId().toString());
