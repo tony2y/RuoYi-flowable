@@ -41,9 +41,9 @@
 
     <div class="center-board">
       <div class="action-bar">
-        <el-button icon="el-icon-video-play" type="text" @click="run">
-          运行
-        </el-button>
+<!--        <el-button icon="el-icon-video-play" type="text" @click="run">-->
+<!--          运行-->
+<!--        </el-button>-->
         <el-button icon="el-icon-plus" type="text" @click="handleForm">
           保存
         </el-button>

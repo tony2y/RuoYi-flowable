@@ -1,6 +1,6 @@
 <script>
-import { deepClone } from '@/utils/index'
-import render from '@/components/render/render.js'
+import { deepClone } from '../../utils/index'
+import render from '../render/render.js'
 
 const ruleTrigger = {
   'el-input': 'blur',

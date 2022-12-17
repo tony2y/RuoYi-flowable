@@ -9,7 +9,7 @@
                 <i class="el-icon-setting" />
               </el-badge>
             </div>
-            <el-tabs v-model="activeTab" type="card" class="editor-tabs">
+            <el-tabs v-model="activeTab" type="border-card" class="editor-tabs">
               <el-tab-pane name="html">
                 <span slot="label">
                   <i v-if="activeTab==='html'" class="el-icon-edit" />
@@ -32,9 +32,9 @@
                 </span>
               </el-tab-pane>
             </el-tabs>
-            <div v-show="activeTab==='html'" id="editorHtml" class="tab-editor" />
-            <div v-show="activeTab==='js'" id="editorJs" class="tab-editor" />
-            <div v-show="activeTab==='css'" id="editorCss" class="tab-editor" />
+            <div v-show="activeTab==='html'" style="margin-top: 8px" id="editorHtml" class="tab-editor" />
+            <div v-show="activeTab==='js'" style="margin-top: 8px" id="editorJs" class="tab-editor" />
+            <div v-show="activeTab==='css'" style="margin-top: 8px" id="editorCss" class="tab-editor" />
           </el-col>
           <el-col :md="24" :lg="12" class="right-preview">
             <div class="action-bar" :style="{'text-align': 'left'}">
@@ -60,9 +60,10 @@
               ref="previewPage"
               class="result-wrapper"
               frameborder="0"
-              src="preview.html"
+              :src="url"
               @load="iframeLoad"
             />
+<!--            <i-frame v-show="isIframeLoaded" :src="url" />-->
             <div v-show="!isIframeLoaded" v-loading="true" class="result-wrapper" />
           </el-col>
         </el-row>
@@ -76,6 +77,7 @@
   </div>
 </template>
 <script>
+import iFrame from "@/components/iFrame/index";
 import { parse } from '@babel/parser'
 import ClipboardJS from 'clipboard'
 import { saveAs } from 'file-saver'
@@ -84,7 +86,7 @@ import {
 } from '@/utils/generator/html'
 import { makeUpJs } from '@/utils/generator/js'
 import { makeUpCss } from '@/utils/generator/css'
-import { exportDefault, beautifierConf, titleCase } from '@/utils/index'
+import { exportDefault, beautifierConf, titleCase } from '@/utils'
 import ResourceDialog from './ResourceDialog'
 import loadMonaco from '@/utils/loadMonaco'
 import loadBeautifier from '@/utils/loadBeautifier'
@@ -103,7 +105,7 @@ let beautifier
 let monaco
 
 export default {
-  components: { ResourceDialog },
+  components: { ResourceDialog,iFrame },
   props: ['formData', 'generateConf'],
   data() {
     return {
@@ -118,7 +120,8 @@ export default {
       resourceVisible: false,
       scripts: [],
       links: [],
-      monaco: null
+      monaco: null,
+      url: "/preview.html",
     }
   },
   computed: {

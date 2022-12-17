@@ -1,6 +1,6 @@
 import { isArray } from 'util'
-import { exportDefault, titleCase } from '@/utils/index'
-import { trigger } from './config'
+import { exportDefault, titleCase, deepClone } from '../../utils/index'
+import ruleTrigger from './ruleTrigger'
 
 const units = {
   KB: '1024',
@@ -13,69 +13,91 @@ const inheritAttrs = {
   dialog: 'inheritAttrs: false,'
 }
 
-
-export function makeUpJs(conf, type) {
-  confGlobal = conf = JSON.parse(JSON.stringify(conf))
+/**
+ * 组装js 【入口函数】
+ * @param {Object} formConfig 整个表单配置
+ * @param {String} type 生成类型，文件或弹窗等
+ */
+export function makeUpJs(formConfig, type) {
+  confGlobal = formConfig = deepClone(formConfig)
   const dataList = []
   const ruleList = []
   const optionsList = []
   const propsList = []
   const methodList = mixinMethod(type)
   const uploadVarList = []
+  const created = []
 
-  conf.fields.forEach(el => {
-    buildAttributes(el, dataList, ruleList, optionsList, methodList, propsList, uploadVarList)
+  formConfig.fields.forEach(el => {
+    buildAttributes(el, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, created)
   })
 
   const script = buildexport(
-    conf,
+    formConfig,
     type,
     dataList.join('\n'),
     ruleList.join('\n'),
     optionsList.join('\n'),
     uploadVarList.join('\n'),
     propsList.join('\n'),
-    methodList.join('\n')
+    methodList.join('\n'),
+    created.join('\n')
   )
   confGlobal = null
   return script
 }
 
-function buildAttributes(el, dataList, ruleList, optionsList, methodList, propsList, uploadVarList) {
-  buildData(el, dataList)
-  buildRules(el, ruleList)
+// 构建组件属性
+function buildAttributes(scheme, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, created) {
+  const config = scheme.__config__
+  const slot = scheme.__slot__
+  buildData(scheme, dataList)
+  buildRules(scheme, ruleList)
 
-  if (el.options && el.options.length) {
-    buildOptions(el, optionsList)
-    if (el.dataType === 'dynamic') {
-      const model = `${el.vModel}Options`
+  // 特殊处理options属性
+  if (scheme.options || (slot && slot.options && slot.options.length)) {
+    buildOptions(scheme, optionsList)
+    if (config.dataType === 'dynamic') {
+      const model = `${scheme.__vModel__}Options`
       const options = titleCase(model)
-      buildOptionMethod(`get${options}`, model, methodList)
+      const methodName = `get${options}`
+      buildOptionMethod(methodName, model, methodList, scheme)
+      callInCreated(methodName, created)
     }
   }
 
-  if (el.props && el.props.props) {
-    buildProps(el, propsList)
+  // 处理props
+  if (scheme.props && scheme.props.props) {
+    buildProps(scheme, propsList)
   }
 
-  if (el.action && el.tag === 'el-upload') {
+  // 处理el-upload的action
+  if (scheme.action && config.tag === 'el-upload') {
     uploadVarList.push(
-      `${el.vModel}Action: '${el.action}',
-      ${el.vModel}fileList: [],`
+      `${scheme.__vModel__}Action: '${scheme.action}',
+      ${scheme.__vModel__}fileList: [],`
     )
-    methodList.push(buildBeforeUpload(el))
-    if (!el['auto-upload']) {
-      methodList.push(buildSubmitUpload(el))
+    methodList.push(buildBeforeUpload(scheme))
+    // 非自动上传时，生成手动上传的函数
+    if (!scheme['auto-upload']) {
+      methodList.push(buildSubmitUpload(scheme))
     }
   }
 
-  if (el.children) {
-    el.children.forEach(el2 => {
-      buildAttributes(el2, dataList, ruleList, optionsList, methodList, propsList, uploadVarList)
+  // 构建子级组件属性
+  if (config.children) {
+    config.children.forEach(item => {
+      buildAttributes(item, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, created)
     })
   }
 }
 
+// 在Created调用函数
+function callInCreated(methodName, created) {
+  created.push(`this.${methodName}()`)
+}
+
+// 混入处理函数
 function mixinMethod(type) {
   const list = []; const
     minxins = {
@@ -98,7 +120,7 @@ function mixinMethod(type) {
         close: `close() {
         this.$emit('update:visible', false)
       },`,
-        handleConfirm: `handleConfirm() {
+        handelConfirm: `handelConfirm() {
         this.$refs['${confGlobal.formRef}'].validate(valid => {
           if(!valid) return
           this.close()
@@ -117,73 +139,75 @@ function mixinMethod(type) {
   return list
 }
 
-function buildData(conf, dataList) {
-  if (conf.vModel === undefined) return
-  let defaultValue
-  if (typeof (conf.defaultValue) === 'string' && !conf.multiple) {
-    defaultValue = `'${conf.defaultValue}'`
-  } else {
-    defaultValue = `${JSON.stringify(conf.defaultValue)}`
-  }
-  dataList.push(`${conf.vModel}: ${defaultValue},`)
+// 构建data
+function buildData(scheme, dataList) {
+  const config = scheme.__config__
+  if (scheme.__vModel__ === undefined) return
+  const defaultValue = JSON.stringify(config.defaultValue)
+  dataList.push(`${scheme.__vModel__}: ${defaultValue},`)
 }
 
-function buildRules(conf, ruleList) {
-  if (conf.vModel === undefined) return
+// 构建校验规则
+function buildRules(scheme, ruleList) {
+  const config = scheme.__config__
+  if (scheme.__vModel__ === undefined) return
   const rules = []
-  if (trigger[conf.tag]) {
-    if (conf.required) {
-      const type = isArray(conf.defaultValue) ? 'type: \'array\',' : ''
-      let message = isArray(conf.defaultValue) ? `请至少选择一个${conf.vModel}` : conf.placeholder
-      if (message === undefined) message = `${conf.label}不能为空`
-      rules.push(`{ required: true, ${type} message: '${message}', trigger: '${trigger[conf.tag]}' }`)
+  if (ruleTrigger[config.tag]) {
+    if (config.required) {
+      const type = isArray(config.defaultValue) ? 'type: \'array\',' : ''
+      let message = isArray(config.defaultValue) ? `请至少选择一个${config.label}` : scheme.placeholder
+      if (message === undefined) message = `${config.label}不能为空`
+      rules.push(`{ required: true, ${type} message: '${message}', trigger: '${ruleTrigger[config.tag]}' }`)
     }
-    if (conf.regList && isArray(conf.regList)) {
-      conf.regList.forEach(item => {
+    if (config.regList && isArray(config.regList)) {
+      config.regList.forEach(item => {
         if (item.pattern) {
-          rules.push(`{ pattern: ${eval(item.pattern)}, message: '${item.message}', trigger: '${trigger[conf.tag]}' }`)
+          rules.push(
+            `{ pattern: ${eval(item.pattern)}, message: '${item.message}', trigger: '${ruleTrigger[config.tag]}' }`
+          )
         }
       })
     }
-    ruleList.push(`${conf.vModel}: [${rules.join(',')}],`)
+    ruleList.push(`${scheme.__vModel__}: [${rules.join(',')}],`)
   }
 }
 
-function buildOptions(conf, optionsList) {
-  if (conf.vModel === undefined) return
-  if (conf.dataType === 'dynamic') { conf.options = [] }
-  const str = `${conf.vModel}Options: ${JSON.stringify(conf.options)},`
+// 构建options
+function buildOptions(scheme, optionsList) {
+  if (scheme.__vModel__ === undefined) return
+  // el-cascader直接有options属性，其他组件都是定义在slot中，所以有两处判断
+  let { options } = scheme
+  if (!options) options = scheme.__slot__.options
+  if (scheme.__config__.dataType === 'dynamic') { options = [] }
+  const str = `${scheme.__vModel__}Options: ${JSON.stringify(options)},`
   optionsList.push(str)
 }
 
-function buildProps(conf, propsList) {
-  if (conf.dataType === 'dynamic') {
-    conf.valueKey !== 'value' && (conf.props.props.value = conf.valueKey)
-    conf.labelKey !== 'label' && (conf.props.props.label = conf.labelKey)
-    conf.childrenKey !== 'children' && (conf.props.props.children = conf.childrenKey)
-  }
-  const str = `${conf.vModel}Props: ${JSON.stringify(conf.props.props)},`
+function buildProps(scheme, propsList) {
+  const str = `${scheme.__vModel__}Props: ${JSON.stringify(scheme.props.props)},`
   propsList.push(str)
 }
 
-function buildBeforeUpload(conf) {
-  const unitNum = units[conf.sizeUnit]; let rightSizeCode = ''; let acceptCode = ''; const
+// el-upload的BeforeUpload
+function buildBeforeUpload(scheme) {
+  const config = scheme.__config__
+  const unitNum = units[config.sizeUnit]; let rightSizeCode = ''; let acceptCode = ''; const
     returnList = []
-  if (conf.fileSize) {
-    rightSizeCode = `let isRightSize = file.size / ${unitNum} < ${conf.fileSize}
+  if (config.fileSize) {
+    rightSizeCode = `let isRightSize = file.size / ${unitNum} < ${config.fileSize}
     if(!isRightSize){
-      this.$message.error('文件大小超过 ${conf.fileSize}${conf.sizeUnit}')
+      this.$message.error('文件大小超过 ${config.fileSize}${config.sizeUnit}')
     }`
     returnList.push('isRightSize')
   }
-  if (conf.accept) {
-    acceptCode = `let isAccept = new RegExp('${conf.accept}').test(file.type)
+  if (scheme.accept) {
+    acceptCode = `let isAccept = new RegExp('${scheme.accept}').test(file.type)
     if(!isAccept){
-      this.$message.error('应该选择${conf.accept}类型的文件')
+      this.$message.error('应该选择${scheme.accept}类型的文件')
     }`
     returnList.push('isAccept')
   }
-  const str = `${conf.vModel}BeforeUpload(file) {
+  const str = `${scheme.__vModel__}BeforeUpload(file) {
     ${rightSizeCode}
     ${acceptCode}
     return ${returnList.join('&&')}
@@ -191,22 +215,31 @@ function buildBeforeUpload(conf) {
   return returnList.length ? str : ''
 }
 
-function buildSubmitUpload(conf) {
+// el-upload的submit
+function buildSubmitUpload(scheme) {
   const str = `submitUpload() {
-    this.$refs['${conf.vModel}'].submit()
+    this.$refs['${scheme.__vModel__}'].submit()
   },`
   return str
 }
 
-function buildOptionMethod(methodName, model, methodList) {
+function buildOptionMethod(methodName, model, methodList, scheme) {
+  const config = scheme.__config__
   const str = `${methodName}() {
-    // TODO 发起请求获取数据
-    this.${model}
+    // 注意：this.$axios是通过Vue.prototype.$axios = axios挂载产生的
+    this.$axios({
+      method: '${config.method}',
+      url: '${config.url}'
+    }).then(resp => {
+      var { data } = resp
+      this.${model} = data.${config.dataPath}
+    })
   },`
   methodList.push(str)
 }
 
-function buildexport(conf, type, data, rules, selectOptions, uploadVar, props, methods) {
+// js整体拼接
+function buildexport(conf, type, data, rules, selectOptions, uploadVar, props, methods, created) {
   const str = `${exportDefault}{
   ${inheritAttrs[type]}
   components: {},
@@ -226,7 +259,9 @@ function buildexport(conf, type, data, rules, selectOptions, uploadVar, props, m
   },
   computed: {},
   watch: {},
-  created () {},
+  created () {
+    ${created}
+  },
   mounted () {},
   methods: {
     ${methods}
