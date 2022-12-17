@@ -15,11 +15,7 @@
     <el-dialog :title="xmlTitle" :visible.sync="xmlOpen" width="70%" class="showAll_dialog">
       <!-- 设置对话框内容高度 -->
         <el-scrollbar>
-            <pre v-highlight>
-               <code class="xml">
-                    {{xmlData}}
-               </code>
-            </pre>
+            <pre v-highlight="xmlData"><code class="xml"></code></pre>
         </el-scrollbar>
     </el-dialog>
   </div>
@@ -28,7 +24,7 @@
 import {readXml, roleList, saveXml, userList,expList} from "@/api/flowable/definition";
 import bpmnModeler from '@/components/Process/index'
 import vkBeautify from 'vkbeautify'
-import highlight from 'highlight.js'
+import hljs from 'highlight.js'
 import 'highlight.js/styles/atelier-savanna-dark.css'
 
 export default {
@@ -39,11 +35,33 @@ export default {
   },
   // 自定义指令
   directives: {
-    highlight:(el) => {
-      let blocks = el.querySelectorAll('pre code');
-      blocks.forEach((block) => {
-        highlight.highlightBlock(block)
-      })
+    deep: true,
+    highlight:{
+      deep: true,
+      bind: function bind(el, binding) {
+        const targets = el.querySelectorAll('code');
+        let target;
+        let i;
+        for (i = 0; i < targets.length; i += 1) {
+          target = targets[i];
+          if (typeof binding.value === 'string') {
+            target.textContent = binding.value;
+          }
+          hljs.highlightBlock(target);
+        }
+      },
+      componentUpdated: function componentUpdated(el, binding) {
+        const targets = el.querySelectorAll('code');
+        let target;
+        let i;
+        for (i = 0; i < targets.length; i += 1) {
+          target = targets[i];
+          if (typeof binding.value === 'string') {
+            target.textContent = binding.value;
+            hljs.highlightBlock(target);
+          }
+        }
+      },
     }
   },
   data() {
@@ -88,7 +106,7 @@ export default {
         xml: data.xml
       }
       saveXml(params).then(res => {
-        this.$message(res.msg)
+        this.$modal.msgSuccess(res.msg)
         // 关闭当前标签页并返回上个页面
         this.$store.dispatch("tagsView/delView", this.$route);
         this.$router.go(-1)
@@ -105,8 +123,8 @@ export default {
           val.userId = val.userId.toString();
         })
         this.users = res.data;
-        let arr = {nickName: "流程发起人", userId: "${INITIATOR}"}
-        this.users.push(arr)
+        // let arr = {nickName: "流程发起人", userId: "${INITIATOR}"}
+        // this.users.push(arr)
       });
       roleList().then(res =>{
         res.data.forEach(val =>{
@@ -119,10 +137,10 @@ export default {
       });
     },
     /** 展示xml */
-    showXML(data){
+    showXML(xmlData){
       this.xmlTitle = 'xml查看';
       this.xmlOpen = true;
-      this.xmlData = vkBeautify.xml(data);
+      this.xmlData = vkBeautify.xml(xmlData);
     },
     // /** 获取数据类型 */
     // dataType(data){

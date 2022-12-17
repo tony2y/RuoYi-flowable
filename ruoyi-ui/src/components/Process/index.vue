@@ -321,8 +321,7 @@ export default {
     },
     async showXML() {
       try {
-        const { xml } = await this.modeler.saveXML({ format: true })
-        debugger
+        const xml = await this.saveXML()
         this.$emit('showXML',xml)
       } catch (err) {
         console.log(err)
