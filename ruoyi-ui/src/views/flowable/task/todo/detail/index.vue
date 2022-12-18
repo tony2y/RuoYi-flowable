@@ -179,15 +179,14 @@ export default {
         returnTaskShow: false, // 是否展示回退表单
         delegateTaskShow: false, // 是否展示回退表单
         defaultTaskShow: true, // 默认处理
-        sendUserShow: false, // 审批用户
         comment:"", // 意见内容
         procInsId: "", // 流程实例编号
         instanceId: "", // 流程实例编号
         deployId: "",  // 流程定义编号
         taskId: "" ,// 流程任务编号
         procDefId: "",  // 流程编号
-        vars: "",
-        targetKey:""
+        targetKey:"",
+        variables:{},
       },
       assignee: null,
       formConf: {}, // 默认表单数据
@@ -205,7 +204,8 @@ export default {
       checkSendRole: false,// 是否展示角色选择模块
       checkType: 'single', // 选择类型
       taskName: null, // 任务节点
-      startUser: null, // 发起人信息
+      startUser: null, // 发起人信息,
+      multiInstanceVars: '' // 会签节点
     };
   },
   created() {
@@ -252,13 +252,13 @@ export default {
       if (selection) {
         if (selection instanceof Array) {
           const selectVal = selection.map(item => item.userId);
-          this.taskForm.values = {
-            "approval": selectVal.join(',')
+          if (this.multiInstanceVars) {
+            this.$set(this.taskForm.variables, this.multiInstanceVars, selection);
+          } else {
+            this.$set(this.taskForm.variables, "approval", selectVal.join(','));
           }
         } else {
-          this.taskForm.values = {
-            "approval": selection
-          }
+            this.$set(this.taskForm.variables, "approval", selection);
         }
       }
     },
@@ -267,25 +267,9 @@ export default {
       if (selection) {
         if (selection instanceof Array) {
           const selectVal = selection.map(item => item.roleId);
-          this.taskForm.values = {
-            "approval": selectVal.join(',')
-          }
+          this.$set(this.taskForm.variables, "approval", selectVal.join(','));
         } else {
-          this.taskForm.values = {
-            "approval": selection
-          }
-        }
-      }
-    },
-    /** 流程变量赋值 */
-    handleCheckChange(val) {
-      if (val instanceof Array) {
-        this.taskForm.values = {
-          "approval": val.join(',')
-        }
-      } else {
-        this.taskForm.values = {
-          "approval": val
+          this.$set(this.taskForm.variables, "approval", selection);
         }
       }
     },
@@ -332,12 +316,10 @@ export default {
           } else if (data.type === 'candidateGroups') { // 指定组(所属角色接收任务)
             this.checkSendRole = true;
           } else if (data.type === 'multiInstance') { // 会签
-            listUser().then(response => {
-                this.taskForm.values = {
-                  "userList": response.rows
-                }
-              }
-            );
+            // 流程设计指定的 elementVariable 作为会签人员列表
+            this.multiInstanceVars = data.vars;
+            this.checkSendUser = true;
+            this.checkType = "multiple";
           }
         }
       })
@@ -349,11 +331,11 @@ export default {
     },
     /** 用户审批任务 */
     taskComplete() {
-      if (!this.taskForm.values && this.checkSendUser){
+      if (!this.taskForm.variables && this.checkSendUser){
         this.$modal.msgError("请选择流程接收人员!");
         return;
       }
-      if (!this.taskForm.values && this.checkSendRole){
+      if (!this.taskForm.variables && this.checkSendRole){
         this.$modal.msgError("请选择流程接收角色组!");
         return;
       }
@@ -361,7 +343,7 @@ export default {
         this.$modal.msgError("请输入审批意见!");
         return;
       }
-      // console.log(this.taskForm,"流程审批提交表单数据")
+      console.log(this.taskForm,"流程审批提交表单数据")
       complete(this.taskForm).then(response => {
         this.$modal.msgSuccess(response.msg);
         this.goBack();
@@ -425,7 +407,7 @@ export default {
       this.returnTitle = "退回流程";
       returnList(this.taskForm).then(res => {
         this.returnTaskList = res.data;
-        this.taskForm.values = null;
+        this.taskForm.variables = null;
       })
     },
     /** 提交退回任务 */
@@ -443,7 +425,6 @@ export default {
     cancelTask() {
       this.taskForm.returnTaskShow = false;
       this.taskForm.defaultTaskShow = true;
-      this.taskForm.sendUserShow = true;
       this.returnTaskList = [];
     },
     /** 委派任务 */
@@ -461,7 +442,6 @@ export default {
     cancelDelegateTask() {
       this.taskForm.delegateTaskShow = false;
       this.taskForm.defaultTaskShow = true;
-      this.taskForm.sendUserShow = true;
       this.returnTaskList = [];
     },
   }

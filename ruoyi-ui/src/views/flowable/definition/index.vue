@@ -176,7 +176,7 @@
     <!-- 流程图 -->
     <el-dialog :title="readImage.title" :visible.sync="readImage.open" width="70%" append-to-body>
       <!-- <el-image :src="readImage.src"></el-image> -->
-       <flow :xmlData="xmlData"/>
+       <flow :flowData="flowData"/>
     </el-dialog>
 
     <!--表单配置详情-->
@@ -227,7 +227,16 @@
 </template>
 
 <script>
-import { listDefinition, updateState, delDeployment, addDeployment, updateDeployment, exportDeployment, definitionStart, readXml} from "@/api/flowable/definition";
+import {
+  listDefinition,
+  updateState,
+  delDeployment,
+  addDeployment,
+  updateDeployment,
+  exportDeployment,
+  definitionStart,
+  flowXmlAndNode
+} from "@/api/flowable/definition";
 import { getToken } from "@/utils/auth";
 import { getForm, addDeployForm ,listForm } from "@/api/flowable/form";
 import Parser from '@/components/parser/Parser'
@@ -311,7 +320,7 @@ export default {
       },
       currentRow: null,
       // xml
-      xmlData:"",
+      flowData: {},
       // 表单参数
       form: {},
       // 表单校验
@@ -380,13 +389,12 @@ export default {
       this.$router.push({ path: '/flowable/definition/model',query: { deployId: row.deploymentId }})
     },
     /** 流程图查看 */
-    handleReadImage(deploymentId){
+    handleReadImage(deployId){
       this.readImage.title = "流程图";
       this.readImage.open = true;
       // this.readImage.src = process.env.VUE_APP_BASE_API + "/flowable/definition/readImage/" + deploymentId;
-       // 发送请求，获取xml
-      readXml(deploymentId).then(res =>{
-        this.xmlData = res.data
+      flowXmlAndNode({deployId:deployId}).then(res => {
+        this.flowData = res.data;
       })
     },
     /** 表单查看 */

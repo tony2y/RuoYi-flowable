@@ -954,7 +954,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
                     MultiInstanceLoopCharacteristics multiInstance = userTask.getLoopCharacteristics();
                     // 会签节点
                     if (Objects.nonNull(multiInstance)) {
-                        flowNextDto.setVars(ProcessConstants.PROCESS_MULTI_INSTANCE_USER);
+                        flowNextDto.setVars(multiInstance.getInputDataItem());
                         flowNextDto.setType(ProcessConstants.PROCESS_MULTI_INSTANCE);
                     } else {
                         // 读取自定义节点属性 判断是否是否需要动态指定任务接收人员、组
@@ -994,7 +994,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
                 MultiInstanceLoopCharacteristics multiInstance = userTask.getLoopCharacteristics();
                 // 会签节点
                 if (Objects.nonNull(multiInstance)) {
-                    flowNextDto.setVars(ProcessConstants.PROCESS_MULTI_INSTANCE_USER);
+                    flowNextDto.setVars(multiInstance.getInputDataItem());
                     flowNextDto.setType(ProcessConstants.PROCESS_MULTI_INSTANCE);
                 } else {
                     // 读取自定义节点属性 判断是否是否需要动态指定任务接收人员、组

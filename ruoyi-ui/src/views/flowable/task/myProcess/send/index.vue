@@ -5,9 +5,9 @@
         <span class="el-icon-document">发起任务</span>
         <el-button style="float: right;" size="mini" type="primary" @click="goBack">关闭</el-button>
       </div>
-      <el-tabs  tab-position="top" @tab-click="handleClick">
+      <el-tabs  tab-position="top" v-model="activeName"  @tab-click="handleClick">
         <!--表单信息-->
-        <el-tab-pane label="表单信息">
+        <el-tab-pane label="表单信息" name="1">
             <!--初始化流程加载表单信息-->
             <el-col :span="16" :offset="4">
               <div class="test-form">
@@ -16,7 +16,7 @@
             </el-col>
         </el-tab-pane>
         <!--流程图-->
-        <el-tab-pane label="流程图">
+        <el-tab-pane label="流程图" name="2">
            <flow :flowData="flowData"/>
         </el-tab-pane>
       </el-tabs>
@@ -56,6 +56,7 @@ export default {
     return {
       // 模型xml数据
       flowData: {},
+      activeName: '1', // 切换tab标签
       defaultProps: {
         children: "children",
         label: "label"
@@ -74,10 +75,10 @@ export default {
       taskOpen: false,
       checkSendUser: false, // 是否展示人员选择模块
       checkSendRole: false,// 是否展示角色选择模块
-      checkType: 'single', // 选择类型
+      checkType: '', // 选择类型
       checkValues: null, // 选中任务接收人员数据
       formData: {}, // 填写的表单数据,
-      activeValue: 1, // 切换tab标签
+      multiInstanceVars: '' // 会签节点
     };
   },
   created() {
@@ -89,7 +90,7 @@ export default {
   },
   methods: {
     handleClick(tab, event) {
-      if (tab.name === '3'){
+      if (tab.name === '2'){
         flowXmlAndNode({deployId:this.deployId}).then(res => {
           this.flowData = res.data;
         })
@@ -149,7 +150,10 @@ export default {
           } else if (data.type === 'candidateGroups') { // 指定组(所属角色接收任务)
             this.checkSendRole = true;
           } else if (data.type === 'multiInstance') { // 会签?
+            // 流程设计指定的 elementVariable 作为会签人员列表
+            this.multiInstanceVars = data.vars;
             this.checkSendUser = true;
+            this.checkType = "multiple";
           }
           if (this.checkSendUser || this.checkSendRole){
             this.taskOpen = true;
@@ -194,7 +198,11 @@ export default {
         // 是否显示按钮
         formData.formBtns = false;
         variables.variables = formData;
-        variables.approval = this.checkValues;
+        if (this.multiInstanceVars) {
+          this.$set(variables, this.multiInstanceVars, this.checkValues);
+        } else {
+          this.$set(variables, "approval", this.checkValues);
+        }
         console.log(variables,"流程发起提交表单数据")
         // 启动流程并将表单数据加入流程变量
         definitionStart(this.procDefId, JSON.stringify(variables)).then(res => {
@@ -218,7 +226,10 @@ export default {
           } else if (data.type === 'candidateGroups') { // 指定组(所属角色接收任务)
             this.checkSendRole = true;
           } else if (data.type === 'multiInstance') { // 会签?
+            // 流程设计指定的 elementVariable 作为会签人员列表
+            this.multiInstanceVars = data.vars;
             this.checkSendUser = true;
+            this.checkType = "multiple";
           }
         }
       })
@@ -228,7 +239,11 @@ export default {
       if (selection) {
         if (selection instanceof Array) {
           const selectVal = selection.map(item => item.userId);
-          this.checkValues = selectVal.join(',')
+          if (this.multiInstanceVars) {
+            this.checkValues = selection;
+          } else {
+            this.checkValues = selectVal.join(',');
+          }
         } else {
           this.checkValues = selection.userId;
         }
