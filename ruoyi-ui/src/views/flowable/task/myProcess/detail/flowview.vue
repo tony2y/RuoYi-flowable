@@ -21,14 +21,10 @@ import { CustomViewer as BpmnViewer } from "@/components/customBpmn";
 export default {
   name: "FlowView",
   props: {
-    xmlData: {
-      type: String,
-      default: ''
+    flowData: {
+      type: Object,
+      default: () => {}
     },
-    taskList: {
-      type: Array,
-      default: () => []
-    }
   },
   data() {
     return {
@@ -36,30 +32,34 @@ export default {
     };
   },
   watch: {
-    xmlData: function(val) {
-      if (val) {
-        this.getImg(val)
-      }
+    flowData: {
+      handler(newVal) {
+        if (Object.keys(newVal).length > 0) {
+          // 生成实例
+          this.bpmnViewer && this.bpmnViewer.destroy();
+          this.bpmnViewer = new BpmnViewer({
+            container: this.$refs.flowCanvas,
+            height: 'calc(100vh - 200px)',
+          });
+          this.loadFlowCanvas(newVal)
+        }
+      },
+      immediate: true, // 立即生效
+      deep: true  //监听对象或数组的时候，要用到深度监听
     }
   },
   mounted() {
-    // 生成实例
-    this.bpmnViewer && this.bpmnViewer.destroy();
-    this.bpmnViewer = new BpmnViewer({
-      container: this.$refs.flowCanvas,
-      height: 'calc(100vh - 200px)',
-    });
-    this.getImg(this.xmlData)
   },
   methods: {
-    // 获取流程图片
-    async getImg(xmlUrl) {
+    // 加载流程
+    async loadFlowCanvas(flowData) {
       const self = this
       try {
-        await self.bpmnViewer.importXML(xmlUrl);
+        console.log(flowData,"self.flowData")
+        await self.bpmnViewer.importXML(flowData.xmlData);
         self.fitViewport()
-        if (self.taskList !==undefined && self.taskList.length > 0 ) {
-          self.fillColor()
+        if (flowData.nodeData !==undefined && flowData.nodeData.length > 0 ) {
+          self.fillColor(flowData.nodeData)
         }
       } catch (err) {
         console.error(err.message, err.warnings)
@@ -83,17 +83,17 @@ export default {
     },
 
     // 设置高亮颜色的
-    fillColor() {
+    fillColor(nodeData) {
       const canvas = this.bpmnViewer.get('canvas')
       this.bpmnViewer.getDefinitions().rootElements[0].flowElements.forEach(n => {
-        const completeTask = this.taskList.find(m => m.key === n.id)
-        const todoTask = this.taskList.find(m => !m.completed)
-        const endTask = this.taskList[this.taskList.length - 1]
+        const completeTask = nodeData.find(m => m.key === n.id)
+        const todoTask = nodeData.find(m => !m.completed)
+        const endTask = nodeData[nodeData.length - 1]
         if (n.$type === 'bpmn:UserTask') {
           if (completeTask) {
             canvas.addMarker(n.id, completeTask.completed ? 'highlight' : 'highlight-todo')
             n.outgoing?.forEach(nn => {
-              const targetTask = this.taskList.find(m => m.key === nn.targetRef.id)
+              const targetTask = nodeData.find(m => m.key === nn.targetRef.id)
               if (targetTask) {
                 if (todoTask && completeTask.key === todoTask.key && !todoTask.completed){
                   canvas.addMarker(nn.id, todoTask.completed ? 'highlight' : 'highlight-todo')
@@ -111,7 +111,7 @@ export default {
           if (completeTask) {
             canvas.addMarker(n.id, completeTask.completed ? 'highlight' : 'highlight-todo')
             n.outgoing?.forEach(nn => {
-              const targetTask = this.taskList.find(m => m.key === nn.targetRef.id)
+              const targetTask = nodeData.find(m => m.key === nn.targetRef.id)
               if (targetTask) {
 
                 canvas.addMarker(nn.id, targetTask.completed ? 'highlight' : 'highlight-todo')
@@ -127,7 +127,7 @@ export default {
           if (completeTask) {
             canvas.addMarker(n.id, completeTask.completed ? 'highlight' : 'highlight-todo')
             n.outgoing?.forEach(nn => {
-              const targetTask = this.taskList.find(m => m.key === nn.targetRef.id)
+              const targetTask = nodeData.find(m => m.key === nn.targetRef.id)
               if (targetTask) {
                 canvas.addMarker(nn.id, targetTask.completed ? 'highlight' : 'highlight-todo')
                 canvas.addMarker(nn.targetRef.id, targetTask.completed ? 'highlight' : 'highlight-todo')
@@ -137,7 +137,7 @@ export default {
         }
         else if (n.$type === 'bpmn:StartEvent') {
           n.outgoing.forEach(nn => {
-            const completeTask = this.taskList.find(m => m.key === nn.targetRef.id)
+            const completeTask = nodeData.find(m => m.key === nn.targetRef.id)
             if (completeTask) {
               canvas.addMarker(nn.id, 'highlight')
               canvas.addMarker(n.id, 'highlight')

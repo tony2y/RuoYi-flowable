@@ -1,6 +1,6 @@
 <template>
   <div>
-    <flow-view :xmlData="xmlData"/>
+    <flow-view :flowData="flowData"/>
   </div>
 </template>
 <script>
@@ -12,9 +12,9 @@ export default {
     FlowView
   },
   props: {
-    xmlData: {
-      type: String,
-      default: ''
+    flowData: {
+      type: Object,
+      default: () => {}
     },
   },
   data() {

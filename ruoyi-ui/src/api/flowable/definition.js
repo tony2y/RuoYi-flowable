@@ -78,11 +78,20 @@ export function readImage(deployId) {
   })
 }
 
-// 读取image文件
+// 获取流程执行节点
 export function getFlowViewer(procInsId, executionId) {
   return request({
     url: '/flowable/task/flowViewer/' + procInsId + '/' + executionId,
     method: 'get'
+  })
+}
+
+// 流程节点数据
+export function flowXmlAndNode(query) {
+  return request({
+    url: '/flowable/task/flowXmlAndNode',
+    method: 'get',
+    params: query
   })
 }
 

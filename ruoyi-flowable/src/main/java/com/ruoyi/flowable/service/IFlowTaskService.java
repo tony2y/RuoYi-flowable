@@ -145,7 +145,7 @@ public interface IFlowTaskService {
     InputStream diagram(String processId);
 
     /**
-     * 获取流程执行过程
+     * 获取流程执行节点
      * @param procInsId
      * @return
      */
@@ -173,4 +173,11 @@ public interface IFlowTaskService {
      * @return
      */
     AjaxResult flowFormData(String deployId);
+
+    /**
+     * 流程节点信息
+     * @param procInsId
+     * @return
+     */
+    AjaxResult flowXmlAndNode(String procInsId,String deployId);
 }

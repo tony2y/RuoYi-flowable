@@ -7,9 +7,9 @@
         <el-tag>任务节点:{{taskName}}</el-tag>
         <el-button style="float: right;" size="mini" type="primary" @click="goBack">关闭</el-button>
       </div>
-      <el-tabs  tab-position="top" @tab-click="handleClick">
+      <el-tabs tab-position="top" v-model="activeName" @tab-click="handleClick">
         <!--表单信息-->
-        <el-tab-pane label="表单信息">
+        <el-tab-pane label="表单信息" name="1">
             <el-col :span="16" :offset="4">
               <div class="test-form">
                   <parser :key="new Date().getTime()" :form-conf="variablesData" />
@@ -25,7 +25,7 @@
            </el-col>
         </el-tab-pane>
         <!--流程流转记录-->
-        <el-tab-pane label="流转记录">
+        <el-tab-pane label="流转记录" name="2">
           <!--flowRecordList-->
           <el-col :span="16" :offset="4" >
             <div class="block">
@@ -71,60 +71,60 @@
             </div>
           </el-col>
         </el-tab-pane>
-      <!--流程图-->
-      <el-tab-pane label="流程图">
-        <flow :xmlData="xmlData" :taskData="taskList"></flow>
-      </el-tab-pane>
-      </el-tabs>
-      <!--审批任务-->
-      <el-dialog :title="completeTitle" :visible.sync="completeOpen" width="60%" append-to-body>
-        <el-form ref="taskForm" :model="taskForm">
-          <el-form-item prop="targetKey">
-            <flow-user v-if="checkSendUser" :checkType="checkType"  @handleUserSelect="handleUserSelect"></flow-user>
-            <flow-role v-if="checkSendRole" @handleRoleSelect="handleRoleSelect"></flow-role>
-          </el-form-item>
-          <el-form-item label="处理意见" label-width="80px" prop="comment" :rules="[{ required: true, message: '请输入处理意见', trigger: 'blur' }]">
-            <el-input type="textarea" v-model="taskForm.comment" placeholder="请输入处理意见"/>
-          </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-        <el-button @click="completeOpen = false">取 消</el-button>
-        <el-button type="primary" @click="taskComplete">确 定</el-button>
-      </span>
-      </el-dialog>
-      <!--退回流程-->
-      <el-dialog :title="returnTitle" :visible.sync="returnOpen" width="40%" append-to-body>
-        <el-form ref="taskForm" :model="taskForm" label-width="80px" >
-          <el-form-item label="退回节点" prop="targetKey">
-            <el-radio-group v-model="taskForm.targetKey">
-              <el-radio-button
-                v-for="item in returnTaskList"
-                :key="item.id"
-                :label="item.id"
-              >{{item.name}}</el-radio-button>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="退回意见" prop="comment" :rules="[{ required: true, message: '请输入意见', trigger: 'blur' }]">
-            <el-input style="width: 50%" type="textarea" v-model="taskForm.comment" placeholder="请输入意见"/>
-          </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-            <el-button @click="returnOpen = false">取 消</el-button>
-            <el-button type="primary" @click="taskReturn">确 定</el-button>
+        <!--流程图-->
+        <el-tab-pane label="流程图" name="3">
+          <flow :flowData="flowData"/>
+        </el-tab-pane>
+        </el-tabs>
+        <!--审批任务-->
+        <el-dialog :title="completeTitle" :visible.sync="completeOpen" width="60%" append-to-body>
+          <el-form ref="taskForm" :model="taskForm">
+            <el-form-item prop="targetKey">
+              <flow-user v-if="checkSendUser" :checkType="checkType"  @handleUserSelect="handleUserSelect"></flow-user>
+              <flow-role v-if="checkSendRole" @handleRoleSelect="handleRoleSelect"></flow-role>
+            </el-form-item>
+            <el-form-item label="处理意见" label-width="80px" prop="comment" :rules="[{ required: true, message: '请输入处理意见', trigger: 'blur' }]">
+              <el-input type="textarea" v-model="taskForm.comment" placeholder="请输入处理意见"/>
+            </el-form-item>
+          </el-form>
+          <span slot="footer" class="dialog-footer">
+          <el-button @click="completeOpen = false">取 消</el-button>
+          <el-button type="primary" @click="taskComplete">确 定</el-button>
         </span>
-      </el-dialog>
-      <!--驳回流程-->
-      <el-dialog :title="rejectTitle" :visible.sync="rejectOpen" width="40%" append-to-body>
-        <el-form ref="taskForm" :model="taskForm" label-width="80px" >
-          <el-form-item label="驳回意见" prop="comment" :rules="[{ required: true, message: '请输入意见', trigger: 'blur' }]">
-            <el-input style="width: 50%" type="textarea" v-model="taskForm.comment" placeholder="请输入意见"/>
-          </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="rejectOpen = false">取 消</el-button>
-          <el-button type="primary" @click="taskReject">确 定</el-button>
-        </span>
-      </el-dialog>
+        </el-dialog>
+        <!--退回流程-->
+        <el-dialog :title="returnTitle" :visible.sync="returnOpen" width="40%" append-to-body>
+          <el-form ref="taskForm" :model="taskForm" label-width="80px" >
+            <el-form-item label="退回节点" prop="targetKey">
+              <el-radio-group v-model="taskForm.targetKey">
+                <el-radio-button
+                  v-for="item in returnTaskList"
+                  :key="item.id"
+                  :label="item.id"
+                >{{item.name}}</el-radio-button>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="退回意见" prop="comment" :rules="[{ required: true, message: '请输入意见', trigger: 'blur' }]">
+              <el-input style="width: 50%" type="textarea" v-model="taskForm.comment" placeholder="请输入意见"/>
+            </el-form-item>
+          </el-form>
+          <span slot="footer" class="dialog-footer">
+              <el-button @click="returnOpen = false">取 消</el-button>
+              <el-button type="primary" @click="taskReturn">确 定</el-button>
+          </span>
+        </el-dialog>
+        <!--驳回流程-->
+        <el-dialog :title="rejectTitle" :visible.sync="rejectOpen" width="40%" append-to-body>
+          <el-form ref="taskForm" :model="taskForm" label-width="80px" >
+            <el-form-item label="驳回意见" prop="comment" :rules="[{ required: true, message: '请输入意见', trigger: 'blur' }]">
+              <el-input style="width: 50%" type="textarea" v-model="taskForm.comment" placeholder="请输入意见"/>
+            </el-form-item>
+          </el-form>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="rejectOpen = false">取 消</el-button>
+            <el-button type="primary" @click="taskReject">确 定</el-button>
+          </span>
+        </el-dialog>
     </el-card>
   </div>
 </template>
@@ -134,7 +134,7 @@ import {flowRecord} from "@/api/flowable/finished";
 import FlowUser from '@/components/flow/User'
 import FlowRole from '@/components/flow/Role'
 import Parser from '@/components/parser/Parser'
-import {definitionStart, getProcessVariables, readXml, getFlowViewer} from "@/api/flowable/definition";
+import {getProcessVariables, flowXmlAndNode} from "@/api/flowable/definition";
 import {complete, rejectTask, returnList, returnTask, getNextFlowNode, delegate} from "@/api/flowable/todo";
 import flow from '@/views/flowable/task/todo/detail/flow'
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -153,7 +153,8 @@ export default {
     return {
       // 模型xml数据
       xmlData: "",
-      taskList: [],
+      flowData: {},
+      activeName: '1',
       // 部门名称
       deptName: undefined,
       // 部门树选项
@@ -216,9 +217,6 @@ export default {
       this.taskForm.procInsId = this.$route.query.procInsId;
       this.taskForm.executionId = this.$route.query.executionId;
       this.taskForm.instanceId = this.$route.query.procInsId;
-      // 回显流程记录
-      this.getFlowViewer(this.taskForm.procInsId, this.taskForm.executionId);
-      this.getModelDetail(this.taskForm.deployId);
       // 流程任务重获取变量表单
       if (this.taskForm.taskId) {
         this.processVariables(this.taskForm.taskId)
@@ -229,19 +227,11 @@ export default {
   },
   methods: {
     handleClick(tab, event) {
-      console.log(tab, event);
-    },
-    /** xml 文件 */
-    getModelDetail(deployId) {
-      // 发送请求，获取xml
-      readXml(deployId).then(res => {
-        this.xmlData = res.data
-      })
-    },
-    getFlowViewer(procInsId,executionId) {
-      getFlowViewer(procInsId,executionId).then(res => {
-        this.taskList = res.data
-      })
+      if (tab.name === '3'){
+        flowXmlAndNode({procInsId: this.taskForm.procInsId, deployId: this.taskForm.deployId}).then(res => {
+          this.flowData = res.data;
+        })
+      }
     },
     setIcon(val) {
       if (val) {

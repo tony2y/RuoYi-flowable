@@ -49,7 +49,7 @@ export default {
       container: this.$refs.flowCanvas,
       height: 'calc(100vh - 200px)',
     });
-    this.getImg(this.xmlData)
+    // this.getImg(this.xmlData)
   },
   methods: {
     // 获取流程图片

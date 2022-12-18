@@ -3,6 +3,7 @@ package com.ruoyi.flowable.service.impl;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.flowable.common.constant.ProcessConstants;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysRole;
@@ -26,6 +27,7 @@ import com.ruoyi.system.service.ISysRoleService;
 import com.ruoyi.system.service.ISysUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.bpmn.model.Process;
 import org.flowable.bpmn.model.*;
@@ -52,6 +54,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -866,7 +869,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
     }
 
     /**
-     * 获取流程执行过程
+     * 获取流程执行节点
      *
      * @param procInsId 流程实例id
      * @return
@@ -1027,6 +1030,56 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
             return AjaxResult.success(JSONObject.parseObject(sysForm.getFormContent()));
         } else {
             return AjaxResult.error("参数错误!");
+        }
+    }
+
+    /**
+     * 流程节点信息
+     *
+     * @param procInsId
+     * @return
+     */
+    @Override
+    public AjaxResult flowXmlAndNode(String procInsId, String deployId) {
+        try {
+            List<FlowViewerDto> flowViewerList = new ArrayList<>();
+            // 获取已经完成的节点
+            List<HistoricActivityInstance> listFinished = historyService.createHistoricActivityInstanceQuery()
+                    .processInstanceId(procInsId)
+                    .finished()
+                    .list();
+
+            // 保存已经完成的流程节点编号
+            listFinished.forEach(s -> {
+                FlowViewerDto flowViewerDto = new FlowViewerDto();
+                flowViewerDto.setKey(s.getActivityId());
+                flowViewerDto.setCompleted(true);
+                flowViewerList.add(flowViewerDto);
+            });
+
+            // 获取代办节点
+            List<HistoricActivityInstance> listUnFinished = historyService.createHistoricActivityInstanceQuery()
+                    .processInstanceId(procInsId)
+                    .unfinished()
+                    .list();
+
+            // 保存需要代办的节点编号
+            listUnFinished.forEach(s -> {
+                FlowViewerDto flowViewerDto = new FlowViewerDto();
+                flowViewerDto.setKey(s.getActivityId());
+                flowViewerDto.setCompleted(false);
+                flowViewerList.add(flowViewerDto);
+            });
+            Map<String, Object> result = new HashMap();
+            // xmlData 数据
+            ProcessDefinition definition = repositoryService.createProcessDefinitionQuery().deploymentId(deployId).singleResult();
+            InputStream inputStream = repositoryService.getResourceAsStream(definition.getDeploymentId(), definition.getResourceName());
+            String xmlData = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            result.put("nodeData",flowViewerList);
+            result.put("xmlData",xmlData);
+            return AjaxResult.success(result);
+        } catch (Exception e) {
+            return AjaxResult.error("高亮历史任务失败");
         }
     }
 

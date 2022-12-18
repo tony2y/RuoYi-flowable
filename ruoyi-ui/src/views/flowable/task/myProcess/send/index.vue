@@ -17,7 +17,7 @@
         </el-tab-pane>
         <!--流程图-->
         <el-tab-pane label="流程图">
-           <flow :xmlData="xmlData"/>
+           <flow :flowData="flowData"/>
         </el-tab-pane>
       </el-tabs>
       <el-button style="position: absolute;right:35px;top:35px;"  type="primary" @click="goBack">关闭</el-button>
@@ -36,7 +36,7 @@
 
 <script>
 import Parser from '@/components/parser/Parser'
-import {definitionStart, readXml} from "@/api/flowable/definition";
+import {definitionStart, flowXmlAndNode} from "@/api/flowable/definition";
 import flow from './flow'
 import {flowFormData} from "@/api/flowable/process";
 import {getNextFlowNodeByStart} from "@/api/flowable/todo";
@@ -55,7 +55,7 @@ export default {
   data() {
     return {
       // 模型xml数据
-      xmlData: "",
+      flowData: {},
       defaultProps: {
         children: "children",
         label: "label"
@@ -86,19 +86,14 @@ export default {
     this.procDefId  = this.$route.query && this.$route.query.procDefId;
     // this.getNextFlowNodeByStart(this.deployId);
     this.getFlowFormData(this.deployId);
-    // 回显流程记录
-    this.loadModelXml(this.deployId);
   },
   methods: {
     handleClick(tab, event) {
-      console.log(tab, event);
-    },
-    /** xml 文件 */
-    loadModelXml(deployId) {
-      // 发送请求，获取xml
-      readXml(deployId).then(res => {
-        this.xmlData = res.data
-      })
+      if (tab.name === '3'){
+        flowXmlAndNode({deployId:this.deployId}).then(res => {
+          this.flowData = res.data;
+        })
+      }
     },
     /** 流程表单数据 */
     getFlowFormData(deployId) {

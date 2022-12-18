@@ -192,7 +192,7 @@ public class FlowTaskController {
     }
 
     /**
-     * 生成流程图
+     * 获取流程执行节点
      *
      * @param procInsId 流程实例编号
      * @param procInsId 任务执行编号
@@ -202,4 +202,16 @@ public class FlowTaskController {
                                     @PathVariable("executionId") String executionId) {
         return flowTaskService.getFlowViewer(procInsId, executionId);
     }
+
+    /**
+     * 流程节点信息
+     * @param procInsId     流程实例id
+     * @return
+     */
+    @GetMapping("/flowXmlAndNode")
+    public AjaxResult flowXmlAndNode(@RequestParam(value = "procInsId",required = false) String procInsId,
+                                   @RequestParam(value = "deployId",required = false) String deployId){
+        return flowTaskService.flowXmlAndNode(procInsId,deployId);
+    }
+
 }

@@ -21,10 +21,9 @@ import { CustomViewer as BpmnViewer } from "@/components/customBpmn";
 export default {
   name: "FlowView",
   props: {
-    // xml 数据
-    xmlData: {
-      type: String,
-      default: ''
+    flowData: {
+      type: Object,
+      default: () => {}
     },
   },
   data() {
@@ -33,30 +32,29 @@ export default {
     };
   },
   watch: {
-    xmlData: {
+    flowData: {
       handler(newVal) {
-        if (newVal) {
-          this.loadFlowImg(newVal)
+        if (Object.keys(newVal).length > 0) {
+          // 生成实例
+          this.bpmnViewer && this.bpmnViewer.destroy();
+          this.bpmnViewer = new BpmnViewer({
+            container: this.$refs.flowCanvas,
+            height: 'calc(100vh - 200px)',
+          });
+          this.loadFlowCanvas(newVal)
         }
       },
       immediate: true, // 立即生效
       deep: true  //监听对象或数组的时候，要用到深度监听
     }
   },
-  mounted() {
-    // 生成实例
-    this.bpmnViewer && this.bpmnViewer.destroy();
-    this.bpmnViewer = new BpmnViewer({
-      container: this.$refs.flowCanvas,
-      height: 'calc(85vh - 200px)',
-    });
-  },
+  mounted() {},
   methods: {
     // 加载流程图片
-    async loadFlowImg(xmlData) {
+    async loadFlowCanvas(flowData) {
       const self = this
       try {
-        await self.bpmnViewer.importXML(xmlData);
+        await self.bpmnViewer.importXML(flowData.xmlData);
         self.fitViewport()
       } catch (err) {
         console.error(err.message, err.warnings)

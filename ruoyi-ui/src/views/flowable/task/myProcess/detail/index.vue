@@ -5,9 +5,9 @@
         <span class="el-icon-document">已发任务</span>
         <el-button style="float: right;" size="mini" type="primary" @click="goBack">关闭</el-button>
       </div>
-      <el-tabs  tab-position="top" @tab-click="handleClick">
+      <el-tabs  tab-position="top" v-model="activeName" @tab-click="handleClick">
         <!--表单信息-->
-        <el-tab-pane label="表单信息">
+        <el-tab-pane label="表单信息" name="1">
           <el-col :span="16" :offset="4">
             <div class="test-form">
                 <parser :key="new Date().getTime()" :form-conf="variablesData" />
@@ -15,7 +15,7 @@
          </el-col>
         </el-tab-pane>
         <!--流程流转记录-->
-        <el-tab-pane label="流转记录">
+        <el-tab-pane label="流转记录" name="2">
           <el-col :span="16" :offset="4" >
             <div class="block">
               <el-timeline>
@@ -61,8 +61,8 @@
           </el-col>
         </el-tab-pane>
         <!--流程图-->
-        <el-tab-pane label="流程图">
-          <flow :xmlData="xmlData" :taskData="taskList"></flow>
+        <el-tab-pane label="流程图" name="3">
+          <flow :flowData="flowData"/>
         </el-tab-pane>
     </el-tabs>
     <el-button style="position: absolute;right:35px;top:35px;"  type="primary" @click="goBack">关闭</el-button>
@@ -73,7 +73,7 @@
 <script>
 import {flowRecord} from "@/api/flowable/finished";
 import Parser from '@/components/parser/Parser'
-import {getProcessVariables, readXml, getFlowViewer} from "@/api/flowable/definition";
+import {getProcessVariables, readXml, getFlowViewer, getHighlight, flowXmlAndNode} from "@/api/flowable/definition";
 import flow from '@/views/flowable/task/myProcess/detail/flow'
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
@@ -87,8 +87,8 @@ export default {
   data() {
     return {
       // 模型xml数据
-      xmlData: "",
-      taskList: [],
+      flowData: {},
+      activeName: '1',
       // 查询参数
       queryParams: {
         deptId: undefined
@@ -113,22 +113,17 @@ export default {
     this.taskForm.taskId  = this.$route.query && this.$route.query.taskId;
     this.taskForm.procInsId = this.$route.query && this.$route.query.procInsId;
     // 回显流程记录
-    this.getFlowViewer(this.taskForm.procInsId,this.taskForm.executionId);
-    this.getModelDetail(this.taskForm.deployId);
     // 流程任务重获取变量表单
     this.processVariables( this.taskForm.taskId)
     this.getFlowRecordList(this.taskForm.procInsId, this.taskForm.deployId);
   },
   methods: {
     handleClick(tab, event) {
-      console.log(tab, event);
-    },
-    /** xml 文件 */
-    getModelDetail(deployId) {
-      // 发送请求，获取xml
-      readXml(deployId).then(res => {
-        this.xmlData = res.data
-      })
+      if (tab.name === '3'){
+        flowXmlAndNode({procInsId:this.taskForm.procInsId,deployId:this.taskForm.deployId}).then(res => {
+          this.flowData = res.data;
+        })
+      }
     },
     getFlowViewer(procInsId,executionId) {
       getFlowViewer(procInsId,executionId).then(res => {
