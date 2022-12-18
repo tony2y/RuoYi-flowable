@@ -46,14 +46,14 @@ export default {
             name: 'collection',
             label: '集合',
             tooltip: 'collection: 属性会作为表达式进行解析。如果表达式解析为字符串而不是一个集合，<br />不论是因为本身配置的就是静态字符串值，还是表达式计算结果为字符串，<br />这个字符串都会被当做变量名，并从流程变量中用于获取实际的集合。',
-            rules: [{ required: true, message: '请输入集合名称', trigger: ['blur', 'change'] }]
+            // rules: [{ required: true, message: '请输入集合名称', trigger: ['blur', 'change'] }]
           },
           {
             xType: 'input',
             name: 'elementVariable',
             label: '元素变量',
             tooltip: 'elementVariable: 每创建一个用户任务前，先以该元素变量为label，集合中的一项为value，<br />创建（局部）流程变量，该局部流程变量被用于指派用户任务。<br />一般来说，该字符串应与指定人员变量相同。',
-            rules: [{ required: true, message: '请输入元素变量', trigger: ['blur', 'change'] }]
+            // rules: [{ required: true, message: '请输入元素变量', trigger: ['blur', 'change'] }]
           },
           {
             xType: 'select',
@@ -61,14 +61,14 @@ export default {
             label: '执行方式',
             tooltip: '并行会签（parallel）、串行会签(sequential)，其中并行会签的意思是 多个人同时执行任务。串行会签是按顺序执行任务。',
             dic: [{label: '串行', value: true}, {label: '并行', value: false}],
-            rules: [{ required: true, message: '请选择执行方式', trigger: ['blur', 'change'] }]
+            // rules: [{ required: true, message: '请选择执行方式', trigger: ['blur', 'change'] }]
           },
           {
             xType: 'input',
             name: 'completionCondition',
             label: '完成条件',
             tooltip: 'completionCondition: 多实例活动在所有实例都完成时结束，然而也可以指定一个表达式，在每个实例<br />结束时进行计算。当表达式计算为true时，将销毁所有剩余的实例，并结束多实例<br />活动，继续执行流程。例如 ${nrOfCompletedInstances/nrOfInstances >= 0.6 }，<br />表示当任务完成60%时，该节点就算完成',
-            rules: [{ required: true, message: '请输入完成条件', trigger: ['blur', 'change'] }]
+            // rules: [{ required: true, message: '请输入完成条件', trigger: ['blur', 'change'] }]
           }
         ],
         operate: [

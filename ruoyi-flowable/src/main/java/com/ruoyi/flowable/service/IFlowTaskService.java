@@ -180,4 +180,11 @@ public interface IFlowTaskService {
      * @return
      */
     AjaxResult flowXmlAndNode(String procInsId,String deployId);
+
+    /**
+     * 流程节点表单
+     * @param taskId 流程任务编号
+     * @return
+     */
+    AjaxResult flowTaskForm(String taskId) throws Exception;
 }

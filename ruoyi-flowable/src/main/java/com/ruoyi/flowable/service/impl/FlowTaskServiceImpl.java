@@ -1,7 +1,10 @@
 package com.ruoyi.flowable.service.impl;
 
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.TypeReference;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.flowable.common.constant.ProcessConstants;
@@ -22,6 +25,7 @@ import com.ruoyi.flowable.flow.FindNextNodeUtil;
 import com.ruoyi.flowable.flow.FlowableUtils;
 import com.ruoyi.flowable.service.IFlowTaskService;
 import com.ruoyi.flowable.service.ISysDeployFormService;
+import com.ruoyi.flowable.service.ISysFormService;
 import com.ruoyi.system.domain.SysForm;
 import com.ruoyi.system.service.ISysRoleService;
 import com.ruoyi.system.service.ISysUserService;
@@ -54,6 +58,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -70,14 +75,12 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
 
     @Resource
     private ISysUserService sysUserService;
-
-
     @Resource
     private ISysRoleService sysRoleService;
-
-
     @Resource
     private ISysDeployFormService sysInstanceFormService;
+    @Resource
+    private ISysFormService sysFormService;
 
     /**
      * 完成任务
@@ -1075,12 +1078,82 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
             ProcessDefinition definition = repositoryService.createProcessDefinitionQuery().deploymentId(deployId).singleResult();
             InputStream inputStream = repositoryService.getResourceAsStream(definition.getDeploymentId(), definition.getResourceName());
             String xmlData = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-            result.put("nodeData",flowViewerList);
-            result.put("xmlData",xmlData);
+            result.put("nodeData", flowViewerList);
+            result.put("xmlData", xmlData);
             return AjaxResult.success(result);
         } catch (Exception e) {
             return AjaxResult.error("高亮历史任务失败");
         }
+    }
+
+    /**
+     * 流程节点表单
+     *
+     * @param taskId 流程任务编号
+     * @return
+     */
+    @Override
+    public AjaxResult flowTaskForm(String taskId) throws Exception {
+        JSONObject result = new JSONObject();
+        result.put("formKeyExist",false);
+        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(task.getProcessDefinitionId());
+        FlowElement flowElement = bpmnModel.getFlowElement(task.getTaskDefinitionKey());
+        // 流程变量
+        Map<String, Object> parameters = new HashMap<>();
+        HistoricTaskInstance historicTaskInstance = historyService.createHistoricTaskInstanceQuery().includeProcessVariables().finished().taskId(taskId).singleResult();
+        if (Objects.nonNull(historicTaskInstance)) {
+            parameters = historicTaskInstance.getProcessVariables();
+        } else {
+            parameters = taskService.getVariables(taskId);
+        }
+        // TODO 暂时只处理用户任务上的表单
+        if (flowElement instanceof UserTask) {
+            String formKey = ((UserTask) flowElement).getFormKey();
+            if (StringUtils.isNotBlank(formKey)) {
+                SysForm sysForm = sysFormService.selectSysFormById(Long.parseLong(formKey));
+
+                JSONObject oldVariables = JSONObject.parseObject(JSON.toJSONString(parameters.get("variables")));
+                List<JSONObject> oldFields = JSON.parseObject(JSON.toJSONString(oldVariables.get("fields")), new TypeReference<List<JSONObject>>() {
+                });
+                oldFields.forEach(obj -> obj.put("disabled", true));
+
+                JSONObject data = JSONObject.parseObject(sysForm.getFormContent());
+                List<JSONObject> newFields = JSON.parseObject(JSON.toJSONString(data.get("fields")), new TypeReference<List<JSONObject>>() {
+                });
+
+                oldFields.addAll(newFields);
+                oldVariables.put("fields", oldFields);
+                oldVariables.put("disabled", false);
+                oldVariables.put("formBtns", true);
+                result.put("formData",oldVariables);
+                result.put("formKeyExist",true);
+                return AjaxResult.success("", result);
+            } else {
+                result.put("formData",parameters.get("variables"));
+                return AjaxResult.success("", result);
+            }
+        } else {
+            result.put("formData",parameters.get("variables"));
+            return AjaxResult.success("", result);
+        }
+    }
+
+    /**
+     * 将Object类型的数据转化成Map<String,Object>
+     *
+     * @param obj
+     * @return
+     * @throws Exception
+     */
+    public Map<String, Object> obj2Map(Object obj) throws Exception {
+        Map<String, Object> map = new HashMap<String, Object>();
+        Field[] fields = obj.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            map.put(field.getName(), field.get(obj));
+        }
+        return map;
     }
 
     /**

@@ -123,3 +123,11 @@ export function exportDeployment(query) {
     params: query
   })
 }
+// 流程节点表单
+export function flowTaskForm(query) {
+  return request({
+    url: '/flowable/task/flowTaskForm',
+    method: 'get',
+    params: query
+  })
+}
