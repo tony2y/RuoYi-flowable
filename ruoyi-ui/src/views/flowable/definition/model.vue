@@ -82,7 +82,7 @@ export default {
     const deployId = this.$route.query && this.$route.query.deployId;
     //  查询流程xml
     if (deployId) {
-      this.getModelDetail(deployId);
+      this.getXmlData(deployId);
     }
     this.getDicts("sys_process_category").then(res => {
       this.categorys = res.data;
@@ -91,7 +91,7 @@ export default {
   },
   methods: {
     /** xml 文件 */
-    getModelDetail(deployId) {
+    getXmlData(deployId) {
       // 发送请求，获取xml
       readXml(deployId).then(res =>{
         this.xml = res.data;

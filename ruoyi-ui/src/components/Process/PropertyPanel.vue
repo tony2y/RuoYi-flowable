@@ -10,7 +10,6 @@
       :groups="groups"
       :exps="exps"
       :categorys="categorys"
-      @dataType="dataType"
     />
   </div>
 </template>
@@ -141,10 +140,6 @@ export default {
         }
       })
     },
-    /** 获取数据类型 */
-    dataType(data){
-      this.$emit('dataType', data)
-    }
   }
 }
 </script>
@@ -156,6 +151,7 @@ export default {
   .el-form--label-top .el-form-item__label {
     padding: 0;
   }
+  // 设置设计器右侧表单高度
   .el-form-item {
     margin-bottom: 6px;
   }

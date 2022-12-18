@@ -845,6 +845,16 @@
             "type": "Boolean"
           },
           {
+            "name": "collection",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "elementVariable",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
             "name": "behavior",
             "type": "MultiInstanceBehavior",
             "default": "All",

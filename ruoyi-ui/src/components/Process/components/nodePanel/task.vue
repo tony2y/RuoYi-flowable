@@ -155,10 +155,6 @@ export default {
         { label: '候选人员', value: 'candidateUsers' },
         { label: '候选角色', value: 'candidateGroups' }
       ],
-      dataTypeOption: [
-        { label: '固定', value: 'fixed' },
-        { label: '动态', value: 'dynamic' }
-      ],
       dialogName: '',
       executionListenerLength: 0,
       taskListenerLength: 0,
@@ -166,9 +162,11 @@ export default {
       userVisible: false,
       roleVisible: false,
       expVisible: false,
-      formData: {},
+      formData: {
+        userTypeOption: 'assignee',
+      },
       assignee: null,
-      candidateUsers: "",
+      candidateUsers: null,
       candidateGroups: null,
       // 选类型
       checkType: 'single',
@@ -178,7 +176,9 @@ export default {
       selectValues: null,
       // 用户列表
       userList: this.users,
+      // 角色列表
       groupList: this.groups,
+      // 表达式列表
       expList: this.exps,
       // 表达式类型
       expType: null,
@@ -223,6 +223,7 @@ export default {
             name: 'userType',
             label: '用户类型',
             dic: _this.userTypeOption,
+            // rules: [{ required: true, message: '用户类型不能为空' }],
             show: !!_this.showConfig.userType
           },
           {
@@ -236,12 +237,14 @@ export default {
             xType: 'slot',
             name: 'checkMultipleUser',
             label: '候选人员',
+            // rules: [{ required: true, message: '候选人员不能为空' }],
             show: !!_this.showConfig.candidateUsers && _this.formData.userType === 'candidateUsers'
           },
           {
             xType: 'slot',
             name: 'checkRole',
             label: '候选角色',
+            // rules: [{ required: true, message: '候选角色不能为空' }],
             show: !!_this.showConfig.candidateGroups && _this.formData.userType === 'candidateGroups'
           },
           {
@@ -351,6 +354,7 @@ export default {
           delete this.formData[type]
         })
       }
+      // 写入userType节点信息到xml
       this.updateProperties({'flowable:userType': val})
     },
     'formData.async': function(val) {
@@ -413,7 +417,7 @@ export default {
     this.computedExecutionListenerLength()
     this.computedTaskListenerLength()
     this.computedHasMultiInstance()
-    this.getCheckValues()
+    this.checkValuesEcho()
   },
   methods: {
     computedExecutionListenerLength() {
@@ -432,11 +436,11 @@ export default {
       }
     },
     // 设计器右侧表单数据回显
-    getCheckValues(){
+    checkValuesEcho(){
       const that = this;
-      // console.log(that.element.businessObject,"this.element.businessObject")
       const attrs = that.element.businessObject.$attrs;
       const businessObject = that.element.businessObject;
+      console.log(that.element.businessObject,"this.element.businessObject")
       // 指定用户
       if (attrs.hasOwnProperty("flowable:assignee")) {
         const val = attrs["flowable:assignee"];
@@ -459,9 +463,9 @@ export default {
           this.checkValues =  newArr.map(item => item.nickName).join(',');
           this.selectValues = newArr.map(item => item.userId).join(',');
         }
-      } else if (businessObject.hasOwnProperty("candidateGroups")) {
+      } else if (businessObject.hasOwnProperty("candidateGroups") || attrs.hasOwnProperty("flowable:candidateGroups") ) {
         // 候选角色信息
-        const val = businessObject["candidateGroups"];
+        const val = businessObject["candidateGroups"] || attrs["flowable:candidateGroups"];
         if (attrs["flowable:dataType"] === "dynamic") {
           this.checkValues = that.expList.find(item => item.expression == val).name;
           this.selectValues = that.expList.filter(item => item.expression == val).id;
