@@ -91,6 +91,6 @@ export default {
 
 <style>
 .flow-containers  .el-badge__content.is-fixed {
-    top: 18px;
+  top: 18px;
 }
 </style>

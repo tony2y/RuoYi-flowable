@@ -42,7 +42,7 @@ export default {
   },
   computed: {
     formConfig() {
-    //   const _this = this
+      //   const _this = this
       return {
         inline: false,
         item: [
@@ -189,6 +189,6 @@ export default {
 
 <style>
 .flow-containers  .el-badge__content.is-fixed {
-    top: 18px;
+  top: 18px;
 }
 </style>
