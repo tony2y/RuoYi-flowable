@@ -38,8 +38,10 @@
   "dependencies": {
     "@riophae/vue-treeselect": "0.4.0",
     "axios": "0.24.0",
+    "bpmn-js": "^11.1.0",
     "clipboard": "2.0.8",
     "core-js": "3.25.3",
+    "diagram-js": "^5.0.0",
     "echarts": "5.4.0",
     "element-ui": "2.15.10",
     "file-saver": "2.0.5",
@@ -52,6 +54,7 @@
     "quill": "1.3.7",
     "screenfull": "5.0.2",
     "sortablejs": "1.10.2",
+    "vkbeautify": "^0.99.3",
     "vue": "2.6.12",
     "vue-count-to": "1.0.13",
     "vue-cropper": "0.5.5",
@@ -59,9 +62,7 @@
     "vue-router": "3.4.9",
     "vuedraggable": "2.24.3",
     "vuex": "3.6.0",
-    "workflow-bpmn-modeler": "^0.2.8",
-    "diagram-js": "^5.0.0",
-    "vkbeautify": "^0.99.3"
+    "xcrud": "^0.4.19"
   },
   "devDependencies": {
     "@babel/parser": "^7.20.5",

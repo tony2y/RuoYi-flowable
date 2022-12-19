@@ -89,10 +89,10 @@ export default {
   methods: {
     updateElement() {
       if (this.formData.isSequential !== null && this.formData.isSequential !== undefined) {
-        const model = this.modeler.get('moddle');
+        // const model = this.modeler.get('moddle');
         let loopCharacteristics = this.element.businessObject.get('loopCharacteristics')
         if (!loopCharacteristics) {
-          loopCharacteristics = model.create('bpmn:MultiInstanceLoopCharacteristics')
+          loopCharacteristics = this.modeler.get('moddle').create('bpmn:MultiInstanceLoopCharacteristics')
         }
         loopCharacteristics['isSequential'] = this.formData.isSequential
         loopCharacteristics['collection'] = this.formData.collection
@@ -107,7 +107,7 @@ export default {
         loopCharacteristics.$attrs[this.prefix + 'elementVariable'] = this.formData.elementVariable
 
         if (this.formData.completionCondition) {
-          loopCharacteristics['completionCondition'] = model.create('bpmn:Expression', {body: this.formData.completionCondition})
+          loopCharacteristics['completionCondition'] = this.modeler.get('moddle').create('bpmn:Expression', {body: this.formData.completionCondition})
         }
         this.updateProperties({loopCharacteristics: loopCharacteristics})
       } else {
