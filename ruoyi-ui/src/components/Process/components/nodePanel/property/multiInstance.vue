@@ -83,7 +83,9 @@ export default {
     const cache = JSON.parse(JSON.stringify(this.element.businessObject.loopCharacteristics ?? {}))
     cache.completionCondition = cache.completionCondition?.body
     // 拼接多实例对象
-    Object.assign(cache,this.element.businessObject.loopCharacteristics.$attrs)
+    if (this.element.businessObject.loopCharacteristics) {
+      Object.assign(cache, this.element.businessObject.loopCharacteristics.$attrs)
+    }
     this.formData = formatJsonKeyValue(cache)
   },
   methods: {

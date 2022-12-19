@@ -110,7 +110,7 @@ export default {
           translate: ['value', customTranslate]
         }
       ],
-      moduleExtensions: {
+      moddleExtensions: {
         flowable: FlowableModule
       }
     })

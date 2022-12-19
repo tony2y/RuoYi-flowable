@@ -38,10 +38,10 @@
   "dependencies": {
     "@riophae/vue-treeselect": "0.4.0",
     "axios": "0.24.0",
-    "bpmn-js": "7.5.0",
+    "bpmn-js": "^11.1.0",
     "clipboard": "2.0.8",
     "core-js": "3.25.3",
-    "diagram-js": "5.1.1",
+    "diagram-js": "^11.4.1",
     "echarts": "5.4.0",
     "element-ui": "2.15.10",
     "file-saver": "2.0.5",
@@ -62,8 +62,7 @@
     "vue-router": "3.4.9",
     "vuedraggable": "2.24.3",
     "vuex": "3.6.0",
-    "xcrud": "0.4.1",
-    "bpmn-moddle": "7.0.4"
+    "xcrud": "^0.4.19"
   },
   "devDependencies": {
     "@babel/parser": "^7.20.5",
