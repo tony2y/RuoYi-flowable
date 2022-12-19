@@ -25,7 +25,8 @@
 
 <script>
 import mixinPanel from '@/components/Process/common/mixinPanel'
-import { formatJsonKeyValue } from '@/components/Process/common/parseElement'
+import {formatJsonKeyValue} from '@/components/Process/common/parseElement'
+
 export default {
   mixins: [mixinPanel],
   data() {
@@ -106,8 +107,7 @@ export default {
         loopCharacteristics.$attrs[this.prefix + 'elementVariable'] = this.formData.elementVariable
 
         if (this.formData.completionCondition) {
-          const completionCondition = model.create('bpmn:Expression', {body: this.formData.completionCondition})
-          loopCharacteristics['completionCondition'] = completionCondition
+          loopCharacteristics['completionCondition'] = model.create('bpmn:Expression', {body: this.formData.completionCondition})
         }
         this.updateProperties({loopCharacteristics: loopCharacteristics})
       } else {

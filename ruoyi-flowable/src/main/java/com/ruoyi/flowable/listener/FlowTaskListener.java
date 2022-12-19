@@ -26,6 +26,8 @@ public class FlowTaskListener implements TaskListener{
 
         log.info("任务监听器:{}", JSON.toJSONString(delegateTask));
         // TODO  获取事件类型 delegateTask.getEventName(),可以通过监听器给任务执行人发送相应的通知消息
+
+
     }
 
 }

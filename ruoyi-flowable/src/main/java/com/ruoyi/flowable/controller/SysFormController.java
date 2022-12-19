@@ -49,6 +49,11 @@ public class SysFormController extends BaseController {
         return getDataTable(list);
     }
 
+    @GetMapping("/formList")
+    public AjaxResult formList(SysForm sysForm) {
+        List<SysForm> list = SysFormService.selectSysFormList(sysForm);
+        return AjaxResult.success(list);
+    }
     /**
      * 导出流程表单列表
      */

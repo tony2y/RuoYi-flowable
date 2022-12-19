@@ -87,15 +87,10 @@ export default {
       type: Boolean,
       default: false
     },
-    taskList: {
-      type: Array,
-      default: () => []
-    }
   },
   data() {
     return {
       modeler: null,
-      // taskList: [],
       zoom: 1
     }
   },
@@ -163,9 +158,6 @@ export default {
         await this.modeler.importXML(data)
         this.adjustPalette()
         this.fitViewport()
-        if (this.taskList !==undefined && this.taskList.length > 0 ) {
-          this.fillColor()
-        }
       } catch (err) {
         console.error(err.message, err.warnings)
       }
@@ -221,77 +213,6 @@ export default {
       } catch (e) {
         console.log(e)
       }
-    },
-    fillColor() {
-      const canvas = this.modeler.get('canvas')
-      this.modeler._definitions.rootElements[0].flowElements.forEach(n => {
-        const completeTask = this.taskList.find(m => m.key === n.id)
-        const todoTask = this.taskList.find(m => !m.completed)
-        const endTask = this.taskList[this.taskList.length - 1]
-        if (n.$type === 'bpmn:UserTask') {
-          if (completeTask) {
-            canvas.addMarker(n.id, completeTask.completed ? 'highlight' : 'highlight-todo')
-            n.outgoing?.forEach(nn => {
-              const targetTask = this.taskList.find(m => m.key === nn.targetRef.id)
-              if (targetTask) {
-                if (todoTask && completeTask.key === todoTask.key && !todoTask.completed){
-                  canvas.addMarker(nn.id, todoTask.completed ? 'highlight' : 'highlight-todo')
-                  canvas.addMarker(nn.targetRef.id, todoTask.completed ? 'highlight' : 'highlight-todo')
-                }else {
-                  canvas.addMarker(nn.id, targetTask.completed ? 'highlight' : 'highlight-todo')
-                  canvas.addMarker(nn.targetRef.id, targetTask.completed ? 'highlight' : 'highlight-todo')
-                }
-              }
-            })
-          }
-        }
-        // 排他网关
-        else if (n.$type === 'bpmn:ExclusiveGateway') {
-          if (completeTask) {
-            canvas.addMarker(n.id, completeTask.completed ? 'highlight' : 'highlight-todo')
-            n.outgoing?.forEach(nn => {
-              const targetTask = this.taskList.find(m => m.key === nn.targetRef.id)
-              if (targetTask) {
-
-                canvas.addMarker(nn.id, targetTask.completed ? 'highlight' : 'highlight-todo')
-                canvas.addMarker(nn.targetRef.id, targetTask.completed ? 'highlight' : 'highlight-todo')
-              }
-
-            })
-          }
-
-        }
-        // 并行网关
-        else if (n.$type === 'bpmn:ParallelGateway') {
-          if (completeTask) {
-            canvas.addMarker(n.id, completeTask.completed ? 'highlight' : 'highlight-todo')
-            n.outgoing?.forEach(nn => {
-              debugger
-              const targetTask = this.taskList.find(m => m.key === nn.targetRef.id)
-              if (targetTask) {
-                canvas.addMarker(nn.id, targetTask.completed ? 'highlight' : 'highlight-todo')
-                canvas.addMarker(nn.targetRef.id, targetTask.completed ? 'highlight' : 'highlight-todo')
-              }
-            })
-          }
-        }
-        else if (n.$type === 'bpmn:StartEvent') {
-          n.outgoing.forEach(nn => {
-            const completeTask = this.taskList.find(m => m.key === nn.targetRef.id)
-            if (completeTask) {
-              canvas.addMarker(nn.id, 'highlight')
-              canvas.addMarker(n.id, 'highlight')
-              return
-            }
-          })
-        }
-        else if (n.$type === 'bpmn:EndEvent') {
-          if (endTask.key === n.id && endTask.completed) {
-            canvas.addMarker(n.id, 'highlight')
-            return
-          }
-        }
-      })
     },
     // 对外 api
     getProcess() {

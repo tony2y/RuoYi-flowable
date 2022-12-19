@@ -8,6 +8,13 @@ export function listForm(query) {
     params: query
   })
 }
+export function listAllForm(query) {
+  return request({
+    url: '/flowable/form/formList',
+    method: 'get',
+    params: query
+  })
+}
 
 // 查询流程表单详细
 export function getForm(formId) {

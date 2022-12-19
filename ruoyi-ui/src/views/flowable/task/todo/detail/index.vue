@@ -497,11 +497,13 @@ export default {
           }
         } else {
           // 最后一个任务节点
-          console.log(this.taskForm, "流程审批提交表单数据")
-          complete(this.taskForm).then(response => {
-            this.$modal.msgSuccess(response.msg);
-            this.goBack();
-          });
+          // console.log(this.taskForm, "流程审批提交表单数据")
+          // complete(this.taskForm).then(response => {
+          //   this.$modal.msgSuccess(response.msg);
+          //   this.goBack();
+          // });
+          this.completeOpen = true;
+          this.completeTitle = "流程审批";
         }
       })
     },

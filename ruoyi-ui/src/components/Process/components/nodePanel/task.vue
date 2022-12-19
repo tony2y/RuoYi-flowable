@@ -122,7 +122,7 @@ import { commonParse, userTaskParse } from '../../common/parseElement'
 import FlowUser from '@/components/flow/User'
 import FlowRole from '@/components/flow/Role'
 import FlowExp from '@/components/flow/Expression'
-import log from "@/views/monitor/job/log";
+import { listAllForm } from '@/api/flowable/form'
 
 export default {
   components: {
@@ -162,9 +162,7 @@ export default {
       userVisible: false,
       roleVisible: false,
       expVisible: false,
-      formData: {
-        userTypeOption: 'assignee',
-      },
+      formData: {},
       assignee: null,
       candidateUsers: null,
       candidateGroups: null,
@@ -182,6 +180,8 @@ export default {
       expList: this.exps,
       // 表达式类型
       expType: null,
+      // 表单列表
+      formList: [],
     }
   },
   computed: {
@@ -222,6 +222,7 @@ export default {
             xType: 'select',
             name: 'userType',
             label: '用户类型',
+            // clearable: true,
             dic: _this.userTypeOption,
             // rules: [{ required: true, message: '用户类型不能为空' }],
             show: !!_this.showConfig.userType
@@ -266,10 +267,18 @@ export default {
             label: '优先级',
             show: !!_this.showConfig.priority
           },
+          // {
+          //   xType: 'input',
+          //   name: 'formKey',
+          //   label: '表单标识key',
+          //   show: !!_this.showConfig.formKey
+          // },
           {
-            xType: 'input',
+            xType: 'select',
             name: 'formKey',
             label: '表单标识key',
+            clearable: true,
+            dic: { data: _this.formList, label: 'formName', value: 'formId' },
             show: !!_this.showConfig.formKey
           },
           {
@@ -417,7 +426,10 @@ export default {
     this.computedExecutionListenerLength()
     this.computedTaskListenerLength()
     this.computedHasMultiInstance()
-    this.checkValuesEcho()
+    // 人员信息回显
+    this.checkValuesEcho();
+    // 加载表单列表
+    this.getListForm();
   },
   methods: {
     computedExecutionListenerLength() {
@@ -434,6 +446,15 @@ export default {
       } else {
         this.hasMultiInstance = false
       }
+    },
+    // 获取表单信息
+    getListForm(){
+      listAllForm().then(res =>{
+        res.data.forEach(item =>{
+          item.formId = item.formId.toString();
+        })
+        this.formList = res.data;
+      })
     },
     // 设计器右侧表单数据回显
     checkValuesEcho(){

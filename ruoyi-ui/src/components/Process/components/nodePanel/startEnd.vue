@@ -60,12 +60,12 @@ export default {
             label: '发起人',
             show: !!_this.showConfig.initiator
           },
-          {
-            xType: 'input',
-            name: 'formKey',
-            label: '表单标识key',
-            show: !!_this.showConfig.formKey
-          }
+          // {
+          //   xType: 'input',
+          //   name: 'formKey',
+          //   label: '表单标识key',
+          //   show: !!_this.showConfig.formKey
+          // }
         ]
       }
     }
