@@ -364,7 +364,7 @@ ContextPadProvider.prototype.getContextPadEntries = function(element) {
         'append.append-user-task': appendAction(
           'bpmn:Task',
           'bpmn-icon-user-task',
-          translate('添加用户任务')
+          '添加用户任务'
         ),
         'append.intermediate-event': appendAction(
           'bpmn:IntermediateThrowEvent',
