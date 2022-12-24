@@ -57,6 +57,7 @@ import BpmData from './BpmData'
 import getInitStr from './flowable/init'
 // 引入flowable的节点文件
 import FlowableModule from './flowable/flowable.json'
+import customControlsModule from './customPanel'
 export default {
   name: 'WorkflowBpmnModeler',
   components: {
@@ -106,9 +107,10 @@ export default {
     this.modeler = new Modeler({
       container: this.$refs.canvas,
       additionalModules: [
-        {
+        customControlsModule,
+        { //汉化
           translate: ['value', customTranslate]
-        }
+        },
       ],
       moddleExtensions: {
         flowable: FlowableModule
@@ -156,7 +158,7 @@ export default {
       })
       try {
         await this.modeler.importXML(data)
-        this.adjustPalette()
+        // this.adjustPalette()
         this.fitViewport()
       } catch (err) {
         console.error(err.message, err.warnings)
