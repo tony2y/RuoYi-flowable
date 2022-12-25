@@ -223,6 +223,17 @@
         </el-col>
       </el-row>
     </el-dialog>
+
+    <!--流程设计器-->
+    <el-dialog
+      title="流程配置"
+      :visible.sync="dialogVisible"
+      :close-on-press-escape="false"
+      :fullscreen=true
+      :before-close="handleClose"
+      append-to-body>
+      <Model :deployId="deployId"/>
+    </el-dialog>
   </div>
 </template>
 
@@ -241,18 +252,21 @@ import { getToken } from "@/utils/auth";
 import { getForm, addDeployForm ,listForm } from "@/api/flowable/form";
 import Parser from '@/components/parser/Parser'
 import flow from '@/views/flowable/task/myProcess/send/flow'
+import Model from './model';
 
 export default {
   name: "Definition",
   dicts: ['sys_process_category'],
   components: {
     Parser,
-    flow
+    flow,
+    Model
   },
   data() {
     return {
       // 遮罩层
       loading: true,
+      dialogVisible: false,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -318,6 +332,7 @@ export default {
         formId: null,
         deployId: null
       },
+      deployId: '',
       currentRow: null,
       // xml
       flowData: {},
@@ -340,6 +355,15 @@ export default {
         this.total = response.data.total;
         this.loading = false;
       });
+    },
+    handleClose(done) {
+      this.$confirm('确定要关闭吗？关闭未保存的修改都会丢失？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        done();
+      }).catch(() => {});
     },
     // 取消按钮
     cancel() {
@@ -386,7 +410,9 @@ export default {
     },
     /** 跳转到流程设计页面 */
     handleLoadXml(row){
-      this.$router.push({ path: '/flowable/definition/model',query: { deployId: row.deploymentId }})
+      this.dialogVisible = true;
+      this.deployId = row.deploymentId;
+      // this.$router.push({ path: '/flowable/definition/model',query: { deployId: row.deploymentId }})
     },
     /** 流程图查看 */
     handleReadImage(deployId){

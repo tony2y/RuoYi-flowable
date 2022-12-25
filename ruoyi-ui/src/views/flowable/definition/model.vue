@@ -12,12 +12,12 @@
       @showXML="showXML"
     />
     <!--在线查看xml-->
-    <el-dialog :title="xmlTitle" :visible.sync="xmlOpen" width="70%" class="showAll_dialog">
+    <el-drawer :title="xmlTitle" :modal="false" direction="rtl" :visible.sync="xmlOpen" size="60%">
       <!-- 设置对话框内容高度 -->
         <el-scrollbar>
             <pre v-highlight="xmlData"><code class="xml"></code></pre>
         </el-scrollbar>
-    </el-dialog>
+    </el-drawer>
   </div>
 </template>
 <script>
@@ -32,6 +32,12 @@ export default {
   components: {
     bpmnModeler,
     vkBeautify
+  },
+  props: {
+    deployId: {
+      type: String,
+      default: ''
+    },
   },
   // 自定义指令
   directives: {
@@ -78,12 +84,18 @@ export default {
 
     };
   },
+  watch: {
+    deployId: {
+      handler(newVal) {
+        if (newVal) {
+          this.getXmlData(newVal);
+        }
+      },
+      immediate: true, // 立即生效
+      deep: true  //监听对象或数组的时候，要用到深度监听
+    },
+  },
   created () {
-    const deployId = this.$route.query && this.$route.query.deployId;
-    //  查询流程xml
-    if (deployId) {
-      this.getXmlData(deployId);
-    }
     this.getDicts("sys_process_category").then(res => {
       this.categorys = res.data;
     });

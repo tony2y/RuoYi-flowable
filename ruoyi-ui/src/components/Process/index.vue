@@ -1,7 +1,7 @@
 <template>
   <div v-loading="isView" class="flow-containers" :class="{ 'view-mode': isView }">
     <el-container style="height: 100%">
-      <el-header style="border-bottom: 1px solid rgb(218 218 218);height: auto;">
+      <el-header style="border-bottom: 1px solid rgb(218 218 218);height: auto;padding-left:0px">
         <div style="display: flex; padding: 10px 0px; justify-content: space-between;">
           <div>
             <el-upload action="" :before-upload="openBpmn" style="margin-right: 10px; display:inline-block;">
