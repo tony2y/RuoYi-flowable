@@ -141,44 +141,40 @@ export default {
       getNextFlowNodeByStart({deploymentId: this.deployId,variables:formData.valData}).then(res => {
         const data = res.data;
         if (data) {
-          if (data.type === 'assignee') { // 指定人员
-            this.checkSendUser = true;
-            this.checkType = "single";
-          } else if (data.type === 'candidateUsers') {  // 候选人员(多个)
-            this.checkSendUser = true;
-            this.checkType = "multiple";
-          } else if (data.type === 'candidateGroups') { // 指定组(所属角色接收任务)
-            this.checkSendRole = true;
-          } else if (data.type === 'multiInstance') { // 会签?
-            // 流程设计指定的 elementVariable 作为会签人员列表
-            this.multiInstanceVars = data.vars;
-            this.checkSendUser = true;
-            this.checkType = "multiple";
-          }
-          if (this.checkSendUser || this.checkSendRole){
+          this.formData = formData;
+          if (data.dataType === 'dynamic') {
+            if (data.type === 'assignee') { // 指定人员
+              this.checkSendUser = true;
+              this.checkType = "single";
+            } else if (data.type === 'candidateUsers') {  // 候选人员(多个)
+              this.checkSendUser = true;
+              this.checkType = "multiple";
+            } else if (data.type === 'candidateGroups') { // 指定组(所属角色接收任务)
+              this.checkSendRole = true;
+            } else { // 会签
+              // 流程设计指定的 elementVariable 作为会签人员列表
+              this.multiInstanceVars = data.vars;
+              this.checkSendUser = true;
+              this.checkType = "multiple";
+            }
             this.taskOpen = true;
             this.taskTitle = "选择任务接收";
-            this.formData = formData;
+          } else {
+            const variables = this.formData.valData;
+            const formData = this.formData.formData;
+            formData.disabled = true;
+            formData.formBtns = false;
+            if (this.procDefId) {
+              variables.variables = formData;
+              // 启动流程并将表单数据加入流程变量
+              definitionStart(this.procDefId, JSON.stringify(variables)).then(res => {
+                this.$modal.msgSuccess(res.msg);
+                this.goBack();
+              })
+            }
           }
         }
       })
-
-      // else {
-        // if (data) {
-        //   const variables = data.valData;
-        //   const formData = data.formData;
-        //   formData.disabled = true;
-        //   formData.formBtns = false;
-        //   if (this.taskForm.procDefId) {
-        //     variables.variables = formData;
-        //     // 启动流程并将表单数据加入流程变量
-        //     definitionStart(this.taskForm.procDefId, JSON.stringify(variables)).then(res => {
-        //      this.$modal.msgSuccess(res.msg);
-        //       this.goBack();
-        //     })
-        //   }
-        // }
-      // }
     },
     /** 提交流程 */
     submitTask() {

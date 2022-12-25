@@ -16,10 +16,7 @@ import java.util.List;
 public class FlowNextDto implements Serializable {
 
     private String type;
-
+    private String dataType;
     private String vars;
 
-    private List<SysUser> userList;
-
-    private List<SysRole> roleList;
 }

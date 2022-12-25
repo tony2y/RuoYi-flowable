@@ -623,11 +623,14 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
     public AjaxResult todoList(Integer pageNum, Integer pageSize) {
         Page<FlowTaskDto> page = new Page<>();
         // 只查看自己的数据
-        Long userId = SecurityUtils.getLoginUser().getUser().getUserId();
+        SysUser sysUser = SecurityUtils.getLoginUser().getUser();
+        Long userId = sysUser.getUserId();
         TaskQuery taskQuery = taskService.createTaskQuery()
                 .active()
                 .includeProcessVariables()
-//                .taskAssignee(userId.toString())
+                .taskAssignee(userId.toString())
+//                .taskCandidateUser(userId.toString())
+//                .taskCandidateGroup(sysUser.getRoleId().toString())
                 .orderByTaskCreateTime().desc();
         page.setTotal(taskQuery.count());
         List<Task> taskList = taskQuery.listPage(pageSize * (pageNum - 1), pageSize);
@@ -959,17 +962,14 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
                     if (Objects.nonNull(multiInstance)) {
                         flowNextDto.setVars(multiInstance.getInputDataItem());
                         flowNextDto.setType(ProcessConstants.PROCESS_MULTI_INSTANCE);
+                        flowNextDto.setDataType(ProcessConstants.PROCESS_MULTI_INSTANCE);
                     } else {
                         // 读取自定义节点属性 判断是否是否需要动态指定任务接收人员、组
                         String dataType = userTask.getAttributeValue(ProcessConstants.NAMASPASE, ProcessConstants.PROCESS_CUSTOM_DATA_TYPE);
                         String userType = userTask.getAttributeValue(ProcessConstants.NAMASPASE, ProcessConstants.PROCESS_CUSTOM_USER_TYPE);
                         flowNextDto.setVars(ProcessConstants.PROCESS_APPROVAL);
                         flowNextDto.setType(userType);
-                        // 处理加载动态指定下一节点接收人员信息
-                        if (ProcessConstants.DYNAMIC.equals(dataType)) {
-                            flowNextDto.setVars(ProcessConstants.PROCESS_APPROVAL);
-                            flowNextDto.setType(userType);
-                        }
+                        flowNextDto.setDataType(dataType);
                     }
                 }
             } else {
@@ -999,17 +999,14 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
                 if (Objects.nonNull(multiInstance)) {
                     flowNextDto.setVars(multiInstance.getInputDataItem());
                     flowNextDto.setType(ProcessConstants.PROCESS_MULTI_INSTANCE);
+                    flowNextDto.setDataType(ProcessConstants.PROCESS_MULTI_INSTANCE);
                 } else {
                     // 读取自定义节点属性 判断是否是否需要动态指定任务接收人员、组
                     String dataType = userTask.getAttributeValue(ProcessConstants.NAMASPASE, ProcessConstants.PROCESS_CUSTOM_DATA_TYPE);
                     String userType = userTask.getAttributeValue(ProcessConstants.NAMASPASE, ProcessConstants.PROCESS_CUSTOM_USER_TYPE);
                     flowNextDto.setVars(ProcessConstants.PROCESS_APPROVAL);
                     flowNextDto.setType(userType);
-                    // 处理加载动态指定下一节点接收人员信息
-                    if (ProcessConstants.DYNAMIC.equals(dataType)) {
-                        flowNextDto.setVars(ProcessConstants.PROCESS_APPROVAL);
-                        flowNextDto.setType(userType);
-                    }
+                    flowNextDto.setDataType(dataType);
                 }
             }
         }

@@ -367,56 +367,69 @@ export default {
       this.updateProperties({'flowable:userType': val})
     },
     'formData.async': function(val) {
-      if (val === '') val = null
-      this.updateProperties({ 'flowable:async': val })
+      if (val) {
+        this.updateProperties({'flowable:async': val})
+      }
     },
     'formData.dueDate': function(val) {
-      if (val === '') val = null
-      this.updateProperties({ 'flowable:dueDate': val })
+      if (val) {
+        this.updateProperties({'flowable:dueDate': val})
+      }
     },
     'formData.formKey': function(val) {
-      if (val === '') val = null
-      this.updateProperties({ 'flowable:formKey': val })
+      if (val) {
+        this.updateProperties({'flowable:formKey': val})
+      }
     },
     'formData.priority': function(val) {
-      if (val === '') val = null
-      this.updateProperties({ 'flowable:priority': val })
+      if (val) {
+        this.updateProperties({'flowable:priority': val})
+      }
     },
     'formData.skipExpression': function(val) {
-      if (val === '') val = null
-      this.updateProperties({ 'flowable:skipExpression': val })
+      if (val) {
+        this.updateProperties({'flowable:skipExpression': val})
+      }
     },
     'formData.isForCompensation': function(val) {
-      if (val === '') val = null
-      this.updateProperties({ 'isForCompensation': val })
+      if (val) {
+        this.updateProperties({'isForCompensation': val})
+      }
     },
     'formData.triggerable': function(val) {
-      if (val === '') val = null
-      this.updateProperties({ 'flowable:triggerable': val })
+      if (val) {
+        this.updateProperties({'flowable:triggerable': val})
+      }
     },
     'formData.class': function(val) {
-      if (val === '') val = null
-      this.updateProperties({ 'flowable:class': val })
+      if (val) {
+        this.updateProperties({'flowable:class': val})
+      }
     },
     'formData.autoStoreVariables': function(val) {
-      if (val === '') val = null
-      this.updateProperties({ 'flowable:autoStoreVariables': val })
+      if (val) {
+        this.updateProperties({'flowable:autoStoreVariables': val})
+      }
     },
     'formData.exclude': function(val) {
-      if (val === '') val = null
-      this.updateProperties({ 'flowable:exclude': val })
+      if (val) {
+        this.updateProperties({'flowable:exclude': val})
+      }
     },
     'formData.ruleVariablesInput': function(val) {
-      if (val === '') val = null
-      this.updateProperties({ 'flowable:ruleVariablesInput': val })
+      if (val) {
+        this.updateProperties({'flowable:ruleVariablesInput': val})
+      }
     },
     'formData.rules': function(val) {
-      if (val === '') val = null
-      this.updateProperties({ 'flowable:rules': val })
+      if (val) {
+        this.updateProperties({'flowable:rules': val})
+      }
     },
     'formData.resultVariable': function(val) {
-      if (val === '') val = null
-      this.updateProperties({ 'flowable:resultVariable': val })
+      if (val) {
+        this.updateProperties({'flowable:resultVariable': val})
+      }
     }
   },
   created() {

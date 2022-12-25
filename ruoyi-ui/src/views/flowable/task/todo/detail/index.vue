@@ -338,19 +338,33 @@ export default {
       getNextFlowNode(params).then(res => {
         const data = res.data;
         if (data) {
-          if (data.type === 'assignee') { // 指定人员
-            this.checkSendUser = true;
-            this.checkType = "single";
-          } else if (data.type === 'candidateUsers') {  // 候选人员(多个)
-            this.checkSendUser = true;
-            this.checkType = "multiple";
-          } else if (data.type === 'candidateGroups') { // 指定组(所属角色接收任务)
-            this.checkSendRole = true;
-          } else if (data.type === 'multiInstance') { // 会签
-            // 流程设计指定的 elementVariable 作为会签人员列表
-            this.multiInstanceVars = data.vars;
-            this.checkSendUser = true;
-            this.checkType = "multiple";
+          if (data.dataType === 'dynamic') {
+            if (data.type === 'assignee') { // 指定人员
+              this.checkSendUser = true;
+              this.checkType = "single";
+            } else if (data.type === 'candidateUsers') {  // 候选人员(多个)
+              this.checkSendUser = true;
+              this.checkType = "multiple";
+            } else if (data.type === 'candidateGroups') { // 指定组(所属角色接收任务)
+              this.checkSendRole = true;
+            } else { // 会签
+              // 流程设计指定的 elementVariable 作为会签人员列表
+              this.multiInstanceVars = data.vars;
+              this.checkSendUser = true;
+              this.checkType = "multiple";
+            }
+          } else {
+            // 表单是否禁用
+            this.taskForm.formData.formData.disabled = true;
+            // 是否显示按钮
+            this.taskForm.formData.formData.formBtns = false;
+            this.taskForm.variables = Object.assign({}, this.taskForm.variables, this.taskForm.formData.valData);
+            this.taskForm.variables.variables = this.taskForm.formData.formData;
+            console.log(this.taskForm, "流程审批提交表单数据")
+            complete(this.taskForm).then(response => {
+              this.$modal.msgSuccess(response.msg);
+              this.goBack();
+            });
           }
         }
       })
@@ -476,32 +490,38 @@ export default {
       getNextFlowNode(params).then(res => {
         const data = res.data;
         if (data) {
-          if (data.type === 'assignee') { // 指定人员
-            this.checkSendUser = true;
-            this.checkType = "single";
-          } else if (data.type === 'candidateUsers') {  // 候选人员(多个)
-            this.checkSendUser = true;
-            this.checkType = "multiple";
-          } else if (data.type === 'candidateGroups') { // 指定组(所属角色接收任务)
-            this.checkSendRole = true;
-          } else if (data.type === 'multiInstance') { // 会签?
-            // 流程设计指定的 elementVariable 作为会签人员列表
-            this.multiInstanceVars = data.vars;
-            this.checkSendUser = true;
-            this.checkType = "multiple";
-          }
-          if (this.checkSendUser || this.checkSendRole) {
+          this.taskForm.formData = formData;
+          if (data.dataType === 'dynamic') {
+            if (data.type === 'assignee') { // 指定人员
+              this.checkSendUser = true;
+              this.checkType = "single";
+            } else if (data.type === 'candidateUsers') {  // 候选人员(多个)
+              this.checkSendUser = true;
+              this.checkType = "multiple";
+            } else if (data.type === 'candidateGroups') { // 指定组(所属角色接收任务)
+              this.checkSendRole = true;
+            } else { // 会签
+              // 流程设计指定的 elementVariable 作为会签人员列表
+              this.multiInstanceVars = data.vars;
+              this.checkSendUser = true;
+              this.checkType = "multiple";
+            }
             this.completeOpen = true;
             this.completeTitle = "流程审批";
-            this.taskForm.formData = formData;
+            } else {
+              // 表单是否禁用
+              this.taskForm.formData.formData.disabled = true;
+              // 是否显示按钮
+              this.taskForm.formData.formData.formBtns = false;
+              this.taskForm.variables = Object.assign({}, this.taskForm.variables, this.taskForm.formData.valData);
+              this.taskForm.variables.variables = this.taskForm.formData.formData;
+              console.log(this.taskForm, "流程审批提交表单数据")
+              complete(this.taskForm).then(response => {
+                this.$modal.msgSuccess(response.msg);
+                this.goBack();
+              });
           }
         } else {
-          // 最后一个任务节点
-          // console.log(this.taskForm, "流程审批提交表单数据")
-          // complete(this.taskForm).then(response => {
-          //   this.$modal.msgSuccess(response.msg);
-          //   this.goBack();
-          // });
           this.completeOpen = true;
           this.completeTitle = "流程审批";
         }
