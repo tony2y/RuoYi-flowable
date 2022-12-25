@@ -58,6 +58,8 @@ import getInitStr from './flowable/init'
 // 引入flowable的节点文件
 import FlowableModule from './flowable/flowable.json'
 import customControlsModule from './customPanel'
+import BpmnColorPickerModule from 'bpmn-js-color-picker';
+
 export default {
   name: 'WorkflowBpmnModeler',
   components: {
@@ -108,6 +110,7 @@ export default {
       container: this.$refs.canvas,
       additionalModules: [
         customControlsModule,
+        BpmnColorPickerModule,
         { //汉化
           translate: ['value', customTranslate]
         },
