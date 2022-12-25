@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysListenerMapper">
+
+    <resultMap type="SysListener" id="SysListenerResult">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="eventType" column="event_type"/>
+        <result property="valueType" column="value_type"/>
+        <result property="value" column="value"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectSysListenerVo">
+        select id,
+               name,
+               type,
+               event_type,
+               value_type,
+               value,
+               create_time,
+               update_time,
+               create_by,
+               update_by,
+               status,
+               remark
+        from sys_listener
+    </sql>
+
+    <select id="selectSysListenerList" parameterType="SysListener" resultMap="SysListenerResult">
+        <include refid="selectSysListenerVo"/>
+        <where>
+            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
+            <if test="type != null  and type != ''">and type = #{type}</if>
+            <if test="eventType != null  and eventType != ''">and event_type = #{eventType}</if>
+            <if test="valueType != null  and valueType != ''">and value_type = #{valueType}</if>
+            <if test="value != null  and value != ''">and value = #{value}</if>
+            <if test="status != null ">and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectSysListenerById" parameterType="Long" resultMap="SysListenerResult">
+        <include refid="selectSysListenerVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSysListener" parameterType="SysListener" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_listener
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="type != null">type,</if>
+            <if test="eventType != null">event_type,</if>
+            <if test="valueType != null">value_type,</if>
+            <if test="value != null">value,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="type != null">#{type},</if>
+            <if test="eventType != null">#{eventType},</if>
+            <if test="valueType != null">#{valueType},</if>
+            <if test="value != null">#{value},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSysListener" parameterType="SysListener">
+        update sys_listener
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="eventType != null">event_type = #{eventType},</if>
+            <if test="valueType != null">value_type = #{valueType},</if>
+            <if test="value != null">value = #{value},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysListenerById" parameterType="Long">
+        delete
+        from sys_listener
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteSysListenerByIds" parameterType="String">
+        delete from sys_listener where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

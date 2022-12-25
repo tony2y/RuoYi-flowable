@@ -53,7 +53,6 @@
 import customTranslate from './common/customTranslate'
 import Modeler from 'bpmn-js/lib/Modeler'
 import panel from './PropertyPanel'
-import BpmData from './BpmData'
 import getInitStr from './flowable/init'
 // 引入flowable的节点文件
 import FlowableModule from './flowable/flowable.json'
@@ -165,58 +164,6 @@ export default {
         this.fitViewport()
       } catch (err) {
         console.error(err.message, err.warnings)
-      }
-    },
-    // 调整左侧工具栏排版
-    adjustPalette() {
-      try {
-        // 获取 bpmn 设计器实例
-        const canvas = this.$refs.canvas
-        const djsPalette = canvas.children[0].children[1].children[4]
-        const djsPalStyle = {
-          width: '130px',
-          padding: '5px',
-          background: 'white',
-          left: '20px',
-          borderRadius: 0
-        }
-        for (var key in djsPalStyle) {
-          djsPalette.style[key] = djsPalStyle[key]
-        }
-        const palette = djsPalette.children[0]
-        const allGroups = palette.children
-        allGroups[0].style['display'] = 'none'
-        // 修改控件样式
-        for (var gKey in allGroups) {
-          const group = allGroups[gKey]
-          for (var cKey in group.children) {
-            const control = group.children[cKey]
-            const controlStyle = {
-              display: 'flex',
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-              width: '100%',
-              padding: '5px'
-            }
-            if (
-              control.className &&
-              control.dataset &&
-              control.className.indexOf('entry') !== -1
-            ) {
-              const controlProps = new BpmData().getControl(
-                control.dataset.action
-              )
-              control.innerHTML = `<div style='font-size: 14px;font-weight:500;margin-left:15px;'>${
-                controlProps['title']
-              }</div>`
-              for (var csKey in controlStyle) {
-                control.style[csKey] = controlStyle[csKey]
-              }
-            }
-          }
-        }
-      } catch (e) {
-        console.log(e)
       }
     },
     // 对外 api

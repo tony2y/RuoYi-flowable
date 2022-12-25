@@ -81,21 +81,25 @@ export default {
                       { label: '类', value: 'class' },
                       { label: '表达式', value: 'expression' },
                       { label: '委托表达式', value: 'delegateExpression' }
-                    ]
+                    ],
+                    tooltip: `类：示例 com.company.MyCustomListener，自定义类必须实现 org.flowable.engine.delegate.TaskListener 接口 <br />
+                              表达式：示例 \${myObject.callMethod(task, task.eventName)} <br />
+                              委托表达式：示例 \${myListenerSpringBean} ，该 springBean 需要实现 org.flowable.engine.delegate.TaskListener 接口
+                    `
                   },
                   {
-                    label: 'java 类名',
+                    label: '值',
                     name: 'className',
                     xType: 'input',
                     rules: [{ required: true, message: '请输入', trigger: ['blur', 'change'] }]
                   },
-                  {
-                    xType: 'slot',
-                    label: '参数',
-                    width: 120,
-                    slot: true,
-                    name: 'params'
-                  }
+                  // {
+                  //   xType: 'slot',
+                  //   label: '参数',
+                  //   width: 120,
+                  //   slot: true,
+                  //   name: 'params'
+                  // }
                 ]
               }
             ]

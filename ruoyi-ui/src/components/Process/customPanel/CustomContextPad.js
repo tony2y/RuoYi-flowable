@@ -362,7 +362,7 @@ ContextPadProvider.prototype.getContextPadEntries = function(element) {
           translate('Append Gateway')
         ),
         'append.append-user-task': appendAction(
-          'bpmn:Task',
+          'bpmn:UserTask',
           'bpmn-icon-user-task',
           '添加用户任务'
         ),

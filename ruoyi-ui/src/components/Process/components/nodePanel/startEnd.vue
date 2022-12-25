@@ -54,12 +54,12 @@ export default {
             name: 'executionListener',
             label: '执行监听器'
           },
-          {
-            xType: 'input',
-            name: 'initiator',
-            label: '发起人',
-            show: !!_this.showConfig.initiator
-          },
+          // {
+          //   xType: 'input',
+          //   name: 'initiator',
+          //   label: '发起人',
+          //   show: !!_this.showConfig.initiator
+          // },
           // {
           //   xType: 'input',
           //   name: 'formKey',
