@@ -64,6 +64,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @author XuanXuan
@@ -628,9 +629,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
         TaskQuery taskQuery = taskService.createTaskQuery()
                 .active()
                 .includeProcessVariables()
-                .taskAssignee(userId.toString())
-//                .taskCandidateUser(userId.toString())
-//                .taskCandidateGroup(sysUser.getRoleId().toString())
+                .taskCandidateOrAssigned(userId.toString())
                 .orderByTaskCreateTime().desc();
         page.setTotal(taskQuery.count());
         List<Task> taskList = taskQuery.listPage(pageSize * (pageNum - 1), pageSize);
