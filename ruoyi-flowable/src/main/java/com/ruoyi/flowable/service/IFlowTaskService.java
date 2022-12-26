@@ -1,6 +1,7 @@
 package com.ruoyi.flowable.service;
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.flowable.domain.vo.FlowQueryVo;
 import com.ruoyi.flowable.domain.vo.FlowTaskVo;
 import org.flowable.task.api.Task;
 
@@ -81,11 +82,10 @@ public interface IFlowTaskService {
 
     /**
      * 我发起的流程
-     * @param pageNum
-     * @param pageSize
+     * @param queryVo  请求参数
      * @return
      */
-    AjaxResult myProcess(Integer pageNum, Integer pageSize);
+    AjaxResult myProcess(FlowQueryVo queryVo);
 
     /**
      * 取消申请
@@ -105,21 +105,19 @@ public interface IFlowTaskService {
     /**
      * 代办任务列表
      *
-     * @param pageNum  当前页码
-     * @param pageSize 每页条数
+     * @param queryVo  请求参数
      * @return
      */
-    AjaxResult todoList(Integer pageNum, Integer pageSize);
+    AjaxResult todoList(FlowQueryVo queryVo);
 
 
     /**
      * 已办任务列表
      *
-     * @param pageNum  当前页码
-     * @param pageSize 每页条数
+     * @param queryVo  请求参数
      * @return
      */
-    AjaxResult finishedList(Integer pageNum, Integer pageSize);
+    AjaxResult finishedList(FlowQueryVo queryVo);
 
     /**
      * 流程历史流转记录

@@ -2,6 +2,7 @@ package com.ruoyi.flowable.controller;
 
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.flowable.domain.dto.FlowTaskDto;
+import com.ruoyi.flowable.domain.vo.FlowQueryVo;
 import com.ruoyi.flowable.domain.vo.FlowTaskVo;
 import com.ruoyi.flowable.service.IFlowTaskService;
 import io.swagger.annotations.Api;
@@ -35,9 +36,8 @@ public class FlowTaskController {
 
     @ApiOperation(value = "我发起的流程", response = FlowTaskDto.class)
     @GetMapping(value = "/myProcess")
-    public AjaxResult myProcess(@ApiParam(value = "当前页码", required = true) @RequestParam Integer pageNum,
-                                @ApiParam(value = "每页条数", required = true) @RequestParam Integer pageSize) {
-        return flowTaskService.myProcess(pageNum, pageSize);
+    public AjaxResult myProcess(FlowQueryVo queryVo) {
+        return flowTaskService.myProcess(queryVo);
     }
 
     @ApiOperation(value = "取消申请", response = FlowTaskDto.class)
@@ -54,16 +54,14 @@ public class FlowTaskController {
 
     @ApiOperation(value = "获取待办列表", response = FlowTaskDto.class)
     @GetMapping(value = "/todoList")
-    public AjaxResult todoList(@ApiParam(value = "当前页码", required = true) @RequestParam Integer pageNum,
-                               @ApiParam(value = "每页条数", required = true) @RequestParam Integer pageSize) {
-        return flowTaskService.todoList(pageNum, pageSize);
+    public AjaxResult todoList(FlowQueryVo queryVo) {
+        return flowTaskService.todoList(queryVo);
     }
 
     @ApiOperation(value = "获取已办任务", response = FlowTaskDto.class)
     @GetMapping(value = "/finishedList")
-    public AjaxResult finishedList(@ApiParam(value = "当前页码", required = true) @RequestParam Integer pageNum,
-                                   @ApiParam(value = "每页条数", required = true) @RequestParam Integer pageSize) {
-        return flowTaskService.finishedList(pageNum, pageSize);
+    public AjaxResult finishedList(FlowQueryVo queryVo) {
+        return flowTaskService.finishedList(queryVo);
     }
 
 

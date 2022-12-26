@@ -18,6 +18,7 @@ import com.ruoyi.flowable.domain.dto.FlowCommentDto;
 import com.ruoyi.flowable.domain.dto.FlowNextDto;
 import com.ruoyi.flowable.domain.dto.FlowTaskDto;
 import com.ruoyi.flowable.domain.dto.FlowViewerDto;
+import com.ruoyi.flowable.domain.vo.FlowQueryVo;
 import com.ruoyi.flowable.domain.vo.FlowTaskVo;
 import com.ruoyi.flowable.factory.FlowServiceFactory;
 import com.ruoyi.flowable.flow.CustomProcessDiagramGenerator;
@@ -459,19 +460,18 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
     /**
      * 我发起的流程
      *
-     * @param pageNum
-     * @param pageSize
+     * @param queryVo 请求参数
      * @return
      */
     @Override
-    public AjaxResult myProcess(Integer pageNum, Integer pageSize) {
+    public AjaxResult myProcess(FlowQueryVo queryVo) {
         Page<FlowTaskDto> page = new Page<>();
         Long userId = SecurityUtils.getLoginUser().getUser().getUserId();
         HistoricProcessInstanceQuery historicProcessInstanceQuery = historyService.createHistoricProcessInstanceQuery()
                 .startedBy(userId.toString())
                 .orderByProcessInstanceStartTime()
                 .desc();
-        List<HistoricProcessInstance> historicProcessInstances = historicProcessInstanceQuery.listPage(pageSize * (pageNum - 1), pageSize);
+        List<HistoricProcessInstance> historicProcessInstances = historicProcessInstanceQuery.listPage(queryVo.getPageSize() * (queryVo.getPageNum() - 1), queryVo.getPageSize());
         page.setTotal(historicProcessInstanceQuery.count());
         List<FlowTaskDto> flowList = new ArrayList<>();
         for (HistoricProcessInstance hisIns : historicProcessInstances) {
@@ -616,23 +616,27 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
     /**
      * 代办任务列表
      *
-     * @param pageNum  当前页码
-     * @param pageSize 每页条数
+     * @param queryVo 请求参数
      * @return
      */
     @Override
-    public AjaxResult todoList(Integer pageNum, Integer pageSize) {
+    public AjaxResult todoList(FlowQueryVo queryVo) {
         Page<FlowTaskDto> page = new Page<>();
         // 只查看自己的数据
         SysUser sysUser = SecurityUtils.getLoginUser().getUser();
-        Long userId = sysUser.getUserId();
         TaskQuery taskQuery = taskService.createTaskQuery()
                 .active()
                 .includeProcessVariables()
-                .taskCandidateOrAssigned(userId.toString())
+                .taskCandidateGroupIn(sysUser.getRoles().stream().map(role -> role.getRoleId().toString()).collect(Collectors.toList()))
+                .taskCandidateOrAssigned(sysUser.getUserId().toString())
                 .orderByTaskCreateTime().desc();
+
+//        TODO 传入名称查询不到数据?
+//        if (StringUtils.isNotBlank(queryVo.getName())){
+//            taskQuery.processDefinitionNameLike(queryVo.getName());
+//        }
         page.setTotal(taskQuery.count());
-        List<Task> taskList = taskQuery.listPage(pageSize * (pageNum - 1), pageSize);
+        List<Task> taskList = taskQuery.listPage(queryVo.getPageSize() * (queryVo.getPageNum() - 1), queryVo.getPageSize());
         List<FlowTaskDto> flowList = new ArrayList<>();
         for (Task task : taskList) {
             FlowTaskDto flowTask = new FlowTaskDto();
@@ -671,12 +675,11 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
     /**
      * 已办任务列表
      *
-     * @param pageNum  当前页码
-     * @param pageSize 每页条数
+     * @param queryVo 请求参数
      * @return
      */
     @Override
-    public AjaxResult finishedList(Integer pageNum, Integer pageSize) {
+    public AjaxResult finishedList(FlowQueryVo queryVo) {
         Page<FlowTaskDto> page = new Page<>();
         Long userId = SecurityUtils.getLoginUser().getUser().getUserId();
         HistoricTaskInstanceQuery taskInstanceQuery = historyService.createHistoricTaskInstanceQuery()
@@ -685,7 +688,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
                 .taskAssignee(userId.toString())
                 .orderByHistoricTaskInstanceEndTime()
                 .desc();
-        List<HistoricTaskInstance> historicTaskInstanceList = taskInstanceQuery.listPage(pageSize * (pageNum - 1), pageSize);
+        List<HistoricTaskInstance> historicTaskInstanceList = taskInstanceQuery.listPage(queryVo.getPageSize() * (queryVo.getPageNum() - 1), queryVo.getPageSize());
         List<FlowTaskDto> hisTaskList = new ArrayList<>();
         for (HistoricTaskInstance histTask : historicTaskInstanceList) {
             FlowTaskDto flowTask = new FlowTaskDto();
@@ -721,9 +724,6 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
         }
         page.setTotal(taskInstanceQuery.count());
         page.setRecords(hisTaskList);
-//        Map<String, Object> result = new HashMap<>();
-//        result.put("result",page);
-//        result.put("finished",true);
         return AjaxResult.success(page);
     }
 
@@ -1091,7 +1091,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
     @Override
     public AjaxResult flowTaskForm(String taskId) throws Exception {
         JSONObject result = new JSONObject();
-        result.put("formKeyExist",false);
+        result.put("formKeyExist", false);
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
         BpmnModel bpmnModel = repositoryService.getBpmnModel(task.getProcessDefinitionId());
         FlowElement flowElement = bpmnModel.getFlowElement(task.getTaskDefinitionKey());
@@ -1122,15 +1122,15 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
                 oldVariables.put("fields", oldFields);
                 oldVariables.put("disabled", false);
                 oldVariables.put("formBtns", true);
-                result.put("formData",oldVariables);
-                result.put("formKeyExist",true);
+                result.put("formData", oldVariables);
+                result.put("formKeyExist", true);
                 return AjaxResult.success("", result);
             } else {
-                result.put("formData",parameters.get("variables"));
+                result.put("formData", parameters.get("variables"));
                 return AjaxResult.success("", result);
             }
         } else {
-            result.put("formData",parameters.get("variables"));
+            result.put("formData", parameters.get("variables"));
             return AjaxResult.success("", result);
         }
     }
