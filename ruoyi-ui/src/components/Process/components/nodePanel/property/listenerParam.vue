@@ -2,6 +2,7 @@
   <div>
     <el-dialog
       title="监听器参数"
+      :modal="false"
       :visible.sync="dialogVisible"
       width="700px"
       :close-on-click-modal="false"

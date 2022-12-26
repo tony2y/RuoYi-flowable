@@ -2,6 +2,7 @@
   <div>
     <el-dialog
       title="多实例配置"
+      :modal="false"
       :visible.sync="dialogVisible"
       width="600px"
       :close-on-click-modal="false"
