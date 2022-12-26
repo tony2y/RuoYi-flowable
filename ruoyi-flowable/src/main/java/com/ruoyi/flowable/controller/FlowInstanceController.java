@@ -53,10 +53,12 @@ public class FlowInstanceController {
     }
 
     @ApiOperation(value = "删除流程实例")
-    @DeleteMapping(value = "/delete")
-    public AjaxResult delete(@ApiParam(value = "流程实例ID", required = true) @RequestParam String instanceId,
+    @DeleteMapping(value = "/delete/{instanceIds}")
+    public AjaxResult delete(@ApiParam(value = "流程实例ID", required = true) @PathVariable String[] instanceIds,
                              @ApiParam(value = "删除原因") @RequestParam(required = false) String deleteReason) {
-        flowInstanceService.delete(instanceId,deleteReason);
+        for (String instanceId : instanceIds) {
+            flowInstanceService.delete(instanceId,deleteReason);
+        }
         return AjaxResult.success();
     }
 }

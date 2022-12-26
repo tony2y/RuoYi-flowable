@@ -65,7 +65,7 @@ export function updateDeployment(data) {
 // 删除流程定义
 export function delDeployment(id) {
   return request({
-    url: '/flowable/instance/delete/?instanceId=' + id,
+    url: '/flowable/instance/delete/' + id,
     method: 'delete'
   })
 }
