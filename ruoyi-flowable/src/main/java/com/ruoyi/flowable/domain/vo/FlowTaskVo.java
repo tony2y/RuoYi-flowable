@@ -33,6 +33,14 @@ public class FlowTaskVo {
     private String targetKey;
 
     private String deploymentId;
+    @ApiModelProperty("流程环节定义ID")
+    private String defId;
+
+    @ApiModelProperty("子执行流ID")
+    private String currentChildExecutionId;
+
+    @ApiModelProperty("子执行流是否已执行")
+    private Boolean flag;
 
     @ApiModelProperty("流程变量信息")
     private Map<String, Object> variables;

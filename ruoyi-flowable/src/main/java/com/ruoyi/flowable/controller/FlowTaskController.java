@@ -138,11 +138,32 @@ public class FlowTaskController {
         return AjaxResult.success();
     }
 
+    @ApiOperation(value = "任务归还")
+    @PostMapping(value = "/delegate")
+    public AjaxResult resolveTask(@RequestBody FlowTaskVo flowTaskVo) {
+        flowTaskService.resolveTask(flowTaskVo);
+        return AjaxResult.success();
+    }
+
     @ApiOperation(value = "转办任务")
     @PostMapping(value = "/assign")
     public AjaxResult assign(@RequestBody FlowTaskVo flowTaskVo) {
         flowTaskService.assignTask(flowTaskVo);
         return AjaxResult.success();
+    }
+
+    @PostMapping(value = "/addMultiInstanceExecution")
+    @ApiOperation(value = "多实例加签")
+    public AjaxResult addMultiInstanceExecution(@RequestBody FlowTaskVo flowTaskVo) {
+        flowTaskService.addMultiInstanceExecution(flowTaskVo);
+        return AjaxResult.success("加签成功");
+    }
+
+    @PostMapping(value = "/deleteMultiInstanceExecution")
+    @ApiOperation(value = "多实例减签")
+    public AjaxResult deleteMultiInstanceExecution(@RequestBody FlowTaskVo flowTaskVo) {
+        flowTaskService.deleteMultiInstanceExecution(flowTaskVo);
+        return AjaxResult.success("减签成功");
     }
 
     @ApiOperation(value = "获取下一节点")
@@ -203,22 +224,24 @@ public class FlowTaskController {
 
     /**
      * 流程节点信息
-     * @param procInsId     流程实例id
+     *
+     * @param procInsId 流程实例id
      * @return
      */
     @GetMapping("/flowXmlAndNode")
-    public AjaxResult flowXmlAndNode(@RequestParam(value = "procInsId",required = false) String procInsId,
-                                   @RequestParam(value = "deployId",required = false) String deployId){
-        return flowTaskService.flowXmlAndNode(procInsId,deployId);
+    public AjaxResult flowXmlAndNode(@RequestParam(value = "procInsId", required = false) String procInsId,
+                                     @RequestParam(value = "deployId", required = false) String deployId) {
+        return flowTaskService.flowXmlAndNode(procInsId, deployId);
     }
 
     /**
      * 流程节点表单
-     * @param taskId  流程任务编号
+     *
+     * @param taskId 流程任务编号
      * @return
      */
     @GetMapping("/flowTaskForm")
-    public AjaxResult flowTaskForm(@RequestParam(value = "taskId",required = false) String taskId) throws Exception {
+    public AjaxResult flowTaskForm(@RequestParam(value = "taskId", required = false) String taskId) throws Exception {
         return flowTaskService.flowTaskForm(taskId);
     }
 

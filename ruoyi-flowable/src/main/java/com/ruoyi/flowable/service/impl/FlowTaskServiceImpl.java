@@ -55,7 +55,8 @@ import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.task.api.history.HistoricTaskInstanceQuery;
-import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
+import org.flowable.engine.impl.cmd.AddMultiInstanceExecutionCmd;
+import org.flowable.engine.impl.cmd.DeleteMultiInstanceExecutionCmd;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -416,6 +417,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
 
     /**
      * 认领/签收任务
+     * 认领以后,这个用户就会成为任务的执行人,任务会从其他成员的任务列表中消失
      *
      * @param flowTaskVo 请求实体参数
      */
@@ -438,6 +440,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
 
     /**
      * 委派任务
+     * 任务委派只是委派人将当前的任务交给被委派人进行审批，处理任务后又重新回到委派人身上。
      *
      * @param flowTaskVo 请求实体参数
      */
@@ -447,16 +450,58 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
         taskService.delegateTask(flowTaskVo.getTaskId(), flowTaskVo.getAssignee());
     }
 
+    /**
+     * 任务归还
+     * 被委派人完成任务之后，将任务归还委派人
+     *
+     * @param flowTaskVo 请求实体参数
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void resolveTask(FlowTaskVo flowTaskVo) {
+        taskService.resolveTask(flowTaskVo.getTaskId());
+    }
+
 
     /**
      * 转办任务
+     * 直接将办理人换成别人，这时任务的拥有者不再是转办人
      *
      * @param flowTaskVo 请求实体参数
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void assignTask(FlowTaskVo flowTaskVo) {
-        taskService.setAssignee(flowTaskVo.getTaskId(), flowTaskVo.getComment());
+        // 直接转派就可以覆盖掉之前的
+        taskService.setAssignee(flowTaskVo.getTaskId(), flowTaskVo.getAssignee());
+//        // 删除指派人重新指派
+//        taskService.deleteCandidateUser(flowTaskVo.getTaskId(),flowTaskVo.getAssignee());
+//        taskService.addCandidateUser(flowTaskVo.getTaskId(),flowTaskVo.getAssignee());
+//        // 如果要查询转给他人处理的任务，可以同时将OWNER进行设置：
+//        taskService.setOwner(flowTaskVo.getTaskId(), flowTaskVo.getAssignee());
+
+    }
+
+    /**
+     * 多实例加签
+     * act_ru_task、act_ru_identitylink各生成一条记录
+     *
+     * @param flowTaskVo
+     */
+    @Override
+    public void addMultiInstanceExecution(FlowTaskVo flowTaskVo) {
+        managementService.executeCommand(new AddMultiInstanceExecutionCmd(flowTaskVo.getDefId(), flowTaskVo.getInstanceId(), flowTaskVo.getVariables()));
+    }
+
+    /**
+     * 多实例减签
+     * act_ru_task减1、act_ru_identitylink不变
+     *
+     * @param flowTaskVo
+     */
+    @Override
+    public void deleteMultiInstanceExecution(FlowTaskVo flowTaskVo) {
+        managementService.executeCommand(new DeleteMultiInstanceExecutionCmd(flowTaskVo.getCurrentChildExecutionId(), flowTaskVo.getFlag()));
     }
 
     /**
@@ -518,6 +563,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
     /**
      * 取消申请
      * 目前实现方式: 直接将当前流程变更为已完成
+     *
      * @param flowTaskVo
      * @return
      */
@@ -529,8 +575,8 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
         }
         // 获取当前流程实例
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
-                        .processInstanceId(flowTaskVo.getInstanceId())
-                        .singleResult();
+                .processInstanceId(flowTaskVo.getInstanceId())
+                .singleResult();
         BpmnModel bpmnModel = repositoryService.getBpmnModel(processInstance.getProcessDefinitionId());
         if (Objects.nonNull(bpmnModel)) {
             Process process = bpmnModel.getMainProcess();
@@ -544,7 +590,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
 //                        StringUtils.isBlank(flowTaskVo.getComment()) ? "取消申请" : flowTaskVo.getComment());
                 // 获取当前流程最后一个节点
                 String endId = endNodes.get(0).getId();
-                List<Execution> executions =  runtimeService.createExecutionQuery()
+                List<Execution> executions = runtimeService.createExecutionQuery()
                         .parentId(processInstance.getProcessInstanceId()).list();
                 List<String> executionIds = new ArrayList<>();
                 executions.forEach(execution -> executionIds.add(execution.getId()));

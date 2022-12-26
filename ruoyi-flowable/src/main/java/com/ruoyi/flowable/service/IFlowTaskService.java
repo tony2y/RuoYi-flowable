@@ -72,6 +72,13 @@ public interface IFlowTaskService {
      */
     void delegateTask(FlowTaskVo flowTaskVo);
 
+    /**
+     * 任务归还
+     *
+     * @param flowTaskVo 请求实体参数
+     */
+    void resolveTask(FlowTaskVo flowTaskVo);
+
 
     /**
      * 转办任务
@@ -79,6 +86,19 @@ public interface IFlowTaskService {
      * @param flowTaskVo 请求实体参数
      */
     void assignTask(FlowTaskVo flowTaskVo);
+
+
+    /**
+     * 多实例加签
+     * @param flowTaskVo
+     */
+    void addMultiInstanceExecution(FlowTaskVo flowTaskVo);
+
+    /**
+     * 多实例减签
+     * @param flowTaskVo
+     */
+    void deleteMultiInstanceExecution(FlowTaskVo flowTaskVo);
 
     /**
      * 我发起的流程
