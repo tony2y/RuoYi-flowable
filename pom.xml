@@ -184,29 +184,15 @@
                 <artifactId>ruoyi-flowable</artifactId>
                 <version>${ruoyi.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.flowable</groupId>
-                <artifactId>flowable-spring-boot-starter-basic</artifactId>
+                <artifactId>flowable-spring-boot-starter</artifactId>
                 <version>${flowable.version}</version>
-                <exclusions><!-- 需要排除flowable的mybatis依赖，不然会跟mybatis-plus冲突 -->
-                    <exclusion>
-                        <groupId>org.mybatis</groupId>
-                        <artifactId>mybatis</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
-
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-annotations</artifactId>
                 <version>1.5.21</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.flowable</groupId>
-                <artifactId>flowable-engine</artifactId>
-                <version>${flowable.version}</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>

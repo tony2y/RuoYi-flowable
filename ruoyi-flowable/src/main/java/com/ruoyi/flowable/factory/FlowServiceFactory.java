@@ -29,9 +29,6 @@ public class FlowServiceFactory {
     protected TaskService taskService;
 
     @Resource
-    protected FormService formService;
-
-    @Resource
     protected HistoryService historyService;
 
     @Resource

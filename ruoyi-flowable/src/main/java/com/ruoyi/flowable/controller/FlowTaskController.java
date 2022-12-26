@@ -132,21 +132,21 @@ public class FlowTaskController {
     }
 
     @ApiOperation(value = "委派任务")
-    @PostMapping(value = "/delegate")
+    @PostMapping(value = "/delegateTask")
     public AjaxResult delegate(@RequestBody FlowTaskVo flowTaskVo) {
         flowTaskService.delegateTask(flowTaskVo);
         return AjaxResult.success();
     }
 
     @ApiOperation(value = "任务归还")
-    @PostMapping(value = "/delegate")
+    @PostMapping(value = "/resolveTask")
     public AjaxResult resolveTask(@RequestBody FlowTaskVo flowTaskVo) {
         flowTaskService.resolveTask(flowTaskVo);
         return AjaxResult.success();
     }
 
     @ApiOperation(value = "转办任务")
-    @PostMapping(value = "/assign")
+    @PostMapping(value = "/assignTask")
     public AjaxResult assign(@RequestBody FlowTaskVo flowTaskVo) {
         flowTaskService.assignTask(flowTaskVo);
         return AjaxResult.success();

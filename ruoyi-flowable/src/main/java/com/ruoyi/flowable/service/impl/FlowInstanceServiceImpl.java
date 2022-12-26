@@ -28,13 +28,6 @@ import java.util.Objects;
 @Slf4j
 public class FlowInstanceServiceImpl extends FlowServiceFactory implements IFlowInstanceService {
 
-
-    @Override
-    public List<Task> queryListByInstanceId(String instanceId) {
-        List<Task> list = taskService.createTaskQuery().processInstanceId(instanceId).active().list();
-        return list;
-    }
-
     /**
      * 结束流程实例
      *

@@ -14,8 +14,6 @@ import java.util.Map;
  */
 public interface IFlowInstanceService {
 
-    List<Task> queryListByInstanceId(String instanceId);
-
     /**
      * 结束流程实例
      *
