@@ -89,6 +89,7 @@ public interface IFlowTaskService {
 
     /**
      * 取消申请
+     * 目前实现方式: 直接将当前流程变更为已完成
      * @param flowTaskVo
      * @return
      */

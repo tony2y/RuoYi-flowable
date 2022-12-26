@@ -44,6 +44,7 @@ import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.history.HistoricProcessInstanceQuery;
 import org.flowable.engine.repository.ProcessDefinition;
+import org.flowable.engine.runtime.ActivityInstance;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.engine.task.Comment;
@@ -54,6 +55,7 @@ import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.task.api.history.HistoricTaskInstanceQuery;
+import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -515,7 +517,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
 
     /**
      * 取消申请
-     *
+     * 目前实现方式: 直接将当前流程变更为已完成
      * @param flowTaskVo
      * @return
      */
@@ -525,9 +527,8 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
         if (CollectionUtils.isEmpty(task)) {
             throw new CustomException("流程未启动或已执行完成，取消申请失败");
         }
-        // 获取当前需撤回的流程实例
-        ProcessInstance processInstance =
-                runtimeService.createProcessInstanceQuery()
+        // 获取当前流程实例
+        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
                         .processInstanceId(flowTaskVo.getInstanceId())
                         .singleResult();
         BpmnModel bpmnModel = repositoryService.getBpmnModel(processInstance.getProcessDefinitionId());
@@ -535,14 +536,16 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
             Process process = bpmnModel.getMainProcess();
             List<EndEvent> endNodes = process.findFlowElementsOfType(EndEvent.class, false);
             if (CollectionUtils.isNotEmpty(endNodes)) {
-                SysUser loginUser = SecurityUtils.getLoginUser().getUser();
-                Authentication.setAuthenticatedUserId(loginUser.getUserId().toString());
+                // TODO 取消流程为什么要设置流程发起人?
+//                SysUser loginUser = SecurityUtils.getLoginUser().getUser();
+//                Authentication.setAuthenticatedUserId(loginUser.getUserId().toString());
+
 //                taskService.addComment(task.getId(), processInstance.getProcessInstanceId(), FlowComment.STOP.getType(),
 //                        StringUtils.isBlank(flowTaskVo.getComment()) ? "取消申请" : flowTaskVo.getComment());
                 // 获取当前流程最后一个节点
                 String endId = endNodes.get(0).getId();
-                List<Execution> executions =
-                        runtimeService.createExecutionQuery().parentId(processInstance.getProcessInstanceId()).list();
+                List<Execution> executions =  runtimeService.createExecutionQuery()
+                        .parentId(processInstance.getProcessInstanceId()).list();
                 List<String> executionIds = new ArrayList<>();
                 executions.forEach(execution -> executionIds.add(execution.getId()));
                 // 变更流程为已结束状态
