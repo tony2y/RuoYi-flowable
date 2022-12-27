@@ -5,7 +5,7 @@
         <span class="el-icon-document">待办任务</span>
         <el-tag style="margin-left:10px">发起人:{{ startUser }}</el-tag>
         <el-tag>任务节点:{{ taskName }}</el-tag>
-        <el-button style="float: right;" size="mini" type="primary" @click="goBack">关闭</el-button>
+        <el-button style="float: right;" size="mini" type="danger" @click="goBack">关闭</el-button>
       </div>
       <el-tabs tab-position="top" v-model="activeName" @tab-click="handleClick">
         <!--表单信息-->

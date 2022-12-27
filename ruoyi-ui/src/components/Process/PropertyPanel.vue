@@ -55,11 +55,6 @@ export default {
         name: '',
         color: null
       },
-      roles: [
-        { value: 'manager', label: '经理' },
-        { value: 'personnel', label: '人事' },
-        { value: 'charge', label: '主管' }
-      ]
     }
   },
   computed: {

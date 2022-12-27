@@ -41,7 +41,7 @@ export default {
             container: this.$refs.flowCanvas,
             height: 'calc(100vh - 200px)',
           });
-          this.loadFlowCanvas(newVal)
+          this.loadFlowCanvas(newVal);
         }
       },
       immediate: true, // 立即生效

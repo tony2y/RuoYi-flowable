@@ -41,7 +41,7 @@ export default {
             container: this.$refs.flowCanvas,
             height: 'calc(100vh - 200px)',
           });
-          this.loadFlowCanvas(newVal)
+          this.loadFlowCanvas(newVal);
         }
       },
       immediate: true, // 立即生效
@@ -55,7 +55,6 @@ export default {
     async loadFlowCanvas(flowData) {
       const self = this
       try {
-        console.log(flowData,"self.flowData")
         await self.bpmnViewer.importXML(flowData.xmlData);
         self.fitViewport()
         if (flowData.nodeData !==undefined && flowData.nodeData.length > 0 ) {

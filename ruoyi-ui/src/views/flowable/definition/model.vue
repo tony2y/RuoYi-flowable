@@ -114,10 +114,6 @@ export default {
     },
     /** 指定流程办理人员列表 */
     getDataList() {
-      // todo 待根据部门选择人员
-      // const params = {
-      //
-      // }
       userList().then(res =>{
         res.data.forEach(val =>{
           val.userId = val.userId.toString();
@@ -142,26 +138,6 @@ export default {
       this.xmlOpen = true;
       this.xmlData = vkBeautify.xml(xmlData);
     },
-    // /** 获取数据类型 */
-    // dataType(data){
-    //   this.users = [];
-    //   this.groups = [];
-    //   if (data) {
-    //     if (data.dataType === 'dynamic') {
-    //       if (data.userType === 'assignee') {
-    //         this.users = [{nickName: "${INITIATOR}", userId: "${INITIATOR}"},
-    //                       {nickName: "#{approval}", userId: "#{approval}"}
-    //           ]
-    //       } else if (data.userType === 'candidateUsers') {
-    //         this.users = [ {nickName: "#{approval}", userId: "#{approval}"}]
-    //       } else {
-    //         this.groups = [{roleName: "#{approval}", roleId: "#{approval}"}]
-    //       }
-    //     } else {
-    //       this.getDataList()
-    //     }
-    //   }
-    // }
   },
 };
 </script>

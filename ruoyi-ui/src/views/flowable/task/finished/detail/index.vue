@@ -2,8 +2,8 @@
   <div class="app-container">
     <el-card class="box-card" >
       <div slot="header" class="clearfix">
-        <span class="el-icon-document">办结任务</span>
-        <el-button style="float: right;" size="mini" type="primary" @click="goBack">关闭</el-button>
+        <span class="el-icon-document">已办任务</span>
+        <el-button style="float: right;" size="mini" type="danger" @click="goBack">关闭</el-button>
       </div>
       <el-tabs  tab-position="top" v-model="activeName" @tab-click="handleClick">
         <!--表单信息-->
@@ -64,7 +64,6 @@
           <flow :flowData="flowData"/>
         </el-tab-pane>
       </el-tabs>
-      <el-button style="position: absolute;right:35px;top:35px;"  type="primary" @click="goBack">关闭</el-button>
     </el-card>
   </div>
 </template>

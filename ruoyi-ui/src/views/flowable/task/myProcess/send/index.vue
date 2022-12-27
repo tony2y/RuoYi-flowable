@@ -3,7 +3,7 @@
     <el-card class="box-card" >
       <div slot="header" class="clearfix">
         <span class="el-icon-document">发起任务</span>
-        <el-button style="float: right;" size="mini" type="primary" @click="goBack">关闭</el-button>
+        <el-button style="float: right;" size="mini" type="danger" @click="goBack">关闭</el-button>
       </div>
       <el-tabs  tab-position="top" v-model="activeName"  @tab-click="handleClick">
         <!--表单信息-->
