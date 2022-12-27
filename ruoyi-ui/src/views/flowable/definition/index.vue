@@ -224,16 +224,16 @@
       </el-row>
     </el-dialog>
 
-    <!--流程设计器-->
-    <el-dialog
-      title="流程配置"
-      :visible.sync="dialogVisible"
-      :close-on-press-escape="false"
-      :fullscreen=true
-      :before-close="handleClose"
-      append-to-body>
-      <Model :deployId="deployId"/>
-    </el-dialog>
+<!--    &lt;!&ndash;流程设计器&ndash;&gt;-->
+<!--    <el-dialog-->
+<!--      title="流程配置"-->
+<!--      :visible.sync="dialogVisible"-->
+<!--      :close-on-press-escape="false"-->
+<!--      :fullscreen=true-->
+<!--      :before-close="handleClose"-->
+<!--      append-to-body>-->
+<!--      <Model :deployId="deployId"/>-->
+<!--    </el-dialog>-->
   </div>
 </template>
 
@@ -410,9 +410,9 @@ export default {
     },
     /** 跳转到流程设计页面 */
     handleLoadXml(row){
-      this.dialogVisible = true;
-      this.deployId = row.deploymentId;
-      // this.$router.push({ path: '/flowable/definition/model',query: { deployId: row.deploymentId }})
+      // this.dialogVisible = true;
+      // this.deployId = row.deploymentId;
+      this.$router.push({ path: '/flowable/definition/model',query: { deployId: row.deploymentId }})
     },
     /** 流程图查看 */
     handleReadImage(deployId){

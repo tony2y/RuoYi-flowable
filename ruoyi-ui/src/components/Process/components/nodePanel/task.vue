@@ -71,7 +71,6 @@
     <!--选择人员-->
     <el-dialog
       title="选择人员"
-      :modal="false"
       :visible.sync="userVisible"
       width="60%"
       :close-on-press-escape="false"
@@ -86,7 +85,6 @@
     <!--选择表达式-->
     <el-dialog
       title="选择表达式"
-      :modal="false"
       :visible.sync="expVisible"
       width="60%"
       :close-on-press-escape="false"
@@ -101,7 +99,6 @@
     <!--选择角色-->
     <el-dialog
       title="选择候选角色"
-      :modal="false"
       :visible.sync="roleVisible"
       width="60%"
       :close-on-press-escape="false"

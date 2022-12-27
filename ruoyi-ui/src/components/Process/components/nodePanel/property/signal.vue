@@ -2,7 +2,6 @@
   <div>
     <el-dialog
       title="信号定义"
-      :modal="false"
       :visible.sync="dialogVisible"
       width="700px"
       :close-on-click-modal="false"

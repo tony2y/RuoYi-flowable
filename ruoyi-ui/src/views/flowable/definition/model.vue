@@ -33,12 +33,6 @@ export default {
     bpmnModeler,
     vkBeautify
   },
-  props: {
-    deployId: {
-      type: String,
-      default: ''
-    },
-  },
   // 自定义指令
   directives: {
     deep: true,
@@ -84,18 +78,12 @@ export default {
 
     };
   },
-  watch: {
-    deployId: {
-      handler(newVal) {
-        if (newVal) {
-          this.getXmlData(newVal);
-        }
-      },
-      immediate: true, // 立即生效
-      deep: true  //监听对象或数组的时候，要用到深度监听
-    },
-  },
   created () {
+    const deployId = this.$route.query && this.$route.query.deployId;
+    //  查询流程xml
+    if (deployId) {
+      this.getXmlData(deployId);
+    }
     this.getDicts("sys_process_category").then(res => {
       this.categorys = res.data;
     });
