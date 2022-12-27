@@ -53,7 +53,7 @@
             <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
           </el-form-item>
         </el-form>
-        <el-table v-if="selectType === 'multiple'" ref="dataTable" v-loading="loading" :data="userList" @selection-change="handleMultipleUserSelect">
+        <el-table v-show="checkType === 'multiple'" ref="dataTable" v-loading="loading" :data="userList" @selection-change="handleMultipleUserSelect">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
           <el-table-column label="登录账号" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
@@ -61,7 +61,7 @@
           <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
           <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
         </el-table>
-        <el-table v-else v-loading="loading" :data="userList" @current-change="handleSingleUserSelect">
+        <el-table v-show="checkType === 'single'" v-loading="loading" :data="userList" @current-change="handleSingleUserSelect">
           <el-table-column  width="55" align="center" >
             <template slot-scope="scope">
               <el-radio v-model="radioSelected" :label="scope.row.userId">&nbsp;</el-radio>
@@ -112,7 +112,6 @@ export default {
   },
   data() {
     return {
-      selectType: this.checkType,
       // 遮罩层
       loading: true,
       // 选中数组

@@ -20,10 +20,10 @@
           <el-input placeholder="请选择人员" class="input-with-select" v-model="checkValues">
               <template slot="append">
                 <!--指定用户-->
-                <el-button style="padding-left: 7px" size="mini" icon="el-icon-user" @click="singleUserCheck"/>
+                <el-button style="padding-left: 7px" icon="el-icon-user" @click="singleUserCheck"/>
                 <el-divider direction="vertical"></el-divider>
                 <!--选择表达式-->
-                <el-button style="padding-right: 7px" size="mini" icon="el-icon-postcard" @click="singleExpCheck('assignee')"/>
+                <el-button style="padding-right: 7px" icon="el-icon-postcard" @click="singleExpCheck('assignee')"/>
               </template>
           </el-input>
       </template>
@@ -31,10 +31,10 @@
           <el-input placeholder="请选择候选用户" class="input-with-select" v-model="checkValues">
             <template slot="append">
               <!--候选用户-->
-              <el-button style="padding-left: 7px" size="mini" icon="el-icon-user" @click="multipleUserCheck"/>
+              <el-button style="padding-left: 7px" icon="el-icon-user" @click="multipleUserCheck"/>
               <el-divider direction="vertical"></el-divider>
               <!--选择表达式-->
-              <el-button style="padding-right: 7px" size="mini" icon="el-icon-postcard" @click="singleExpCheck('candidateUsers')"/>
+              <el-button style="padding-right: 7px" icon="el-icon-postcard" @click="singleExpCheck('candidateUsers')"/>
             </template>
           </el-input>
       </template>
@@ -42,10 +42,10 @@
         <el-input placeholder="请选择候选角色" class="input-with-select" v-model="checkValues">
           <template slot="append">
           <!--候选角色-->
-            <el-button style="padding-left: 7px" size="mini" icon="el-icon-user" @click="multipleRoleCheck"/>
+            <el-button style="padding-left: 7px" icon="el-icon-user" @click="multipleRoleCheck"/>
             <el-divider direction="vertical"></el-divider>
               <!--选择表达式-->
-            <el-button style="padding-right: 7px" size="mini" icon="el-icon-postcard" @click="singleExpCheck('candidateGroups')"/>
+            <el-button style="padding-right: 7px" icon="el-icon-postcard" @click="singleExpCheck('candidateGroups')"/>
           </template>
         </el-input>
       </template>

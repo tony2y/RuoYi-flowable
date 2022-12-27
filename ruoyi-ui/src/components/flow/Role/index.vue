@@ -16,7 +16,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table v-if="selectType === 'multiple'" ref="dataTable"  v-loading="loading" :data="roleList" @selection-change="handleMultipleRoleSelect">
+    <el-table v-show="checkType === 'multiple'" ref="dataTable"  v-loading="loading" :data="roleList" @selection-change="handleMultipleRoleSelect">
       <el-table-column type="selection" width="50" align="center" />
       <el-table-column label="角色编号" prop="roleId" width="120" />
       <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" width="150" />
@@ -28,7 +28,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-table v-else v-loading="loading" :data="roleList" @current-change="handleSingleRoleSelect">
+    <el-table v-show="checkType === 'single'" v-loading="loading" :data="roleList" @current-change="handleSingleRoleSelect">
       <el-table-column  width="55" align="center" >
         <template slot-scope="scope">
           <!-- 可以手动的修改label的值，从而控制选择哪一项 -->
@@ -80,7 +80,6 @@ export default {
   },
   data() {
     return {
-      selectType: this.checkType,
       // 遮罩层
       loading: true,
       // 选中数组
