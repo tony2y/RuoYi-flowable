@@ -794,27 +794,28 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
             List<HistoricActivityInstance> list = historyService
                     .createHistoricActivityInstanceQuery()
                     .processInstanceId(procInsId)
-                    .orderByHistoricActivityInstanceEndTime()
+                    .orderByHistoricActivityInstanceStartTime()
                     .desc().list();
             List<FlowTaskDto> hisFlowList = new ArrayList<>();
             for (HistoricActivityInstance histIns : list) {
                 // 展示开始节点
-                if ("startEvent".equals(histIns.getActivityType())) {
-                    FlowTaskDto flowTask = new FlowTaskDto();
-                    // 流程发起人信息
-                    HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery()
-                            .processInstanceId(histIns.getProcessInstanceId())
-                            .singleResult();
-                    SysUser startUser = sysUserService.selectUserById(Long.parseLong(historicProcessInstance.getStartUserId()));
-                    flowTask.setTaskName(startUser.getNickName() + "(" + startUser.getDept().getDeptName() + ")发起申请");
-                    flowTask.setFinishTime(histIns.getEndTime());
-                    hisFlowList.add(flowTask);
-                } else if ("endEvent".equals(histIns.getActivityType())) {
-                    FlowTaskDto flowTask = new FlowTaskDto();
-                    flowTask.setTaskName(StringUtils.isNotBlank(histIns.getActivityName()) ? histIns.getActivityName() : "结束");
-                    flowTask.setFinishTime(histIns.getEndTime());
-                    hisFlowList.add(flowTask);
-                } else if (StringUtils.isNotBlank(histIns.getTaskId())) {
+//                if ("startEvent".equals(histIns.getActivityType())) {
+//                    FlowTaskDto flowTask = new FlowTaskDto();
+//                    // 流程发起人信息
+//                    HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery()
+//                            .processInstanceId(histIns.getProcessInstanceId())
+//                            .singleResult();
+//                    SysUser startUser = sysUserService.selectUserById(Long.parseLong(historicProcessInstance.getStartUserId()));
+//                    flowTask.setTaskName(startUser.getNickName() + "(" + startUser.getDept().getDeptName() + ")发起申请");
+//                    flowTask.setFinishTime(histIns.getEndTime());
+//                    hisFlowList.add(flowTask);
+//                } else if ("endEvent".equals(histIns.getActivityType())) {
+//                    FlowTaskDto flowTask = new FlowTaskDto();
+//                    flowTask.setTaskName(StringUtils.isNotBlank(histIns.getActivityName()) ? histIns.getActivityName() : "结束");
+//                    flowTask.setFinishTime(histIns.getEndTime());
+//                    hisFlowList.add(flowTask);
+//                } else
+                    if (StringUtils.isNotBlank(histIns.getTaskId())) {
                     FlowTaskDto flowTask = new FlowTaskDto();
                     flowTask.setTaskId(histIns.getTaskId());
                     flowTask.setTaskName(histIns.getActivityName());
