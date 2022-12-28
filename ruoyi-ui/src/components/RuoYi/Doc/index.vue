@@ -9,7 +9,7 @@ export default {
   name: 'RuoYiDoc',
   data() {
     return {
-      url: 'http://doc.ruoyi.vip/ruoyi-vue'
+      url: 'https://www.yuque.com/u1024153/icipor/vh4wfl'
     }
   },
   methods: {
