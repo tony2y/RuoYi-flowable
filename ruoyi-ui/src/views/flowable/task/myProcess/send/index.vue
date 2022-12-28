@@ -20,7 +20,6 @@
            <flow :flowData="flowData"/>
         </el-tab-pane>
       </el-tabs>
-      <el-button style="position: absolute;right:35px;top:35px;"  type="primary" @click="goBack">关闭</el-button>
       <!--选择流程接收人-->
       <el-dialog :title="taskTitle" :visible.sync="taskOpen" width="65%" append-to-body>
         <flow-user v-if="checkSendUser" :checkType="checkType"  @handleUserSelect="handleUserSelect"/>
