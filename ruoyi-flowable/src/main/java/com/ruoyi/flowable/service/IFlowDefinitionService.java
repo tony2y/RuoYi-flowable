@@ -28,7 +28,8 @@ public interface IFlowDefinitionService {
 
     /**
      * 导入流程文件
-     *
+     * 当每个key的流程第一次部署时，指定版本为1。对其后所有使用相同key的流程定义，
+     * 部署时版本会在该key当前已部署的最高版本号基础上加1。key参数用于区分流程定义
      * @param name
      * @param category
      * @param in

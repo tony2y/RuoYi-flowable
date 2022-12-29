@@ -183,7 +183,7 @@ public class FlowTaskController {
      *
      * @param processId 任务ID
      */
-    @RequestMapping("/diagram/{processId}")
+    @GetMapping("/diagram/{processId}")
     public void genProcessDiagram(HttpServletResponse response,
                                   @PathVariable("processId") String processId) {
         InputStream inputStream = flowTaskService.diagram(processId);
@@ -216,7 +216,7 @@ public class FlowTaskController {
      * @param procInsId 流程实例编号
      * @param procInsId 任务执行编号
      */
-    @RequestMapping("/flowViewer/{procInsId}/{executionId}")
+    @GetMapping("/flowViewer/{procInsId}/{executionId}")
     public AjaxResult getFlowViewer(@PathVariable("procInsId") String procInsId,
                                     @PathVariable("executionId") String executionId) {
         return flowTaskService.getFlowViewer(procInsId, executionId);

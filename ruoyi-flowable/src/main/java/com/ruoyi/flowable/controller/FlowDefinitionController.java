@@ -1,5 +1,6 @@
 package com.ruoyi.flowable.controller;
 
+import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.domain.entity.SysUser;
@@ -44,7 +45,7 @@ import java.util.Map;
 @Api(tags = "流程定义")
 @RestController
 @RequestMapping("/flowable/definition")
-public class FlowDefinitionController {
+public class FlowDefinitionController extends BaseController {
 
     @Autowired
     private IFlowDefinitionService flowDefinitionService;

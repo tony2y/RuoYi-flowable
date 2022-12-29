@@ -9,7 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
         SELECT
             rp.id_ as id,
-            rd.id_ as deploymentId,
+            rd.deployment_id_ as deploymentId,
             rd.name_ as name,
             rd.category_ as category,
             rp.key_ as flowKey,
@@ -17,8 +17,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             rp.suspension_state_ as suspensionState,
             rd.deploy_time_  as deploymentTime
         FROM
-            ACT_RE_PROCDEF rp
-                LEFT JOIN ACT_RE_DEPLOYMENT rd ON rp.deployment_id_ = rd.id_
+            act_re_procdef rp
+                LEFT JOIN act_re_deployment rd ON rp.deployment_id_ = rd.id_
         <where>
             <if test="name != null and name != ''">
                and rd.name_ like concat('%', #{name}, '%')
