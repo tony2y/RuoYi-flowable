@@ -9,7 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
         SELECT
             rp.id_ as id,
-            rd.deployment_id_ as deploymentId,
+            rp.deployment_id_ as deploymentId,
             rd.name_ as name,
             rd.category_ as category,
             rp.key_ as flowKey,
