@@ -55,6 +55,10 @@ QQ群： [![加入QQ群](https://img.shields.io/badge/782924350-blue.svg)](https
 
 <table>
     <tr>
+        <td><img src="https://cdn.nlark.com/yuque/0/2023/gif/1260343/1672819753906-5d341d61-3445-4c55-a791-88db2f551173.gif"/></td>
+        <td><img src="https://cdn.nlark.com/yuque/0/2023/gif/1260343/1672792479466-2d69f84a-e085-4550-9c55-d680cacb3772.gif"/></td>
+    </tr> 
+    <tr>
         <td><img src="https://foruda.gitee.com/images/1672213722156548767/41fdbc64_2042292.png"/></td>
         <td><img src="https://foruda.gitee.com/images/1672213813377147650/5b549a6b_2042292.png"/></td>
     </tr>
