@@ -62,7 +62,7 @@
     </el-row>
     <el-divider />
     <el-row :gutter="20">
-      <el-col :xs="24" :sm="24" :md="12" :lg="14">
+      <el-col :xs="24" :sm="24" :md="12" :lg="8">
         <el-card class="update-log">
           <div slot="header" class="clearfix">
             <span>流程功能列表</span>
@@ -72,6 +72,14 @@
           <p>3.节点任务/执行监听器</p>
           <p>4.动态配置任务候选人</p>
           <p>5.其它模块优化</p>
+        </el-card>
+      </el-col>
+      <el-col :xs="24" :sm="24" :md="12" :lg="16">
+        <el-card class="update-log">
+          <div slot="header" class="clearfix">
+            <span>流程演示</span>
+          </div>
+          <img style="width: 850px" src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f248dea817f74341b70f4087f425975b~tplv-k3u1fbpfcp-watermark.image?"/>
         </el-card>
       </el-col>
     </el-row>
