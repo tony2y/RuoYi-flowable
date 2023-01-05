@@ -253,7 +253,7 @@ export default {
 </script>
 <style>
 /*隐藏radio展示的label及本身自带的样式*/
-.el-radio__label{
-  display:none;
-}
+/*.el-radio__label{*/
+/*  display:none;*/
+/*}*/
 </style>
