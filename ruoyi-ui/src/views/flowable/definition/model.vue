@@ -108,8 +108,8 @@ export default {
       saveXml(params).then(res => {
         this.$modal.msgSuccess(res.msg)
         // 关闭当前标签页并返回上个页面
-        this.$store.dispatch("tagsView/delView", this.$route);
-        this.$router.go(-1)
+        const obj = { path: "/flowable/definition", query: { t: Date.now()} };
+        this.$tab.closeOpenPage(obj);
       })
     },
     /** 指定流程办理人员列表 */
