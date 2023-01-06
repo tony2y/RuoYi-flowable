@@ -18,6 +18,7 @@
 
 <script>
 import mixinPanel from '../../common/mixinPanel'
+import {StrUtil} from '@/utils/StrUtil'
 import mixinExecutionListener from '../../common/mixinExecutionListener'
 import { commonParse, conditionExpressionParse } from '../../common/parseElement'
 export default {
@@ -69,16 +70,20 @@ export default {
   },
   watch: {
     'formData.conditionExpression': function(val) {
-      if (val) {
+      if (StrUtil.isNotBlank(val)) {
         const newCondition = this.modeler.get('moddle').create('bpmn:FormalExpression', { body: val })
         this.updateProperties({ conditionExpression: newCondition })
-      } else {
-        this.updateProperties({ conditionExpression: null })
       }
+      // else {
+      //   this.updateProperties({ conditionExpression: null })
+      // }
     },
     'formData.skipExpression': function(val) {
-      if (val === '') val = null
-      this.updateProperties({ 'flowable:skipExpression': val })
+      if (StrUtil.isNotBlank(val)) {
+        this.updateProperties({'flowable:skipExpression': val})
+      } else {
+        delete this.element.businessObject.$attrs[`flowable:skipExpression`]
+      }
     }
   },
   created() {

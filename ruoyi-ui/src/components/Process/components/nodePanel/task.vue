@@ -119,6 +119,7 @@ import executionListenerDialog from './property/executionListener'
 import taskListenerDialog from './property/taskListener'
 import multiInstanceDialog from './property/multiInstance'
 import { commonParse, userTaskParse } from '../../common/parseElement'
+import {StrUtil} from '@/utils/StrUtil'
 import FlowUser from '@/components/flow/User'
 import FlowRole from '@/components/flow/Role'
 import FlowExp from '@/components/flow/Expression'
@@ -357,7 +358,7 @@ export default {
   watch: {
     'formData.userType': function(val, oldVal) {
       const types = ['assignee', 'candidateUsers', 'candidateGroups']
-      if (oldVal) {
+      if (StrUtil.isNotBlank(oldVal)) {
         types.forEach(type => {
           delete this.element.businessObject.$attrs[`flowable:${type}`]
           delete this.formData[type]
@@ -367,67 +368,69 @@ export default {
       this.updateProperties({'flowable:userType': val})
     },
     'formData.async': function(val) {
-      if (val) {
+      if (StrUtil.isNotBlank(val)) {
         this.updateProperties({'flowable:async': val})
       }
     },
     'formData.dueDate': function(val) {
-      if (val) {
+      if (StrUtil.isNotBlank(val)) {
         this.updateProperties({'flowable:dueDate': val})
       }
     },
     'formData.formKey': function(val) {
-      if (val) {
+      if (StrUtil.isNotBlank(val)) {
         this.updateProperties({'flowable:formKey': val})
       }
     },
     'formData.priority': function(val) {
-      if (val) {
+      if (StrUtil.isNotBlank(val)) {
         this.updateProperties({'flowable:priority': val})
       }
     },
     'formData.skipExpression': function(val) {
-      if (val) {
+      if (StrUtil.isNotBlank(val)) {
         this.updateProperties({'flowable:skipExpression': val})
+      } else {
+        delete this.element.businessObject.$attrs[`flowable:skipExpression`]
       }
     },
     'formData.isForCompensation': function(val) {
-      if (val) {
+      if (StrUtil.isNotBlank(val)) {
         this.updateProperties({'isForCompensation': val})
       }
     },
     'formData.triggerable': function(val) {
-      if (val) {
+      if (StrUtil.isNotBlank(val)) {
         this.updateProperties({'flowable:triggerable': val})
       }
     },
     'formData.class': function(val) {
-      if (val) {
+      if (StrUtil.isNotBlank(val)) {
         this.updateProperties({'flowable:class': val})
       }
     },
     'formData.autoStoreVariables': function(val) {
-      if (val) {
+      if (StrUtil.isNotBlank(val)) {
         this.updateProperties({'flowable:autoStoreVariables': val})
       }
     },
     'formData.exclude': function(val) {
-      if (val) {
+      if (StrUtil.isNotBlank(val)) {
         this.updateProperties({'flowable:exclude': val})
       }
     },
     'formData.ruleVariablesInput': function(val) {
-      if (val) {
+      if (StrUtil.isNotBlank(val)) {
         this.updateProperties({'flowable:ruleVariablesInput': val})
       }
     },
     'formData.rules': function(val) {
-      if (val) {
+      if (StrUtil.isNotBlank(val)) {
         this.updateProperties({'flowable:rules': val})
       }
     },
     'formData.resultVariable': function(val) {
-      if (val) {
+      if (StrUtil.isNotBlank(val)) {
         this.updateProperties({'flowable:resultVariable': val})
       }
     }
