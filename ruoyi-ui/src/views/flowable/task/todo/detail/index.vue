@@ -277,7 +277,7 @@ export default {
             this.$set(this.taskForm.variables, "approval", selectVal.join(','));
           }
         } else {
-          this.$set(this.taskForm.variables, "approval", selection);
+          this.$set(this.taskForm.variables, "approval", selection.userId.toString());
         }
       }
     },
