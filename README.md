@@ -41,11 +41,14 @@
 
 ## 联系方式
 
-技术咨询、业务定制等其它支持可添加 微信: Almost-2y / QQ: 846249920 进行沟通交流
+技术咨询、业务定制等其它支持可扫码添加微信进行沟通交流
+
+![微信](https://foruda.gitee.com/images/1673020930078669843/612210b0_2042292.jpeg)
 
 ## 工作流交流群
 
 QQ群： [![加入QQ群](https://img.shields.io/badge/782924350-blue.svg)](https://jq.qq.com/?_wv=1027&k=2zE87c2G) 点击按钮入群。
+![扫码入群](https://foruda.gitee.com/images/1673021325036093349/ce470104_2042292.jpeg)
 
 ## 请作者喝杯咖啡 ~ (*^▽^*)
 
