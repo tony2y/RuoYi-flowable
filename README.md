@@ -49,8 +49,6 @@
 
 QQ群： [![加入QQ群](https://img.shields.io/badge/782924350-blue.svg)](https://jq.qq.com/?_wv=1027&k=2zE87c2G) 点击按钮入群。
 
-![扫码入群](https://foruda.gitee.com/images/1673021325036093349/ce470104_2042292.jpeg)
-
 ## 请作者喝杯咖啡 ~ (*^▽^*)
 
 <img src="https://foruda.gitee.com/images/1672215449995765124/596b46c3_2042292.png">
