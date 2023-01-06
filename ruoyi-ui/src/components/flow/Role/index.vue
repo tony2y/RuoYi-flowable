@@ -115,7 +115,7 @@ export default {
   watch: {
     selectValues: {
       handler(newVal) {
-        if (newVal instanceof Number) {
+        if (newVal instanceof Number || newVal instanceof String) {
           this.radioSelected = newVal
         } else {
           this.selectRoleList = newVal;
