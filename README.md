@@ -43,8 +43,7 @@
 
 技术咨询、业务定制等其它支持可扫码添加微信进行沟通交流。
 
-![微信](https://foruda.gitee.com/images/1673020930078669843/612210b0_2042292.jpeg)
-
+![微信](https://foruda.gitee.com/images/1673021725627728693/f3d6216b_2042292.jpeg)
 ## 工作流交流群
 
 QQ群： [![加入QQ群](https://img.shields.io/badge/782924350-blue.svg)](https://jq.qq.com/?_wv=1027&k=2zE87c2G) 点击按钮入群。
