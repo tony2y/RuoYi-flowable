@@ -119,7 +119,9 @@ export default {
       })
       this.modeler.on('element.click', e => {
         const { element } = e
-        if (element.type === 'bpmn:Process') {
+        if (element.type === 'bpmn:Process'
+          || element.type === 'bpmn:SequenceFlow'
+          || element.type === 'bpmn:EndEvent' ) {
           this.element = element
         }
       })
