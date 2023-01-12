@@ -493,7 +493,7 @@ export default {
         const val = attrs["flowable:candidateUsers"];
         if (attrs["flowable:dataType"] === "dynamic") {
           this.checkValues = that.expList.find(item => item.expression == val).name;
-          this.selectValues = that.expList.filter(item => item.expression == val).id;
+          this.selectValues = that.expList.find(item => item.expression == val).id;
         } else {
           const newArr = that.userList.filter(i => val.split(',').includes(i.userId))
           this.checkValues =  newArr.map(item => item.nickName).join(',');
@@ -504,7 +504,7 @@ export default {
         const val = businessObject["candidateGroups"] || attrs["flowable:candidateGroups"];
         if (attrs["flowable:dataType"] === "dynamic") {
           this.checkValues = that.expList.find(item => item.expression == val).name;
-          this.selectValues = that.expList.filter(item => item.expression == val).id;
+          this.selectValues = that.expList.find(item => item.expression == val).id;
         } else {
           const newArr = that.groupList.filter(i => val.split(',').includes(i.roleId))
           this.checkValues =  newArr.map(item => item.roleName).join(',');
