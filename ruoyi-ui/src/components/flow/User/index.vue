@@ -64,7 +64,7 @@
         <el-table v-show="checkType === 'single'" v-loading="loading" :data="userList" @current-change="handleSingleUserSelect">
           <el-table-column  width="55" align="center" >
             <template slot-scope="scope">
-              <el-radio v-model="radioSelected" :label="scope.row.userId">&nbsp;</el-radio>
+              <el-radio v-model="radioSelected" :label="scope.row.userId" style="color: rgba(255,0,0,0)">&nbsp;</el-radio>
             </template>
           </el-table-column>
           <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />

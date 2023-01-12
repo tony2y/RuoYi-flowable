@@ -29,7 +29,7 @@
       <el-table-column  width="55" align="center" >
         <template slot-scope="scope">
           <!-- 可以手动的修改label的值，从而控制选择哪一项 -->
-          <el-radio v-model="radioSelected" :label="scope.row.id">&nbsp;</el-radio>
+          <el-radio v-model="radioSelected" :label="scope.row.id"style="color: rgba(255,0,0,0)">&nbsp;</el-radio>
         </template>
       </el-table-column>
       <el-table-column label="主键" align="center" prop="id" />
