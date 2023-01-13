@@ -362,6 +362,9 @@ export default {
           delete this.formData[oldVal]
           // 清除已选人员数据
           this.checkValues = '';
+          this.selectValues = null;
+          // 删除xml中已选择数据类型节点
+          delete this.element.businessObject.$attrs[`flowable:dataType`]
       }
       // 写入userType节点信息到xml
       this.updateProperties({'flowable:userType': val})
