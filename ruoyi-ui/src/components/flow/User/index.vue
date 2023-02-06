@@ -53,8 +53,8 @@
             <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
           </el-form-item>
         </el-form>
-        <el-table v-show="checkType === 'multiple'" ref="dataTable" v-loading="loading" :data="userList" @selection-change="handleMultipleUserSelect">
-          <el-table-column type="selection" width="50" align="center" />
+        <el-table v-show="checkType === 'multiple'" ref="dataTable" v-loading="loading" :row-key="getRowKey" :data="userList" @selection-change="handleMultipleUserSelect">
+          <el-table-column type="selection" :reserve-selection="true" width="50" align="center" />
           <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
           <el-table-column label="登录账号" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
           <el-table-column label="用户姓名" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
@@ -215,6 +215,10 @@ export default {
       deptTreeSelect().then(response => {
         this.deptOptions = response.data;
       });
+    },
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey (row) {
+      return row.id
     },
     // 筛选节点
     filterNode(value, data) {
