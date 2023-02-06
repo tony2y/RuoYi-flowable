@@ -815,7 +815,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
 //                    flowTask.setFinishTime(histIns.getEndTime());
 //                    hisFlowList.add(flowTask);
 //                } else
-                    if (StringUtils.isNotBlank(histIns.getTaskId())) {
+                if (StringUtils.isNotBlank(histIns.getTaskId())) {
                     FlowTaskDto flowTask = new FlowTaskDto();
                     flowTask.setTaskId(histIns.getTaskId());
                     flowTask.setTaskName(histIns.getActivityName());
@@ -825,7 +825,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
                         SysUser sysUser = sysUserService.selectUserById(Long.parseLong(histIns.getAssignee()));
                         flowTask.setAssigneeId(sysUser.getUserId());
                         flowTask.setAssigneeName(sysUser.getNickName());
-                        flowTask.setDeptName(sysUser.getDept().getDeptName());
+                        flowTask.setDeptName(Objects.nonNull(sysUser.getDept()) ? sysUser.getDept().getDeptName() : "");
                     }
                     // 展示审批人员
                     List<HistoricIdentityLink> linksForTask = historyService.getHistoricIdentityLinksForTask(histIns.getTaskId());
