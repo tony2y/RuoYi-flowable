@@ -448,8 +448,8 @@ export default {
       const params = {taskId: this.taskForm.taskId}
       getNextFlowNode(params).then(res => {
         const data = res.data;
+        this.taskForm.formData = formData;
         if (data) {
-          this.taskForm.formData = formData;
           if (data.dataType === 'dynamic') {
             if (data.type === 'assignee') { // 指定人员
               this.checkSendUser = true;
