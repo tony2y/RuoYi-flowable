@@ -283,6 +283,8 @@ export default {
         that.form = res.data;
       })
     }else {
+      // 初始化表单设计器
+      that.formConf = {};
       if (formConfInDB) {
         that.formConf = formConfInDB
       }
