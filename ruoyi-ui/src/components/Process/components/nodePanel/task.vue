@@ -382,6 +382,9 @@ export default {
     'formData.formKey': function(val) {
       if (StrUtil.isNotBlank(val)) {
         this.updateProperties({'flowable:formKey': val})
+      } else {
+        // 删除xml中已选择表单信息
+        delete this.element.businessObject[`formKey`]
       }
     },
     'formData.priority': function(val) {
