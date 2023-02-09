@@ -1018,7 +1018,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
                     MultiInstanceLoopCharacteristics multiInstance = userTask.getLoopCharacteristics();
                     // 会签节点
                     if (Objects.nonNull(multiInstance)) {
-                        flowNextDto.setVars(multiInstance.getInputDataItem());
+                        flowNextDto.setVars(multiInstance.getElementVariable());
                         flowNextDto.setType(ProcessConstants.PROCESS_MULTI_INSTANCE);
                         flowNextDto.setDataType(ProcessConstants.DYNAMIC);
                     } else {
@@ -1055,7 +1055,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
                 MultiInstanceLoopCharacteristics multiInstance = userTask.getLoopCharacteristics();
                 // 会签节点
                 if (Objects.nonNull(multiInstance)) {
-                    flowNextDto.setVars(multiInstance.getInputDataItem());
+                    flowNextDto.setVars(multiInstance.getElementVariable());
                     flowNextDto.setType(ProcessConstants.PROCESS_MULTI_INSTANCE);
                     flowNextDto.setDataType(ProcessConstants.DYNAMIC);
                 } else {
