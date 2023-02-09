@@ -1020,7 +1020,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
                     if (Objects.nonNull(multiInstance)) {
                         flowNextDto.setVars(multiInstance.getInputDataItem());
                         flowNextDto.setType(ProcessConstants.PROCESS_MULTI_INSTANCE);
-                        flowNextDto.setDataType(ProcessConstants.PROCESS_MULTI_INSTANCE);
+                        flowNextDto.setDataType(ProcessConstants.DYNAMIC);
                     } else {
                         // 读取自定义节点属性 判断是否是否需要动态指定任务接收人员、组
                         String dataType = userTask.getAttributeValue(ProcessConstants.NAMASPASE, ProcessConstants.PROCESS_CUSTOM_DATA_TYPE);
@@ -1057,7 +1057,7 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
                 if (Objects.nonNull(multiInstance)) {
                     flowNextDto.setVars(multiInstance.getInputDataItem());
                     flowNextDto.setType(ProcessConstants.PROCESS_MULTI_INSTANCE);
-                    flowNextDto.setDataType(ProcessConstants.PROCESS_MULTI_INSTANCE);
+                    flowNextDto.setDataType(ProcessConstants.DYNAMIC);
                 } else {
                     // 读取自定义节点属性 判断是否是否需要动态指定任务接收人员、组
                     String dataType = userTask.getAttributeValue(ProcessConstants.NAMASPASE, ProcessConstants.PROCESS_CUSTOM_DATA_TYPE);
