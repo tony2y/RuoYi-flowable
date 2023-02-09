@@ -235,7 +235,7 @@ export default {
         if (selection instanceof Array) {
           const selectVal = selection.map(item => item.userId);
           if (this.multiInstanceVars) {
-            this.checkValues = selection;
+            this.checkValues = selectVal;
           } else {
             this.checkValues = selectVal.join(',');
           }

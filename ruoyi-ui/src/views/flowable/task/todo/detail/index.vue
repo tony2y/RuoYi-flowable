@@ -272,7 +272,7 @@ export default {
         if (selection instanceof Array) {
           const selectVal = selection.map(item => item.userId);
           if (this.multiInstanceVars) {
-            this.$set(this.taskForm.variables, this.multiInstanceVars, selection);
+            this.$set(this.taskForm.variables, this.multiInstanceVars, selectVal);
           } else {
             this.$set(this.taskForm.variables, "approval", selectVal.join(','));
           }
