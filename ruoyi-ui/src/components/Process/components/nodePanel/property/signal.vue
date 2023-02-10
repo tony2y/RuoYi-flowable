@@ -76,34 +76,57 @@ export default {
   },
   mounted() {
     // this.formData.signal = this.element.businessObject.extensionElements?.values.map(item => {
-    //   let type
-    //   if ('class' in item.$attrs) type = 'class'
-    //   if ('expression' in item.$attrs) type = 'expression'
-    //   if ('delegateExpression' in item.$attrs) type = 'delegateExpression'
-    //   return {
-    //     event: item.$attrs.event,
-    //     type: type,
-    //     className: item.$attrs[type]
-    //   }
-    // }) ?? []
+    this.formData.signal = this.element.businessObject.extensionElements?.values
+      .filter(item => item.$type === 'bpmn:Signal')
+      .map(item => {
+        return {
+          scope: item.scope,
+          id: item.id,
+          name: item.name
+        }
+      }) ?? []
   },
   methods: {
     updateElement() {
+      // if (this.formData.signal?.length) {
+      //   let extensionElements = this.element.businessObject.get('extensionElements')
+      //   if (!extensionElements) {
+      //     console.log(this.modeler.get('moddle'),"this.modeler.get('moddle')")
+      //     extensionElements = this.modeler.get('moddle').create('bpmn:Signal')
+      //   }
+      //   extensionElements.values = extensionElements.values?.filter(item => item.$type !== 'bpmn:Signal') ?? []
+      //   console.log(extensionElements,"extensionElements")
+      //   const length = extensionElements.get('values').length
+      //   for (let i = 0; i < length; i++) {
+      //     // 清除旧值
+      //     extensionElements.get('values').pop()
+      //   }
+      //   this.updateProperties({ extensionElements: extensionElements })
+      // } else {
+      //   const extensionElements = this.element.businessObject[`extensionElements`]
+      //   if (extensionElements) {
+      //     extensionElements.values = extensionElements.values?.filter(item => item.$type !== 'flowable:ExecutionListener')
+      //   }
+      // }
       if (this.formData.signal?.length) {
         let extensionElements = this.element.businessObject.get('extensionElements')
         if (!extensionElements) {
-          extensionElements = this.modeler.get('moddle').create('bpmn:signal')
+          extensionElements = this.modeler.get('moddle').create('bpmn:ExtensionElements')
         }
-        const length = extensionElements.get('values').length
-        for (let i = 0; i < length; i++) {
-          // 清除旧值
-          extensionElements.get('values').pop()
-        }
+        // 清除旧值
+        extensionElements.values = extensionElements.values?.filter(item => item.$type !== 'bpmn:Signal') ?? []
+        this.formData.signal.forEach(item => {
+          const signal = this.modeler.get('moddle').create('bpmn:Signal')
+          signal['scope'] = item.scope
+          signal['id'] = item.id
+          signal['name'] = item.name
+          extensionElements.get('values').push(signal)
+        })
         this.updateProperties({ extensionElements: extensionElements })
       } else {
         const extensionElements = this.element.businessObject[`extensionElements`]
         if (extensionElements) {
-          extensionElements.values = extensionElements.values?.filter(item => item.$type !== 'flowable:ExecutionListener')
+          extensionElements.values = extensionElements.values?.filter(item => item.$type !== 'bpmn:Signal') ?? []
         }
       }
     },
