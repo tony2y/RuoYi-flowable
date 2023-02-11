@@ -9,7 +9,7 @@
 
 基于RuoYi-vue  + Flowable 6.x 的工作流管理平台 ~
 
-- 不定时同步RuoYi-Vue至最新版本。
+- 不定时同步[RuoYi-Vue](https://gitee.com/y_project/RuoYi-Vue)至最新版本。
 - 前端采用Vue、Element UI。
 - 后端采用Spring Boot、Spring Security、Redis & Jwt。
 - 权限认证使用Jwt，支持多终端认证系统。
@@ -17,7 +17,7 @@
 - 项目地址：[Gitee](https://gitee.com/tony2y/RuoYi-flowable.git)&nbsp;&nbsp;&nbsp;[Github](https://github.com/tony2y/RuoYi-flowable.git)
 - 阿里云折扣场：[点我进入](https://www.aliyun.com/activity/daily/bestoffer?userCode=q2b8atsa)，腾讯云秒杀场：[点我进入](https://curl.qcloud.com/W5KFkBG4)&nbsp;&nbsp;
 - 阿里云优惠券：[点我领取](https://www.aliyun.com/daily-act/ecs/activity_selection?userCode=q2b8atsa)，腾讯云优惠券：[点我领取](https://curl.qcloud.com/AacfyRxq)&nbsp;&nbsp;
-
+- 特别鸣谢：[RuoYi-Vue](https://gitee.com/y_project/RuoYi-Vue)
 ## 内置功能
 
 - 在线流程设计器
@@ -30,7 +30,8 @@
 
 ## 演示地址
 
-- 演示地址：http://www.tony2y.top
+- Vue2演示地址：http://www.tony2y.top
+- Vue3演示地址：http://vue3.tony2y.top
 - 使用文档：https://www.yuque.com/u1024153/icipor
 
 ## 其它业务系统
@@ -41,7 +42,7 @@
 
 ## 联系方式
 
-技术咨询、业务定制等其它支持可扫码添加微信进行沟通交流。
+付费版咨询、技术咨询、项目定制开发等其它支持可扫码添加微信进行沟通交流。
 
 ![微信](https://foruda.gitee.com/images/1673021725627728693/f3d6216b_2042292.jpeg)
 ## 工作流交流群
