@@ -432,6 +432,7 @@ create table sys_oper_log (
   status            int(1)          default 0                  comment '操作状态（0正常 1异常）',
   error_msg         varchar(2000)   default ''                 comment '错误消息',
   oper_time         datetime                                   comment '操作时间',
+  cost_time         bigint(20)      default 0                  comment '消耗时间',
   primary key (oper_id)
 ) engine=innodb auto_increment=100 comment = '操作日志记录';
 
@@ -544,6 +545,7 @@ insert into sys_config values(2, '用户管理-账号初始密码',         'sys
 insert into sys_config values(3, '主框架页-侧边栏主题',           'sys.index.sideTheme',           'theme-dark',    'Y', 'admin', sysdate(), '', null, '深色主题theme-dark，浅色主题theme-light' );
 insert into sys_config values(4, '账号自助-验证码开关',           'sys.account.captchaEnabled',    'true',          'Y', 'admin', sysdate(), '', null, '是否开启验证码功能（true开启，false关闭）');
 insert into sys_config values(5, '账号自助-是否开启用户注册功能', 'sys.account.registerUser',      'false',         'Y', 'admin', sysdate(), '', null, '是否开启注册用户功能（true开启，false关闭）');
+insert into sys_config values(6, '用户登录-黑名单列表',           'sys.login.blackIPList',         '',              'Y', 'admin', sysdate(), '', null, '设置登录IP黑名单限制，多个匹配项以;分隔，支持匹配（*通配、网段）');
 
 
 -- ----------------------------
