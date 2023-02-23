@@ -2473,15 +2473,9 @@ CREATE TABLE `sys_oper_log` (
   `status` int(1) DEFAULT '0' COMMENT '操作状态（0正常 1异常）',
   `error_msg` varchar(2000) DEFAULT '' COMMENT '错误消息',
   `oper_time` datetime DEFAULT NULL COMMENT '操作时间',
+   cost_time  bigint(20) DEFAULT 0  COMMENT '消耗时间',
   PRIMARY KEY (`oper_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=166 DEFAULT CHARSET=utf8mb4 COMMENT='操作日志记录';
-
--- ----------------------------
--- Records of sys_oper_log
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_oper_log` (`oper_id`, `title`, `business_type`, `method`, `request_method`, `operator_type`, `oper_name`, `dept_name`, `oper_url`, `oper_ip`, `oper_location`, `oper_param`, `json_result`, `status`, `error_msg`, `oper_time`) VALUES (165, '代码生成', 3, 'com.ruoyi.generator.controller.GenController.remove()', 'DELETE', 1, 'admin', NULL, '/tool/gen/1,2', '127.0.0.1', '内网IP', '{}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-28 16:38:06');
-COMMIT;
 
 -- ----------------------------
 -- Table structure for sys_post
