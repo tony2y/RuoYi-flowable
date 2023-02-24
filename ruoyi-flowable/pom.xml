@@ -56,6 +56,13 @@
 		<dependency>
 			<groupId>org.flowable</groupId>
 			<artifactId>flowable-spring-boot-starter</artifactId>
+			<!-- 排除flowable自带的权限认证 -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.flowable</groupId>
+					<artifactId>flowable-spring-security</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.baomidou</groupId>
