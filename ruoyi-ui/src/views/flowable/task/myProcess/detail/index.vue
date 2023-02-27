@@ -173,8 +173,8 @@ export default {
     /** 返回页面 */
     goBack() {
       // 关闭当前标签页并返回上个页面
-      this.$store.dispatch("tagsView/delView", this.$route);
-      this.$router.go(-1)
+      const obj = { path: "/task/process", query: { t: Date.now()} };
+      this.$tab.closeOpenPage(obj);
     },
   }
 };
