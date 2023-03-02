@@ -195,17 +195,17 @@ public class FlowDefinitionServiceImpl extends FlowServiceFactory implements IFl
             if (Objects.nonNull(processDefinition) && processDefinition.isSuspended()) {
                 return AjaxResult.error("流程已被挂起,请先激活流程");
             }
-//            // 加入多实例用户到流程变量中
-//            variables.put("userList", sysUserService.selectUserList(null));
             // 设置流程发起人Id到流程中
             SysUser sysUser = SecurityUtils.getLoginUser().getUser();
             identityService.setAuthenticatedUserId(sysUser.getUserId().toString());
             variables.put(ProcessConstants.PROCESS_INITIATOR, sysUser.getUserId());
             runtimeService.startProcessInstanceById(procDefId, variables);
-//            variables.put(ProcessConstants.PROCESS_INITIATOR, sysUser.getUserId());
-            //          variables.put("skip", true);
-//           variables.put(ProcessConstants.FLOWABLE_SKIP_EXPRESSION_ENABLED, true);
-//            // 给第一步申请人节点设置任务执行人和意见 todo:第一个节点不设置为申请人节点有点问题？
+            // 流程发起时 跳过发起人节点
+//            SysUser sysUser = SecurityUtils.getLoginUser().getUser();
+//            identityService.setAuthenticatedUserId(sysUser.getUserId().toString());
+//            variables.put(ProcessConstants.PROCESS_INITIATOR, "");
+//            ProcessInstance processInstance = runtimeService.startProcessInstanceById(procDefId, variables);
+//            // 给第一步申请人节点设置任务执行人和意见
 //            Task task = taskService.createTaskQuery().processInstanceId(processInstance.getProcessInstanceId()).singleResult();
 //            if (Objects.nonNull(task)) {
 //                taskService.addComment(task.getId(), processInstance.getProcessInstanceId(), FlowComment.NORMAL.getType(), sysUser.getNickName() + "发起流程申请");

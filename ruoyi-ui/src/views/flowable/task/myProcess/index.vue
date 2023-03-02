@@ -68,10 +68,10 @@
       </el-table-column>
       <el-table-column label="耗时" align="center" prop="duration" width="180"/>
       <el-table-column label="当前节点" align="center" prop="taskName"/>
-      <el-table-column label="办理" align="center">
+      <el-table-column label="办理人" align="center">
         <template slot-scope="scope">
-          <label v-if="scope.row.assigneeName">{{scope.row.assigneeName}} <el-tag type="info" size="mini">{{scope.row.deptName}}</el-tag></label>
-          <label v-if="scope.row.candidate">{{scope.row.candidate}}</label>
+          <label v-if="scope.row.assigneeName">{{scope.row.assigneeName}} <el-tag type="info" size="mini">{{scope.row.assigneeDeptName}}</el-tag></label>
+<!--          <label v-if="scope.row.candidate">{{scope.row.candidate}}</label>-->
         </template>
       </el-table-column>
       <el-table-column label="操作" width="150" fixed="right" class-name="small-padding fixed-width">
