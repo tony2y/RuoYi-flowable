@@ -549,23 +549,27 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
             if (CollectionUtils.isNotEmpty(taskList)) {
                 flowTask.setTaskId(taskList.get(0).getId());
                 flowTask.setTaskName(taskList.get(0).getName());
-                // 当前任务节点办理人信息
-                SysUser sysUser = sysUserService.selectUserById(Long.parseLong(taskList.get(0).getAssignee()));
-                if (Objects.nonNull(sysUser)) {
-                    flowTask.setAssigneeId(sysUser.getUserId());
-                    flowTask.setAssigneeName(sysUser.getNickName());
-                    flowTask.setAssigneeDeptName(Objects.nonNull(sysUser.getDept()) ? sysUser.getDept().getDeptName() : "");
+                if (StringUtils.isNotBlank(taskList.get(0).getAssignee())) {
+                    // 当前任务节点办理人信息
+                    SysUser sysUser = sysUserService.selectUserById(Long.parseLong(taskList.get(0).getAssignee()));
+                    if (Objects.nonNull(sysUser)) {
+                        flowTask.setAssigneeId(sysUser.getUserId());
+                        flowTask.setAssigneeName(sysUser.getNickName());
+                        flowTask.setAssigneeDeptName(Objects.nonNull(sysUser.getDept()) ? sysUser.getDept().getDeptName() : "");
+                    }
                 }
             } else {
                 List<HistoricTaskInstance> historicTaskInstance = historyService.createHistoricTaskInstanceQuery().processInstanceId(hisIns.getId()).orderByHistoricTaskInstanceEndTime().desc().list();
                 flowTask.setTaskId(historicTaskInstance.get(0).getId());
                 flowTask.setTaskName(historicTaskInstance.get(0).getName());
-                // 当前任务节点办理人信息
-                SysUser sysUser = sysUserService.selectUserById(Long.parseLong(historicTaskInstance.get(0).getAssignee()));
-                if (Objects.nonNull(sysUser)) {
-                    flowTask.setAssigneeId(sysUser.getUserId());
-                    flowTask.setAssigneeName(sysUser.getNickName());
-                    flowTask.setAssigneeDeptName(Objects.nonNull(sysUser.getDept()) ? sysUser.getDept().getDeptName() : "");
+                if (StringUtils.isNotBlank(historicTaskInstance.get(0).getAssignee())) {
+                    // 当前任务节点办理人信息
+                    SysUser sysUser = sysUserService.selectUserById(Long.parseLong(historicTaskInstance.get(0).getAssignee()));
+                    if (Objects.nonNull(sysUser)) {
+                        flowTask.setAssigneeId(sysUser.getUserId());
+                        flowTask.setAssigneeName(sysUser.getNickName());
+                        flowTask.setAssigneeDeptName(Objects.nonNull(sysUser.getDept()) ? sysUser.getDept().getDeptName() : "");
+                    }
                 }
             }
             flowList.add(flowTask);
