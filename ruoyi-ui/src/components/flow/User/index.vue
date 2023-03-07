@@ -90,6 +90,7 @@
 import { listUser, deptTreeSelect } from "@/api/system/user";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import {StrUtil} from "@/utils/StrUtil";
 
 export default {
   name: "FlowUser",
@@ -125,7 +126,7 @@ export default {
       // 总条数
       total: 0,
       // 用户表格数据
-      userList: null,
+      userList: [],
       // 弹出层标题
       title: "",
       // 部门树选项
@@ -160,7 +161,7 @@ export default {
         { key: 6, label: `创建时间`, visible: true }
       ],
       radioSelected: null, // 单选框传值
-      selectUserList: null // 回显数据传值
+      selectUserList: [] // 回显数据传值
     };
   },
   watch: {
@@ -170,17 +171,19 @@ export default {
     },
     selectValues: {
       handler(newVal) {
-        if (newVal instanceof Number) {
-          this.radioSelected = newVal
-        } else {
-          this.selectUserList = newVal;
+        if (StrUtil.isNotBlank(newVal)) {
+          if (newVal instanceof Number) {
+            this.radioSelected = newVal
+          } else {
+            this.selectUserList = newVal;
+          }
         }
       },
       immediate: true
     },
     userList: {
       handler(newVal) {
-        if (newVal && this.selectUserList) {
+        if (StrUtil.isNotBlank(newVal)  && this.selectUserList.length > 0) {
           this.$nextTick(() => {
             this.$refs.dataTable.clearSelection();
             this.selectUserList?.split(',').forEach(key => {

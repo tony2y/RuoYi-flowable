@@ -60,6 +60,7 @@
 <script>
 import { listRole, getRole, delRole, addRole, updateRole, dataScope, changeRoleStatus, deptTreeSelect } from "@/api/system/role";
 import { treeselect as menuTreeselect, roleMenuTreeselect } from "@/api/system/menu";
+import {StrUtil} from "@/utils/StrUtil";
 
 export default {
   name: "FlowRole",
@@ -109,23 +110,25 @@ export default {
       // 表单参数
       form: {},
       radioSelected: null, // 单选框传值
-      selectRoleList: null // 回显数据传值
+      selectRoleList: [] // 回显数据传值
     };
   },
   watch: {
     selectValues: {
       handler(newVal) {
-        if (newVal instanceof Number || newVal instanceof String) {
-          this.radioSelected = newVal
-        } else {
-          this.selectRoleList = newVal;
+        if (StrUtil.isNotBlank(newVal)) {
+          if (newVal instanceof Number || newVal instanceof String) {
+            this.radioSelected = newVal
+          } else {
+            this.selectRoleList = newVal;
+          }
         }
       },
       immediate: true
     },
     roleList: {
       handler(newVal) {
-        if (newVal && this.selectRoleList) {
+        if (StrUtil.isNotBlank(newVal) && this.selectRoleList.length > 0) {
           this.$nextTick(() => {
             this.$refs.dataTable.clearSelection();
             this.selectRoleList?.split(',').forEach(key => {

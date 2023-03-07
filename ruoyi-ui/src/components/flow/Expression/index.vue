@@ -25,7 +25,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="expressionList" @current-change="handleSingleExpSelect">
+    <el-table v-loading="loading" :data="expressionList" row-key="id" @current-change="handleSingleExpSelect">
       <el-table-column  width="55" align="center" >
         <template slot-scope="scope">
           <!-- 可以手动的修改label的值，从而控制选择哪一项 -->
@@ -51,6 +51,7 @@
 
 <script>
 import { listExpression } from "@/api/system/expression";
+import {StrUtil} from "@/utils/StrUtil";
 
 export default {
   name: "Expression",
@@ -98,7 +99,9 @@ export default {
   watch: {
     selectValues: {
       handler(newVal) {
-        this.radioSelected = newVal
+        if (StrUtil.isNotBlank(newVal)) {
+          this.radioSelected = newVal
+        }
       },
       immediate: true,
     }
