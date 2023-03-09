@@ -4,10 +4,9 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.domain.entity.SysUser;
-import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.system.domain.FlowProcDefDto;
 import com.ruoyi.flowable.domain.dto.FlowSaveXmlVo;
 import com.ruoyi.flowable.service.IFlowDefinitionService;
+import com.ruoyi.system.domain.FlowProcDefDto;
 import com.ruoyi.system.domain.SysExpression;
 import com.ruoyi.system.service.ISysExpressionService;
 import com.ruoyi.system.service.ISysRoleService;
@@ -17,7 +16,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -141,7 +139,7 @@ public class FlowDefinitionController extends BaseController {
             flowDefinitionService.importFile(vo.getName(), vo.getCategory(), in);
         } catch (Exception e) {
             log.error("导入失败:", e);
-            return AjaxResult.success(e.getMessage());
+            return AjaxResult.error(e.getMessage());
         } finally {
             try {
                 if (in != null) {
