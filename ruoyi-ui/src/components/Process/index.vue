@@ -29,6 +29,7 @@
             </el-tooltip>
           </div>
           <div>
+            <el-button size="mini" icon="el-icon-s-check" @click="verifyXML">校验xml</el-button>
             <el-button size="mini" icon="el-icon-view" @click="showXML">查看xml</el-button>
             <el-button size="mini" icon="el-icon-download" @click="saveXML(true)">下载xml</el-button>
             <el-button size="mini" icon="el-icon-picture" @click="saveImg('svg', true)">下载svg</el-button>
@@ -51,7 +52,9 @@
 <script>
 // 汉化
 import customTranslate from './common/customTranslate'
+import lintModule from 'bpmn-js-bpmnlint';
 import Modeler from 'bpmn-js/lib/Modeler'
+import bpmnlintConfig from './.bpmnlintrc';
 import panel from './PropertyPanel'
 import getInitStr from './flowable/init'
 // 引入flowable的节点文件
@@ -107,11 +110,15 @@ export default {
     this.modeler = new Modeler({
       container: this.$refs.canvas,
       additionalModules: [
+        lintModule,
         customControlsModule,
         { //汉化
           translate: ['value', customTranslate]
         },
       ],
+      linting: {
+        bpmnlint: bpmnlintConfig
+      },
       moddleExtensions: {
         flowable: FlowableModule
       }
@@ -179,6 +186,11 @@ export default {
         if (rootElements[i].$type === 'bpmn:Process') return rootElements[i]
       }
     },
+    async verifyXML(){
+      const linting = this.modeler.get('linting')
+      console.log(linting)
+      linting.toggle(true);
+    },
     async saveXML(download = false) {
       try {
         const { xml } = await this.modeler.saveXML({ format: true })
@@ -243,6 +255,7 @@ export default {
 @import "~bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
 @import "~bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css";
 @import "~bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css";
+@import "~bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css";
 .view-mode {
   .el-header, .el-aside, .djs-palette, .bjs-powered-by {
     display: none;
@@ -289,7 +302,7 @@ export default {
   }
 
   .djs-container svg {
-    min-height: 650px;
+    //min-height: 650px;
   }
 
    .highlight.djs-shape .djs-visual > :nth-child(1) {

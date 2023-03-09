@@ -89,6 +89,12 @@ module.exports = {
         symbolId: 'icon-[name]'
       })
       .end()
+    config.module
+      .rule('bpmnlintrc')
+      .test(/\.bpmnlintrc$/)
+      .use('bpmnlint-loader')
+      .loader('bpmnlint-loader')
+      .end()
 
     config
       .when(process.env.NODE_ENV !== 'development',
