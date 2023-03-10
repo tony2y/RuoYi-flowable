@@ -1,0 +1,26 @@
+{
+  "name": "bpmnlint-plugin-local",
+  "version": "0.0.0",
+  "description": "The bpmnlint local plug-in",
+  "main": "index.js",
+  "scripts": {
+    "all": "npm test",
+    "test": "mocha test.js"
+  },
+  "keywords": [
+    "bpmnlint",
+    "plugin"
+  ],
+  "devDependencies": {
+    "bpmnlint": "^7.2.1",
+    "chai": "^4.2.0",
+    "mocha": "^9.1.3"
+  },
+  "dependencies": {
+    "bpmnlint-utils": "^1.0.2"
+  },
+  "files": [
+    "rules",
+    "index.js"
+  ]
+}
