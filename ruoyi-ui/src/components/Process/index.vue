@@ -188,8 +188,7 @@ export default {
     },
     async verifyXML(){
       const linting = this.modeler.get('linting')
-      console.log(linting)
-      linting.toggle(true);
+      linting.toggle();
     },
     async saveXML(download = false) {
       try {
