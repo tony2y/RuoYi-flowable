@@ -1,3 +1,9 @@
 {
-  "extends": "bpmnlint:recommended"
+  "extends": [
+    "bpmnlint:recommended",
+    "plugin:local/recommended"
+  ],
+  "rules": {
+    "local/no-manual-task": "warn"
+  }
 }
