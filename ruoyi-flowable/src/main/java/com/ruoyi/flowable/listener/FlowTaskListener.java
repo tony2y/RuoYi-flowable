@@ -1,6 +1,5 @@
 package com.ruoyi.flowable.listener;
 
-import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.delegate.TaskListener;
 import org.flowable.task.service.delegate.DelegateTask;
@@ -24,7 +23,7 @@ public class FlowTaskListener implements TaskListener{
     @Override
     public void notify(DelegateTask delegateTask) {
 
-        log.info("任务监听器:{}", JSON.toJSONString(delegateTask));
+        log.info("任务监听器:{}", delegateTask);
         // TODO  获取事件类型 delegateTask.getEventName(),可以通过监听器给任务执行人发送相应的通知消息
 
 

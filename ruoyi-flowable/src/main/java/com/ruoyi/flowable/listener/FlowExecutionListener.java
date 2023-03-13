@@ -1,6 +1,5 @@
 package com.ruoyi.flowable.listener;
 
-import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.common.engine.api.delegate.Expression;
 import org.flowable.engine.delegate.DelegateExecution;
@@ -32,6 +31,6 @@ public class FlowExecutionListener implements ExecutionListener {
 
     @Override
     public void notify(DelegateExecution execution) {
-        log.info("执行监听器:{}", JSON.toJSONString(execution));
+        log.info("执行监听器:{}", execution);
     }
 }
