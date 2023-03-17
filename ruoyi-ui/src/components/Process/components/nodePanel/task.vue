@@ -347,6 +347,7 @@ export default {
           {
             xType: 'datePicker',
             type: 'datetime',
+            valueFormat: 'yyyy-MM-ddTHH:mm:ss',
             name: 'dueDate',
             label: '到期时间',
             show: !!_this.showConfig.dueDate
