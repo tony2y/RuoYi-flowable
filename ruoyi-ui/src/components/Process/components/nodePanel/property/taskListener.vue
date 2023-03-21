@@ -19,6 +19,11 @@
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" size="medium" @click="closeDialog">确 定</el-button>
       </span>
+      <listener-list
+        :visible="listenerDialogVisible"
+        @close="() => this.listenerDialogVisible = false"
+        @submit="addListener"
+      />
     </el-dialog>
     <listenerParam v-if="showParamDialog" :value="formData.taskListener[nowIndex].params" @close="finishConfigParam" />
   </div>
@@ -27,12 +32,14 @@
 <script>
 import mixinPanel from '../../../common/mixinPanel'
 import listenerParam from './listenerParam'
+import ListenerList from '@/components/Process/components/nodePanel/property/listenerList'
 export default {
-  components: { listenerParam },
+  components: { listenerParam, ListenerList },
   mixins: [mixinPanel],
   data() {
     return {
       dialogVisible: true,
+      listenerDialogVisible: false,
       showParamDialog: false,
       nowIndex: null,
       formData: {
@@ -109,6 +116,7 @@ export default {
     }
   },
   mounted() {
+    this.$nextTick(() => this.addButton())
     this.formData.taskListener = this.element.businessObject.extensionElements?.values
       .filter(item => item.$type === 'flowable:TaskListener')
       .map(item => {
@@ -134,6 +142,16 @@ export default {
       }) ?? []
   },
   methods: {
+    addButton() {
+      const button = document.createElement('button')
+      button.innerText = '内置监听器'
+      button.setAttribute('type', 'button')
+      button.setAttribute('class', 'el-button el-button--primary el-button--mini')
+      button.addEventListener('click', () => this.listenerDialogVisible = true)
+      const div = document.getElementById('pane-taskListener')
+      const table = div.getElementsByClassName('el-table')[0]
+      div.insertBefore(button, table)
+    },
     configParam(index) {
       this.nowIndex = index
       const nowObj = this.formData.taskListener[index]
@@ -188,6 +206,9 @@ export default {
         this.updateElement()
         this.dialogVisible = false
       }).catch(e => console.error(e))
+    },
+    addListener(data) {
+      this.formData.taskListener = this.formData.taskListener.concat(data)
     }
   }
 }
