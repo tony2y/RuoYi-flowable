@@ -14,12 +14,37 @@ keys.forEach(key => {
   componentChild[tag] = value
 })
 
-function vModel(dataObject, defaultValue) {
-  dataObject.props.value = defaultValue
+function vModel(dataObject, defaultValue, config) {
+  // 获取上传表单元素组件上传的文件
+  if (config.tag === "el-upload") {
+    // 上传表单元素组件的成功和移除事件
+    dataObject.attrs["on-success"] = (response, file, fileList) => {
+      this.$emit("upload", response, file, fileList);
+    };
 
-  dataObject.on.input = val => {
-    this.$emit('input', val)
+    dataObject.attrs["on-remove"] = (file, fileList) => {
+      this.$emit("deleteUpload", file, fileList);
+    };
+
+    dataObject.attrs["on-preview"] = (file, fileList) => {
+      this.$emit("previewUpload", file, fileList);
+    };
+
+    // 获取上传表单元素的默认值
+    try {
+      dataObject.props["file-list"] = JSON.parse(defaultValue);
+    } catch (err) {
+      console.warn(err);
+    }
+
+    return;
   }
+
+  // 获取普通表单元素的值
+  dataObject.props.value = defaultValue;
+  dataObject.on.input = (val) => {
+    this.$emit("input", val);
+  };
 }
 
 function mountSlotFiles(h, confClone, children) {
@@ -50,7 +75,7 @@ function buildDataObject(confClone, dataObject) {
   Object.keys(confClone).forEach(key => {
     const val = confClone[key]
     if (key === '__vModel__') {
-      vModel.call(this, dataObject, confClone.__config__.defaultValue)
+      vModel.call(this, dataObject, confClone.__config__.defaultValue, confClone.__config__)
     } else if (dataObject[key] !== undefined) {
       if (dataObject[key] === null
         || dataObject[key] instanceof RegExp

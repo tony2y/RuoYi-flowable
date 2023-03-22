@@ -154,12 +154,23 @@ export default {
       })
     },
     fillFormData(form, data) {
-      form.fields.forEach(item => {
-        const val = data[item.__vModel__]
-        if (val) {
-          item.__config__.defaultValue = val
+      form.fields.forEach((item) => {
+        const vModel = item.__vModel__;
+        const val = data[item.__vModel__];
+
+        // 特殊处理el-upload，回显图片
+        if (item.__config__.tag === "el-upload") {
+          // 回显图片
+          item["file-list"] = (val || []).map((url) => ({
+            name: `${vModel}${i}`,
+            url,
+          }));
         }
-      })
+
+        if (val) {
+          item.__config__.defaultValue = val;
+        }
+      });
     },
     /** 获取流程变量内容 */
     processVariables(taskId) {
