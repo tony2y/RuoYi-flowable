@@ -104,18 +104,75 @@ function setValue(event, config, scheme) {
 }
 
 function buildListeners(scheme) {
-  const config = scheme.__config__
-  const methods = this.formConf.__methods__ || {}
-  const listeners = {}
+  const config = scheme.__config__;
+  const methods = this.formConf.__methods__ || {};
+  const listeners = {};
 
   // 给__methods__中的方法绑定this和event
-  Object.keys(methods).forEach(key => {
-    listeners[key] = event => methods[key].call(this, event)
-  })
-  // 响应 render.js 中的 vModel $emit('input', val)
-  listeners.input = event => setValue.call(this, event, config, scheme)
+  Object.keys(methods).forEach((key) => {
+    listeners[key] = (event) => methods[key].call(this, event);
+  });
 
-  return listeners
+  // 响应 render.js 中的 vModel $emit('input', val)
+  listeners.input = (event) => setValue.call(this, event, config, scheme);
+
+  // 上传表单元素组件的成功、移除和预览事件
+  if (config.tag === "el-upload") {
+    listeners.upload = (response, file, fileList) =>
+      setUpload.call(this, config, scheme, response, file, fileList);
+
+    listeners.deleteUpload = (file, fileList) =>
+      deleteUpload.call(this, config, scheme, file, fileList);
+
+    listeners.previewUpload = (file, fileList) =>
+      window.open(file.url, "_blank");
+  }
+
+  return listeners;
+}
+
+//获取上传表单元素组件 上传的文件
+function setUpload(config, scheme, response, file, fileList) {
+  //response: 上传接口返回的数据
+  let fileObj = {
+    name: response.fileName,
+    url: response.url,
+    fileType: response.contentType,
+  };
+  let oldValue = "";
+  try {
+    oldValue = JSON.parse(this[this.formConf.formModel][scheme.__vModel__]);
+  } catch (err) {
+    console.warn(err);
+  }
+
+  if (oldValue) {
+    oldValue.push(fileObj);
+  } else {
+    oldValue = [fileObj];
+  }
+
+  this.$set(config, "defaultValue", JSON.stringify(oldValue));
+  this.$set(
+    this[this.formConf.formModel],
+    scheme.__vModel__,
+    JSON.stringify(oldValue)
+  );
+}
+
+//获取上传表单元素组件 删除文件后的文件列表
+function deleteUpload(config, scheme, file, fileList) {
+  let oldValue = JSON.parse(this[this.formConf.formModel][scheme.__vModel__]);
+
+  //file 删除的文件
+  //过滤掉删除的文件
+  let newValue = oldValue.filter((item) => item.name !== file.name);
+  this.$set(config, "defaultValue", JSON.stringify(newValue));
+  this.$set(
+    this[this.formConf.formModel],
+    scheme.__vModel__,
+    JSON.stringify(newValue)
+  );
 }
 
 export default {
