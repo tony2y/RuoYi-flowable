@@ -66,8 +66,7 @@
     "vue-router": "3.4.9",
     "vuedraggable": "2.24.3",
     "vuex": "3.6.0",
-    "xcrud": "^0.4.19",
-    "bpmnlint-plugin-local": "file:bpmnlint-plugin-local"
+    "xcrud": "^0.4.19"
   },
   "devDependencies": {
     "@babel/parser": "^7.20.5",

@@ -116,9 +116,10 @@ export default {
           translate: ['value', customTranslate]
         },
       ],
-      linting: {
-        bpmnlint: bpmnlintConfig
-      },
+      // 去除流程校验器,有需求可自行添加,需要在package.json 加入 "bpmnlint-plugin-local": "file:bpmnlint-plugin-local"
+      // linting: {
+      //   bpmnlint: bpmnlintConfig
+      // },
       moddleExtensions: {
         flowable: FlowableModule
       }
