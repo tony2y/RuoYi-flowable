@@ -1,5 +1,3 @@
-import de from "element-ui/src/locale/lang/de";
-
 const DRAWING_ITEMS = 'drawingItems'
 const DRAWING_ITEMS_VERSION = '1.2'
 const DRAWING_ITEMS_VERSION_KEY = 'DRAWING_ITEMS_VERSION'
@@ -22,7 +20,11 @@ export function getDrawingList() {
 }
 
 export function saveDrawingList(list) {
-  localStorage.setItem(DRAWING_ITEMS, JSON.stringify(list))
+  if (JSON.stringify(list)){
+    localStorage.setItem(DRAWING_ITEMS, JSON.stringify(list))
+  }else {
+    localStorage.setItem(DRAWING_ITEMS, '[]')
+  }
 }
 
 export function getIdGlobal() {

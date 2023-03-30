@@ -29,7 +29,7 @@
             </el-tooltip>
           </div>
           <div>
-            <el-button size="mini" icon="el-icon-s-check" @click="verifyXML">校验xml</el-button>
+<!--            <el-button size="mini" icon="el-icon-s-check" @click="verifyXML">校验xml</el-button>-->
             <el-button size="mini" icon="el-icon-view" @click="showXML">查看xml</el-button>
             <el-button size="mini" icon="el-icon-download" @click="saveXML(true)">下载xml</el-button>
             <el-button size="mini" icon="el-icon-picture" @click="saveImg('svg', true)">下载svg</el-button>
@@ -255,7 +255,7 @@ export default {
 @import "~bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
 @import "~bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css";
 @import "~bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css";
-@import "~bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css";
+//@import "~bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css";
 .view-mode {
   .el-header, .el-aside, .djs-palette, .bjs-powered-by {
     display: none;

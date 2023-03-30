@@ -284,7 +284,7 @@ export default {
       })
     }else {
       // 初始化表单设计器
-      that.formConf = {};
+      // that.formConf = {};
       if (formConfInDB) {
         that.formConf = formConfInDB
       }
