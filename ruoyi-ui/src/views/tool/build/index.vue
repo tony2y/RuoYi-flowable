@@ -505,9 +505,9 @@ export default {
     /** 表单基本信息 */
     handleForm(){
       this.formData = {
-        fields: deepClone(this.drawingList),
         ...this.formConf
       }
+      this.formData.fields = deepClone(this.drawingList);
       this.form.formContent = JSON.stringify(this.formData);
       this.formOpen = true;
       this.formTitle = "添加表单";
