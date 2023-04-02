@@ -54,7 +54,7 @@
 import customTranslate from './common/customTranslate'
 import lintModule from 'bpmn-js-bpmnlint';
 import Modeler from 'bpmn-js/lib/Modeler'
-import bpmnlintConfig from './.bpmnlintrc';
+// import bpmnlintConfig from './.bpmnlintrc';
 import panel from './PropertyPanel'
 import getInitStr from './flowable/init'
 // 引入flowable的节点文件
