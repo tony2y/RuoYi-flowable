@@ -77,7 +77,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button 
+          <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
@@ -134,14 +134,13 @@
                 trigger="click"
                 @show="$refs['iconSelect'].reset()"
               >
-                <IconSelect ref="iconSelect" @selected="selected" />
+                <IconSelect ref="iconSelect" @selected="selected" :active-icon="form.icon" />
                 <el-input slot="reference" v-model="form.icon" placeholder="点击选择图标" readonly>
                   <svg-icon
                     v-if="form.icon"
                     slot="prefix"
                     :icon-class="form.icon"
-                    class="el-input__icon"
-                    style="height: 32px;width: 16px;"
+                    style="width: 25px;"
                   />
                   <i v-else slot="prefix" class="el-icon-search el-input__icon" />
                 </el-input>
