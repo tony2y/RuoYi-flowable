@@ -46,8 +46,8 @@
 
 ![微信](https://foruda.gitee.com/images/1673021725627728693/f3d6216b_2042292.jpeg)
 ## 工作流交流群
-
-QQ群： [![加入QQ群](https://img.shields.io/badge/已满-782924350-blue.svg)](https://jq.qq.com/?_wv=1027&k=2zE87c2G) [![加入QQ群](https://img.shields.io/badge/658810320-blue.svg)]() star项目后复制群号申请入群。
+### QQ群号：782924350(1)-已满、658810320(2)
+star项目后复制群号申请入群。
 
 ## 请作者喝杯咖啡 ~ (*^▽^*)
 
