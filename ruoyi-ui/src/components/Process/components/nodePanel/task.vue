@@ -358,6 +358,10 @@ export default {
   },
   watch: {
     'formData.userType': function(val, oldVal) {
+      //判断切换用户类型时，不是候选角色类型的 删除该属性
+      if(val !== 'candidateGroups'){
+         delete this.element.businessObject.candidateGroups;
+      }
       if (StrUtil.isNotBlank(oldVal)) {
           delete this.element.businessObject.$attrs[`flowable:${oldVal}`]
           delete this.formData[oldVal]
