@@ -18,23 +18,747 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
+-- Table structure for ACT_APP_APPDEF
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_APP_APPDEF`;
+CREATE TABLE `ACT_APP_APPDEF` (
+                                  `ID_` varchar(255) NOT NULL,
+                                  `REV_` int(11) NOT NULL,
+                                  `NAME_` varchar(255) DEFAULT NULL,
+                                  `KEY_` varchar(255) NOT NULL,
+                                  `VERSION_` int(11) NOT NULL,
+                                  `CATEGORY_` varchar(255) DEFAULT NULL,
+                                  `DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
+                                  `RESOURCE_NAME_` varchar(4000) DEFAULT NULL,
+                                  `DESCRIPTION_` varchar(4000) DEFAULT NULL,
+                                  `TENANT_ID_` varchar(255) DEFAULT '',
+                                  PRIMARY KEY (`ID_`),
+                                  UNIQUE KEY `ACT_IDX_APP_DEF_UNIQ` (`KEY_`,`VERSION_`,`TENANT_ID_`),
+                                  KEY `ACT_IDX_APP_DEF_DPLY` (`DEPLOYMENT_ID_`),
+                                  CONSTRAINT `ACT_FK_APP_DEF_DPLY` FOREIGN KEY (`DEPLOYMENT_ID_`) REFERENCES `ACT_APP_DEPLOYMENT` (`ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_APP_APPDEF
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_APP_DATABASECHANGELOG
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_APP_DATABASECHANGELOG`;
+CREATE TABLE `ACT_APP_DATABASECHANGELOG` (
+                                             `ID` varchar(255) NOT NULL,
+                                             `AUTHOR` varchar(255) NOT NULL,
+                                             `FILENAME` varchar(255) NOT NULL,
+                                             `DATEEXECUTED` datetime NOT NULL,
+                                             `ORDEREXECUTED` int(11) NOT NULL,
+                                             `EXECTYPE` varchar(10) NOT NULL,
+                                             `MD5SUM` varchar(35) DEFAULT NULL,
+                                             `DESCRIPTION` varchar(255) DEFAULT NULL,
+                                             `COMMENTS` varchar(255) DEFAULT NULL,
+                                             `TAG` varchar(255) DEFAULT NULL,
+                                             `LIQUIBASE` varchar(20) DEFAULT NULL,
+                                             `CONTEXTS` varchar(255) DEFAULT NULL,
+                                             `LABELS` varchar(255) DEFAULT NULL,
+                                             `DEPLOYMENT_ID` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_APP_DATABASECHANGELOG
+-- ----------------------------
+BEGIN;
+INSERT INTO `ACT_APP_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('1', 'flowable', 'org/flowable/app/db/liquibase/flowable-app-db-changelog.xml', '2023-09-14 11:05:29', 1, 'EXECUTED', '8:496fc778bdf2ab13f2e1926d0e63e0a2', 'createTable tableName=ACT_APP_DEPLOYMENT; createTable tableName=ACT_APP_DEPLOYMENT_RESOURCE; addForeignKeyConstraint baseTableName=ACT_APP_DEPLOYMENT_RESOURCE, constraintName=ACT_FK_APP_RSRC_DPL, referencedTableName=ACT_APP_DEPLOYMENT; createIndex...', '', NULL, '4.3.5', NULL, NULL, '4660729443');
+INSERT INTO `ACT_APP_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('2', 'flowable', 'org/flowable/app/db/liquibase/flowable-app-db-changelog.xml', '2023-09-14 11:05:29', 2, 'EXECUTED', '8:ccea9ebfb6c1f8367ca4dd473fcbb7db', 'modifyDataType columnName=DEPLOY_TIME_, tableName=ACT_APP_DEPLOYMENT', '', NULL, '4.3.5', NULL, NULL, '4660729443');
+INSERT INTO `ACT_APP_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('3', 'flowable', 'org/flowable/app/db/liquibase/flowable-app-db-changelog.xml', '2023-09-14 11:05:29', 3, 'EXECUTED', '8:f1f8aff320aade831944ebad24355f3d', 'createIndex indexName=ACT_IDX_APP_DEF_UNIQ, tableName=ACT_APP_APPDEF', '', NULL, '4.3.5', NULL, NULL, '4660729443');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_APP_DATABASECHANGELOGLOCK
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_APP_DATABASECHANGELOGLOCK`;
+CREATE TABLE `ACT_APP_DATABASECHANGELOGLOCK` (
+                                                 `ID` int(11) NOT NULL,
+                                                 `LOCKED` bit(1) NOT NULL,
+                                                 `LOCKGRANTED` datetime DEFAULT NULL,
+                                                 `LOCKEDBY` varchar(255) DEFAULT NULL,
+                                                 PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_APP_DATABASECHANGELOGLOCK
+-- ----------------------------
+BEGIN;
+INSERT INTO `ACT_APP_DATABASECHANGELOGLOCK` (`ID`, `LOCKED`, `LOCKGRANTED`, `LOCKEDBY`) VALUES (1, b'0', NULL, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_APP_DEPLOYMENT
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_APP_DEPLOYMENT`;
+CREATE TABLE `ACT_APP_DEPLOYMENT` (
+                                      `ID_` varchar(255) NOT NULL,
+                                      `NAME_` varchar(255) DEFAULT NULL,
+                                      `CATEGORY_` varchar(255) DEFAULT NULL,
+                                      `KEY_` varchar(255) DEFAULT NULL,
+                                      `DEPLOY_TIME_` datetime(3) DEFAULT NULL,
+                                      `TENANT_ID_` varchar(255) DEFAULT '',
+                                      PRIMARY KEY (`ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_APP_DEPLOYMENT
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_APP_DEPLOYMENT_RESOURCE
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_APP_DEPLOYMENT_RESOURCE`;
+CREATE TABLE `ACT_APP_DEPLOYMENT_RESOURCE` (
+                                               `ID_` varchar(255) NOT NULL,
+                                               `NAME_` varchar(255) DEFAULT NULL,
+                                               `DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
+                                               `RESOURCE_BYTES_` longblob,
+                                               PRIMARY KEY (`ID_`),
+                                               KEY `ACT_IDX_APP_RSRC_DPL` (`DEPLOYMENT_ID_`),
+                                               CONSTRAINT `ACT_FK_APP_RSRC_DPL` FOREIGN KEY (`DEPLOYMENT_ID_`) REFERENCES `ACT_APP_DEPLOYMENT` (`ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_APP_DEPLOYMENT_RESOURCE
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_CMMN_CASEDEF
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_CMMN_CASEDEF`;
+CREATE TABLE `ACT_CMMN_CASEDEF` (
+                                    `ID_` varchar(255) NOT NULL,
+                                    `REV_` int(11) NOT NULL,
+                                    `NAME_` varchar(255) DEFAULT NULL,
+                                    `KEY_` varchar(255) NOT NULL,
+                                    `VERSION_` int(11) NOT NULL,
+                                    `CATEGORY_` varchar(255) DEFAULT NULL,
+                                    `DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
+                                    `RESOURCE_NAME_` varchar(4000) DEFAULT NULL,
+                                    `DESCRIPTION_` varchar(4000) DEFAULT NULL,
+                                    `HAS_GRAPHICAL_NOTATION_` bit(1) DEFAULT NULL,
+                                    `TENANT_ID_` varchar(255) DEFAULT '',
+                                    `DGRM_RESOURCE_NAME_` varchar(4000) DEFAULT NULL,
+                                    `HAS_START_FORM_KEY_` bit(1) DEFAULT NULL,
+                                    PRIMARY KEY (`ID_`),
+                                    UNIQUE KEY `ACT_IDX_CASE_DEF_UNIQ` (`KEY_`,`VERSION_`,`TENANT_ID_`),
+                                    KEY `ACT_IDX_CASE_DEF_DPLY` (`DEPLOYMENT_ID_`),
+                                    CONSTRAINT `ACT_FK_CASE_DEF_DPLY` FOREIGN KEY (`DEPLOYMENT_ID_`) REFERENCES `ACT_CMMN_DEPLOYMENT` (`ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_CMMN_CASEDEF
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_CMMN_DATABASECHANGELOG
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_CMMN_DATABASECHANGELOG`;
+CREATE TABLE `ACT_CMMN_DATABASECHANGELOG` (
+                                              `ID` varchar(255) NOT NULL,
+                                              `AUTHOR` varchar(255) NOT NULL,
+                                              `FILENAME` varchar(255) NOT NULL,
+                                              `DATEEXECUTED` datetime NOT NULL,
+                                              `ORDEREXECUTED` int(11) NOT NULL,
+                                              `EXECTYPE` varchar(10) NOT NULL,
+                                              `MD5SUM` varchar(35) DEFAULT NULL,
+                                              `DESCRIPTION` varchar(255) DEFAULT NULL,
+                                              `COMMENTS` varchar(255) DEFAULT NULL,
+                                              `TAG` varchar(255) DEFAULT NULL,
+                                              `LIQUIBASE` varchar(20) DEFAULT NULL,
+                                              `CONTEXTS` varchar(255) DEFAULT NULL,
+                                              `LABELS` varchar(255) DEFAULT NULL,
+                                              `DEPLOYMENT_ID` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_CMMN_DATABASECHANGELOG
+-- ----------------------------
+BEGIN;
+INSERT INTO `ACT_CMMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('1', 'flowable', 'org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml', '2023-09-14 11:05:27', 1, 'EXECUTED', '8:8b4b922d90b05ff27483abefc9597aa6', 'createTable tableName=ACT_CMMN_DEPLOYMENT; createTable tableName=ACT_CMMN_DEPLOYMENT_RESOURCE; addForeignKeyConstraint baseTableName=ACT_CMMN_DEPLOYMENT_RESOURCE, constraintName=ACT_FK_CMMN_RSRC_DPL, referencedTableName=ACT_CMMN_DEPLOYMENT; create...', '', NULL, '4.3.5', NULL, NULL, '4660727511');
+INSERT INTO `ACT_CMMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('2', 'flowable', 'org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml', '2023-09-14 11:05:28', 2, 'EXECUTED', '8:65e39b3d385706bb261cbeffe7533cbe', 'addColumn tableName=ACT_CMMN_CASEDEF; addColumn tableName=ACT_CMMN_DEPLOYMENT_RESOURCE; addColumn tableName=ACT_CMMN_RU_CASE_INST; addColumn tableName=ACT_CMMN_RU_PLAN_ITEM_INST', '', NULL, '4.3.5', NULL, NULL, '4660727511');
+INSERT INTO `ACT_CMMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('3', 'flowable', 'org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml', '2023-09-14 11:05:28', 3, 'EXECUTED', '8:c01f6e802b49436b4489040da3012359', 'addColumn tableName=ACT_CMMN_RU_PLAN_ITEM_INST; addColumn tableName=ACT_CMMN_RU_CASE_INST; createIndex indexName=ACT_IDX_PLAN_ITEM_STAGE_INST, tableName=ACT_CMMN_RU_PLAN_ITEM_INST; addColumn tableName=ACT_CMMN_RU_PLAN_ITEM_INST; addColumn tableNam...', '', NULL, '4.3.5', NULL, NULL, '4660727511');
+INSERT INTO `ACT_CMMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('4', 'flowable', 'org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml', '2023-09-14 11:05:28', 4, 'EXECUTED', '8:e40d29cb79345b7fb5afd38a7f0ba8fc', 'createTable tableName=ACT_CMMN_HI_PLAN_ITEM_INST; addColumn tableName=ACT_CMMN_RU_MIL_INST; addColumn tableName=ACT_CMMN_HI_MIL_INST', '', NULL, '4.3.5', NULL, NULL, '4660727511');
+INSERT INTO `ACT_CMMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('5', 'flowable', 'org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml', '2023-09-14 11:05:28', 5, 'EXECUTED', '8:70349de472f87368dcdec971a10311a0', 'modifyDataType columnName=DEPLOY_TIME_, tableName=ACT_CMMN_DEPLOYMENT; modifyDataType columnName=START_TIME_, tableName=ACT_CMMN_RU_CASE_INST; modifyDataType columnName=START_TIME_, tableName=ACT_CMMN_RU_PLAN_ITEM_INST; modifyDataType columnName=T...', '', NULL, '4.3.5', NULL, NULL, '4660727511');
+INSERT INTO `ACT_CMMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('6', 'flowable', 'org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml', '2023-09-14 11:05:28', 6, 'EXECUTED', '8:10e82e26a7fee94c32a92099c059c18c', 'createIndex indexName=ACT_IDX_CASE_DEF_UNIQ, tableName=ACT_CMMN_CASEDEF', '', NULL, '4.3.5', NULL, NULL, '4660727511');
+INSERT INTO `ACT_CMMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('7', 'flowable', 'org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml', '2023-09-14 11:05:28', 7, 'EXECUTED', '8:530bc81a1e30618ccf4a2da1f7c6c043', 'renameColumn newColumnName=CREATE_TIME_, oldColumnName=START_TIME_, tableName=ACT_CMMN_RU_PLAN_ITEM_INST; renameColumn newColumnName=CREATE_TIME_, oldColumnName=CREATED_TIME_, tableName=ACT_CMMN_HI_PLAN_ITEM_INST; addColumn tableName=ACT_CMMN_RU_P...', '', NULL, '4.3.5', NULL, NULL, '4660727511');
+INSERT INTO `ACT_CMMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('8', 'flowable', 'org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml', '2023-09-14 11:05:28', 8, 'EXECUTED', '8:e8c2eb1ce28bc301efe07e0e29757781', 'addColumn tableName=ACT_CMMN_HI_PLAN_ITEM_INST', '', NULL, '4.3.5', NULL, NULL, '4660727511');
+INSERT INTO `ACT_CMMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('9', 'flowable', 'org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml', '2023-09-14 11:05:28', 9, 'EXECUTED', '8:4cb4782b9bdec5ced2a64c525aa7b3a0', 'addColumn tableName=ACT_CMMN_RU_PLAN_ITEM_INST; addColumn tableName=ACT_CMMN_HI_PLAN_ITEM_INST', '', NULL, '4.3.5', NULL, NULL, '4660727511');
+INSERT INTO `ACT_CMMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('10', 'flowable', 'org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml', '2023-09-14 11:05:28', 10, 'EXECUTED', '8:341c16be247f5d17badc9809da8691f9', 'addColumn tableName=ACT_CMMN_RU_CASE_INST; addColumn tableName=ACT_CMMN_RU_CASE_INST; createIndex indexName=ACT_IDX_CASE_INST_REF_ID_, tableName=ACT_CMMN_RU_CASE_INST; addColumn tableName=ACT_CMMN_HI_CASE_INST; addColumn tableName=ACT_CMMN_HI_CASE...', '', NULL, '4.3.5', NULL, NULL, '4660727511');
+INSERT INTO `ACT_CMMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('11', 'flowable', 'org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml', '2023-09-14 11:05:28', 11, 'EXECUTED', '8:d7c4da9276bcfffbfb0ebfb25e3f7b05', 'addColumn tableName=ACT_CMMN_RU_PLAN_ITEM_INST; addColumn tableName=ACT_CMMN_HI_PLAN_ITEM_INST', '', NULL, '4.3.5', NULL, NULL, '4660727511');
+INSERT INTO `ACT_CMMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('12', 'flowable', 'org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml', '2023-09-14 11:05:28', 12, 'EXECUTED', '8:adf4ecc45f2aa9a44a5626b02e1d6f98', 'addColumn tableName=ACT_CMMN_RU_CASE_INST', '', NULL, '4.3.5', NULL, NULL, '4660727511');
+INSERT INTO `ACT_CMMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('13', 'flowable', 'org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml', '2023-09-14 11:05:28', 13, 'EXECUTED', '8:7550626f964ab5518464709408333ec1', 'addColumn tableName=ACT_CMMN_RU_PLAN_ITEM_INST; addColumn tableName=ACT_CMMN_HI_PLAN_ITEM_INST', '', NULL, '4.3.5', NULL, NULL, '4660727511');
+INSERT INTO `ACT_CMMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('14', 'flowable', 'org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml', '2023-09-14 11:05:28', 14, 'EXECUTED', '8:086b40b3a05596dcc8a8d7479922d494', 'addColumn tableName=ACT_CMMN_RU_CASE_INST; addColumn tableName=ACT_CMMN_HI_CASE_INST', '', NULL, '4.3.5', NULL, NULL, '4660727511');
+INSERT INTO `ACT_CMMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('16', 'flowable', 'org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml', '2023-09-14 11:05:28', 15, 'EXECUTED', '8:a697a222ddd99dd15b36516a252f1c63', 'addColumn tableName=ACT_CMMN_RU_CASE_INST; addColumn tableName=ACT_CMMN_HI_CASE_INST', '', NULL, '4.3.5', NULL, NULL, '4660727511');
+INSERT INTO `ACT_CMMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('17', 'flowable', 'org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml', '2023-09-14 11:05:28', 16, 'EXECUTED', '8:d3706c5813a9b97fd2a59d12a9523946', 'createIndex indexName=ACT_IDX_HI_CASE_INST_END, tableName=ACT_CMMN_HI_CASE_INST', '', NULL, '4.3.5', NULL, NULL, '4660727511');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_CMMN_DATABASECHANGELOGLOCK
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_CMMN_DATABASECHANGELOGLOCK`;
+CREATE TABLE `ACT_CMMN_DATABASECHANGELOGLOCK` (
+                                                  `ID` int(11) NOT NULL,
+                                                  `LOCKED` bit(1) NOT NULL,
+                                                  `LOCKGRANTED` datetime DEFAULT NULL,
+                                                  `LOCKEDBY` varchar(255) DEFAULT NULL,
+                                                  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_CMMN_DATABASECHANGELOGLOCK
+-- ----------------------------
+BEGIN;
+INSERT INTO `ACT_CMMN_DATABASECHANGELOGLOCK` (`ID`, `LOCKED`, `LOCKGRANTED`, `LOCKEDBY`) VALUES (1, b'0', NULL, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_CMMN_DEPLOYMENT
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_CMMN_DEPLOYMENT`;
+CREATE TABLE `ACT_CMMN_DEPLOYMENT` (
+                                       `ID_` varchar(255) NOT NULL,
+                                       `NAME_` varchar(255) DEFAULT NULL,
+                                       `CATEGORY_` varchar(255) DEFAULT NULL,
+                                       `KEY_` varchar(255) DEFAULT NULL,
+                                       `DEPLOY_TIME_` datetime(3) DEFAULT NULL,
+                                       `PARENT_DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
+                                       `TENANT_ID_` varchar(255) DEFAULT '',
+                                       PRIMARY KEY (`ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_CMMN_DEPLOYMENT
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_CMMN_DEPLOYMENT_RESOURCE
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_CMMN_DEPLOYMENT_RESOURCE`;
+CREATE TABLE `ACT_CMMN_DEPLOYMENT_RESOURCE` (
+                                                `ID_` varchar(255) NOT NULL,
+                                                `NAME_` varchar(255) DEFAULT NULL,
+                                                `DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
+                                                `RESOURCE_BYTES_` longblob,
+                                                `GENERATED_` bit(1) DEFAULT NULL,
+                                                PRIMARY KEY (`ID_`),
+                                                KEY `ACT_IDX_CMMN_RSRC_DPL` (`DEPLOYMENT_ID_`),
+                                                CONSTRAINT `ACT_FK_CMMN_RSRC_DPL` FOREIGN KEY (`DEPLOYMENT_ID_`) REFERENCES `ACT_CMMN_DEPLOYMENT` (`ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_CMMN_DEPLOYMENT_RESOURCE
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_CMMN_HI_CASE_INST
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_CMMN_HI_CASE_INST`;
+CREATE TABLE `ACT_CMMN_HI_CASE_INST` (
+                                         `ID_` varchar(255) NOT NULL,
+                                         `REV_` int(11) NOT NULL,
+                                         `BUSINESS_KEY_` varchar(255) DEFAULT NULL,
+                                         `NAME_` varchar(255) DEFAULT NULL,
+                                         `PARENT_ID_` varchar(255) DEFAULT NULL,
+                                         `CASE_DEF_ID_` varchar(255) DEFAULT NULL,
+                                         `STATE_` varchar(255) DEFAULT NULL,
+                                         `START_TIME_` datetime(3) DEFAULT NULL,
+                                         `END_TIME_` datetime(3) DEFAULT NULL,
+                                         `START_USER_ID_` varchar(255) DEFAULT NULL,
+                                         `CALLBACK_ID_` varchar(255) DEFAULT NULL,
+                                         `CALLBACK_TYPE_` varchar(255) DEFAULT NULL,
+                                         `TENANT_ID_` varchar(255) DEFAULT '',
+                                         `REFERENCE_ID_` varchar(255) DEFAULT NULL,
+                                         `REFERENCE_TYPE_` varchar(255) DEFAULT NULL,
+                                         `LAST_REACTIVATION_TIME_` datetime(3) DEFAULT NULL,
+                                         `LAST_REACTIVATION_USER_ID_` varchar(255) DEFAULT NULL,
+                                         `BUSINESS_STATUS_` varchar(255) DEFAULT NULL,
+                                         PRIMARY KEY (`ID_`),
+                                         KEY `ACT_IDX_HI_CASE_INST_END` (`END_TIME_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_CMMN_HI_CASE_INST
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_CMMN_HI_MIL_INST
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_CMMN_HI_MIL_INST`;
+CREATE TABLE `ACT_CMMN_HI_MIL_INST` (
+                                        `ID_` varchar(255) NOT NULL,
+                                        `REV_` int(11) NOT NULL,
+                                        `NAME_` varchar(255) NOT NULL,
+                                        `TIME_STAMP_` datetime(3) DEFAULT NULL,
+                                        `CASE_INST_ID_` varchar(255) NOT NULL,
+                                        `CASE_DEF_ID_` varchar(255) NOT NULL,
+                                        `ELEMENT_ID_` varchar(255) NOT NULL,
+                                        `TENANT_ID_` varchar(255) DEFAULT '',
+                                        PRIMARY KEY (`ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_CMMN_HI_MIL_INST
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_CMMN_HI_PLAN_ITEM_INST
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_CMMN_HI_PLAN_ITEM_INST`;
+CREATE TABLE `ACT_CMMN_HI_PLAN_ITEM_INST` (
+                                              `ID_` varchar(255) NOT NULL,
+                                              `REV_` int(11) NOT NULL,
+                                              `NAME_` varchar(255) DEFAULT NULL,
+                                              `STATE_` varchar(255) DEFAULT NULL,
+                                              `CASE_DEF_ID_` varchar(255) DEFAULT NULL,
+                                              `CASE_INST_ID_` varchar(255) DEFAULT NULL,
+                                              `STAGE_INST_ID_` varchar(255) DEFAULT NULL,
+                                              `IS_STAGE_` bit(1) DEFAULT NULL,
+                                              `ELEMENT_ID_` varchar(255) DEFAULT NULL,
+                                              `ITEM_DEFINITION_ID_` varchar(255) DEFAULT NULL,
+                                              `ITEM_DEFINITION_TYPE_` varchar(255) DEFAULT NULL,
+                                              `CREATE_TIME_` datetime(3) DEFAULT NULL,
+                                              `LAST_AVAILABLE_TIME_` datetime(3) DEFAULT NULL,
+                                              `LAST_ENABLED_TIME_` datetime(3) DEFAULT NULL,
+                                              `LAST_DISABLED_TIME_` datetime(3) DEFAULT NULL,
+                                              `LAST_STARTED_TIME_` datetime(3) DEFAULT NULL,
+                                              `LAST_SUSPENDED_TIME_` datetime(3) DEFAULT NULL,
+                                              `COMPLETED_TIME_` datetime(3) DEFAULT NULL,
+                                              `OCCURRED_TIME_` datetime(3) DEFAULT NULL,
+                                              `TERMINATED_TIME_` datetime(3) DEFAULT NULL,
+                                              `EXIT_TIME_` datetime(3) DEFAULT NULL,
+                                              `ENDED_TIME_` datetime(3) DEFAULT NULL,
+                                              `LAST_UPDATED_TIME_` datetime(3) DEFAULT NULL,
+                                              `START_USER_ID_` varchar(255) DEFAULT NULL,
+                                              `REFERENCE_ID_` varchar(255) DEFAULT NULL,
+                                              `REFERENCE_TYPE_` varchar(255) DEFAULT NULL,
+                                              `TENANT_ID_` varchar(255) DEFAULT '',
+                                              `ENTRY_CRITERION_ID_` varchar(255) DEFAULT NULL,
+                                              `EXIT_CRITERION_ID_` varchar(255) DEFAULT NULL,
+                                              `SHOW_IN_OVERVIEW_` bit(1) DEFAULT NULL,
+                                              `EXTRA_VALUE_` varchar(255) DEFAULT NULL,
+                                              `DERIVED_CASE_DEF_ID_` varchar(255) DEFAULT NULL,
+                                              `LAST_UNAVAILABLE_TIME_` datetime(3) DEFAULT NULL,
+                                              PRIMARY KEY (`ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_CMMN_HI_PLAN_ITEM_INST
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_CMMN_RU_CASE_INST
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_CMMN_RU_CASE_INST`;
+CREATE TABLE `ACT_CMMN_RU_CASE_INST` (
+                                         `ID_` varchar(255) NOT NULL,
+                                         `REV_` int(11) NOT NULL,
+                                         `BUSINESS_KEY_` varchar(255) DEFAULT NULL,
+                                         `NAME_` varchar(255) DEFAULT NULL,
+                                         `PARENT_ID_` varchar(255) DEFAULT NULL,
+                                         `CASE_DEF_ID_` varchar(255) DEFAULT NULL,
+                                         `STATE_` varchar(255) DEFAULT NULL,
+                                         `START_TIME_` datetime(3) DEFAULT NULL,
+                                         `START_USER_ID_` varchar(255) DEFAULT NULL,
+                                         `CALLBACK_ID_` varchar(255) DEFAULT NULL,
+                                         `CALLBACK_TYPE_` varchar(255) DEFAULT NULL,
+                                         `TENANT_ID_` varchar(255) DEFAULT '',
+                                         `LOCK_TIME_` datetime(3) DEFAULT NULL,
+                                         `IS_COMPLETEABLE_` bit(1) DEFAULT NULL,
+                                         `REFERENCE_ID_` varchar(255) DEFAULT NULL,
+                                         `REFERENCE_TYPE_` varchar(255) DEFAULT NULL,
+                                         `LOCK_OWNER_` varchar(255) DEFAULT NULL,
+                                         `LAST_REACTIVATION_TIME_` datetime(3) DEFAULT NULL,
+                                         `LAST_REACTIVATION_USER_ID_` varchar(255) DEFAULT NULL,
+                                         `BUSINESS_STATUS_` varchar(255) DEFAULT NULL,
+                                         PRIMARY KEY (`ID_`),
+                                         KEY `ACT_IDX_CASE_INST_CASE_DEF` (`CASE_DEF_ID_`),
+                                         KEY `ACT_IDX_CASE_INST_PARENT` (`PARENT_ID_`),
+                                         KEY `ACT_IDX_CASE_INST_REF_ID_` (`REFERENCE_ID_`),
+                                         CONSTRAINT `ACT_FK_CASE_INST_CASE_DEF` FOREIGN KEY (`CASE_DEF_ID_`) REFERENCES `ACT_CMMN_CASEDEF` (`ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_CMMN_RU_CASE_INST
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_CMMN_RU_MIL_INST
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_CMMN_RU_MIL_INST`;
+CREATE TABLE `ACT_CMMN_RU_MIL_INST` (
+                                        `ID_` varchar(255) NOT NULL,
+                                        `NAME_` varchar(255) NOT NULL,
+                                        `TIME_STAMP_` datetime(3) DEFAULT NULL,
+                                        `CASE_INST_ID_` varchar(255) NOT NULL,
+                                        `CASE_DEF_ID_` varchar(255) NOT NULL,
+                                        `ELEMENT_ID_` varchar(255) NOT NULL,
+                                        `TENANT_ID_` varchar(255) DEFAULT '',
+                                        PRIMARY KEY (`ID_`),
+                                        KEY `ACT_IDX_MIL_CASE_DEF` (`CASE_DEF_ID_`),
+                                        KEY `ACT_IDX_MIL_CASE_INST` (`CASE_INST_ID_`),
+                                        CONSTRAINT `ACT_FK_MIL_CASE_DEF` FOREIGN KEY (`CASE_DEF_ID_`) REFERENCES `ACT_CMMN_CASEDEF` (`ID_`),
+                                        CONSTRAINT `ACT_FK_MIL_CASE_INST` FOREIGN KEY (`CASE_INST_ID_`) REFERENCES `ACT_CMMN_RU_CASE_INST` (`ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_CMMN_RU_MIL_INST
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_CMMN_RU_PLAN_ITEM_INST
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_CMMN_RU_PLAN_ITEM_INST`;
+CREATE TABLE `ACT_CMMN_RU_PLAN_ITEM_INST` (
+                                              `ID_` varchar(255) NOT NULL,
+                                              `REV_` int(11) NOT NULL,
+                                              `CASE_DEF_ID_` varchar(255) DEFAULT NULL,
+                                              `CASE_INST_ID_` varchar(255) DEFAULT NULL,
+                                              `STAGE_INST_ID_` varchar(255) DEFAULT NULL,
+                                              `IS_STAGE_` bit(1) DEFAULT NULL,
+                                              `ELEMENT_ID_` varchar(255) DEFAULT NULL,
+                                              `NAME_` varchar(255) DEFAULT NULL,
+                                              `STATE_` varchar(255) DEFAULT NULL,
+                                              `CREATE_TIME_` datetime(3) DEFAULT NULL,
+                                              `START_USER_ID_` varchar(255) DEFAULT NULL,
+                                              `REFERENCE_ID_` varchar(255) DEFAULT NULL,
+                                              `REFERENCE_TYPE_` varchar(255) DEFAULT NULL,
+                                              `TENANT_ID_` varchar(255) DEFAULT '',
+                                              `ITEM_DEFINITION_ID_` varchar(255) DEFAULT NULL,
+                                              `ITEM_DEFINITION_TYPE_` varchar(255) DEFAULT NULL,
+                                              `IS_COMPLETEABLE_` bit(1) DEFAULT NULL,
+                                              `IS_COUNT_ENABLED_` bit(1) DEFAULT NULL,
+                                              `VAR_COUNT_` int(11) DEFAULT NULL,
+                                              `SENTRY_PART_INST_COUNT_` int(11) DEFAULT NULL,
+                                              `LAST_AVAILABLE_TIME_` datetime(3) DEFAULT NULL,
+                                              `LAST_ENABLED_TIME_` datetime(3) DEFAULT NULL,
+                                              `LAST_DISABLED_TIME_` datetime(3) DEFAULT NULL,
+                                              `LAST_STARTED_TIME_` datetime(3) DEFAULT NULL,
+                                              `LAST_SUSPENDED_TIME_` datetime(3) DEFAULT NULL,
+                                              `COMPLETED_TIME_` datetime(3) DEFAULT NULL,
+                                              `OCCURRED_TIME_` datetime(3) DEFAULT NULL,
+                                              `TERMINATED_TIME_` datetime(3) DEFAULT NULL,
+                                              `EXIT_TIME_` datetime(3) DEFAULT NULL,
+                                              `ENDED_TIME_` datetime(3) DEFAULT NULL,
+                                              `ENTRY_CRITERION_ID_` varchar(255) DEFAULT NULL,
+                                              `EXIT_CRITERION_ID_` varchar(255) DEFAULT NULL,
+                                              `EXTRA_VALUE_` varchar(255) DEFAULT NULL,
+                                              `DERIVED_CASE_DEF_ID_` varchar(255) DEFAULT NULL,
+                                              `LAST_UNAVAILABLE_TIME_` datetime(3) DEFAULT NULL,
+                                              PRIMARY KEY (`ID_`),
+                                              KEY `ACT_IDX_PLAN_ITEM_CASE_DEF` (`CASE_DEF_ID_`),
+                                              KEY `ACT_IDX_PLAN_ITEM_CASE_INST` (`CASE_INST_ID_`),
+                                              KEY `ACT_IDX_PLAN_ITEM_STAGE_INST` (`STAGE_INST_ID_`),
+                                              CONSTRAINT `ACT_FK_PLAN_ITEM_CASE_DEF` FOREIGN KEY (`CASE_DEF_ID_`) REFERENCES `ACT_CMMN_CASEDEF` (`ID_`),
+                                              CONSTRAINT `ACT_FK_PLAN_ITEM_CASE_INST` FOREIGN KEY (`CASE_INST_ID_`) REFERENCES `ACT_CMMN_RU_CASE_INST` (`ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_CMMN_RU_PLAN_ITEM_INST
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_CMMN_RU_SENTRY_PART_INST
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_CMMN_RU_SENTRY_PART_INST`;
+CREATE TABLE `ACT_CMMN_RU_SENTRY_PART_INST` (
+                                                `ID_` varchar(255) NOT NULL,
+                                                `REV_` int(11) NOT NULL,
+                                                `CASE_DEF_ID_` varchar(255) DEFAULT NULL,
+                                                `CASE_INST_ID_` varchar(255) DEFAULT NULL,
+                                                `PLAN_ITEM_INST_ID_` varchar(255) DEFAULT NULL,
+                                                `ON_PART_ID_` varchar(255) DEFAULT NULL,
+                                                `IF_PART_ID_` varchar(255) DEFAULT NULL,
+                                                `TIME_STAMP_` datetime(3) DEFAULT NULL,
+                                                PRIMARY KEY (`ID_`),
+                                                KEY `ACT_IDX_SENTRY_CASE_DEF` (`CASE_DEF_ID_`),
+                                                KEY `ACT_IDX_SENTRY_CASE_INST` (`CASE_INST_ID_`),
+                                                KEY `ACT_IDX_SENTRY_PLAN_ITEM` (`PLAN_ITEM_INST_ID_`),
+                                                CONSTRAINT `ACT_FK_SENTRY_CASE_DEF` FOREIGN KEY (`CASE_DEF_ID_`) REFERENCES `ACT_CMMN_CASEDEF` (`ID_`),
+                                                CONSTRAINT `ACT_FK_SENTRY_CASE_INST` FOREIGN KEY (`CASE_INST_ID_`) REFERENCES `ACT_CMMN_RU_CASE_INST` (`ID_`),
+                                                CONSTRAINT `ACT_FK_SENTRY_PLAN_ITEM` FOREIGN KEY (`PLAN_ITEM_INST_ID_`) REFERENCES `ACT_CMMN_RU_PLAN_ITEM_INST` (`ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_CMMN_RU_SENTRY_PART_INST
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_CO_CONTENT_ITEM
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_CO_CONTENT_ITEM`;
+CREATE TABLE `ACT_CO_CONTENT_ITEM` (
+                                       `ID_` varchar(255) NOT NULL,
+                                       `NAME_` varchar(255) NOT NULL,
+                                       `MIME_TYPE_` varchar(255) DEFAULT NULL,
+                                       `TASK_ID_` varchar(255) DEFAULT NULL,
+                                       `PROC_INST_ID_` varchar(255) DEFAULT NULL,
+                                       `CONTENT_STORE_ID_` varchar(255) DEFAULT NULL,
+                                       `CONTENT_STORE_NAME_` varchar(255) DEFAULT NULL,
+                                       `FIELD_` varchar(400) DEFAULT NULL,
+                                       `CONTENT_AVAILABLE_` bit(1) DEFAULT b'0',
+                                       `CREATED_` timestamp(6) NULL DEFAULT NULL,
+                                       `CREATED_BY_` varchar(255) DEFAULT NULL,
+                                       `LAST_MODIFIED_` timestamp(6) NULL DEFAULT NULL,
+                                       `LAST_MODIFIED_BY_` varchar(255) DEFAULT NULL,
+                                       `CONTENT_SIZE_` bigint(20) DEFAULT '0',
+                                       `TENANT_ID_` varchar(255) DEFAULT NULL,
+                                       `SCOPE_ID_` varchar(255) DEFAULT NULL,
+                                       `SCOPE_TYPE_` varchar(255) DEFAULT NULL,
+                                       PRIMARY KEY (`ID_`),
+                                       KEY `idx_contitem_taskid` (`TASK_ID_`),
+                                       KEY `idx_contitem_procid` (`PROC_INST_ID_`),
+                                       KEY `idx_contitem_scope` (`SCOPE_ID_`,`SCOPE_TYPE_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_CO_CONTENT_ITEM
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_CO_DATABASECHANGELOG
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_CO_DATABASECHANGELOG`;
+CREATE TABLE `ACT_CO_DATABASECHANGELOG` (
+                                            `ID` varchar(255) NOT NULL,
+                                            `AUTHOR` varchar(255) NOT NULL,
+                                            `FILENAME` varchar(255) NOT NULL,
+                                            `DATEEXECUTED` datetime NOT NULL,
+                                            `ORDEREXECUTED` int(11) NOT NULL,
+                                            `EXECTYPE` varchar(10) NOT NULL,
+                                            `MD5SUM` varchar(35) DEFAULT NULL,
+                                            `DESCRIPTION` varchar(255) DEFAULT NULL,
+                                            `COMMENTS` varchar(255) DEFAULT NULL,
+                                            `TAG` varchar(255) DEFAULT NULL,
+                                            `LIQUIBASE` varchar(20) DEFAULT NULL,
+                                            `CONTEXTS` varchar(255) DEFAULT NULL,
+                                            `LABELS` varchar(255) DEFAULT NULL,
+                                            `DEPLOYMENT_ID` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_CO_DATABASECHANGELOG
+-- ----------------------------
+BEGIN;
+INSERT INTO `ACT_CO_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('1', 'activiti', 'org/flowable/content/db/liquibase/flowable-content-db-changelog.xml', '2023-09-14 11:05:26', 1, 'EXECUTED', '8:7644d7165cfe799200a2abdd3419e8b6', 'createTable tableName=ACT_CO_CONTENT_ITEM; createIndex indexName=idx_contitem_taskid, tableName=ACT_CO_CONTENT_ITEM; createIndex indexName=idx_contitem_procid, tableName=ACT_CO_CONTENT_ITEM', '', NULL, '4.3.5', NULL, NULL, '4660726300');
+INSERT INTO `ACT_CO_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('2', 'flowable', 'org/flowable/content/db/liquibase/flowable-content-db-changelog.xml', '2023-09-14 11:05:26', 2, 'EXECUTED', '8:fe7b11ac7dbbf9c43006b23bbab60bab', 'addColumn tableName=ACT_CO_CONTENT_ITEM; createIndex indexName=idx_contitem_scope, tableName=ACT_CO_CONTENT_ITEM', '', NULL, '4.3.5', NULL, NULL, '4660726300');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_CO_DATABASECHANGELOGLOCK
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_CO_DATABASECHANGELOGLOCK`;
+CREATE TABLE `ACT_CO_DATABASECHANGELOGLOCK` (
+                                                `ID` int(11) NOT NULL,
+                                                `LOCKED` bit(1) NOT NULL,
+                                                `LOCKGRANTED` datetime DEFAULT NULL,
+                                                `LOCKEDBY` varchar(255) DEFAULT NULL,
+                                                PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_CO_DATABASECHANGELOGLOCK
+-- ----------------------------
+BEGIN;
+INSERT INTO `ACT_CO_DATABASECHANGELOGLOCK` (`ID`, `LOCKED`, `LOCKGRANTED`, `LOCKEDBY`) VALUES (1, b'0', NULL, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_DMN_DATABASECHANGELOG
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_DMN_DATABASECHANGELOG`;
+CREATE TABLE `ACT_DMN_DATABASECHANGELOG` (
+                                             `ID` varchar(255) NOT NULL,
+                                             `AUTHOR` varchar(255) NOT NULL,
+                                             `FILENAME` varchar(255) NOT NULL,
+                                             `DATEEXECUTED` datetime NOT NULL,
+                                             `ORDEREXECUTED` int(11) NOT NULL,
+                                             `EXECTYPE` varchar(10) NOT NULL,
+                                             `MD5SUM` varchar(35) DEFAULT NULL,
+                                             `DESCRIPTION` varchar(255) DEFAULT NULL,
+                                             `COMMENTS` varchar(255) DEFAULT NULL,
+                                             `TAG` varchar(255) DEFAULT NULL,
+                                             `LIQUIBASE` varchar(20) DEFAULT NULL,
+                                             `CONTEXTS` varchar(255) DEFAULT NULL,
+                                             `LABELS` varchar(255) DEFAULT NULL,
+                                             `DEPLOYMENT_ID` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_DMN_DATABASECHANGELOG
+-- ----------------------------
+BEGIN;
+INSERT INTO `ACT_DMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('1', 'activiti', 'org/flowable/dmn/db/liquibase/flowable-dmn-db-changelog.xml', '2023-09-14 11:05:25', 1, 'EXECUTED', '8:c8701f1c71018b55029f450b2e9a10a1', 'createTable tableName=ACT_DMN_DEPLOYMENT; createTable tableName=ACT_DMN_DEPLOYMENT_RESOURCE; createTable tableName=ACT_DMN_DECISION_TABLE', '', NULL, '4.3.5', NULL, NULL, '4660725322');
+INSERT INTO `ACT_DMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('2', 'flowable', 'org/flowable/dmn/db/liquibase/flowable-dmn-db-changelog.xml', '2023-09-14 11:05:25', 2, 'EXECUTED', '8:47f94b27feb7df8a30d4e338c7bd5fb8', 'createTable tableName=ACT_DMN_HI_DECISION_EXECUTION', '', NULL, '4.3.5', NULL, NULL, '4660725322');
+INSERT INTO `ACT_DMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('3', 'flowable', 'org/flowable/dmn/db/liquibase/flowable-dmn-db-changelog.xml', '2023-09-14 11:05:25', 3, 'EXECUTED', '8:ac17eae89fbdccb6e08daf3c7797b579', 'addColumn tableName=ACT_DMN_HI_DECISION_EXECUTION', '', NULL, '4.3.5', NULL, NULL, '4660725322');
+INSERT INTO `ACT_DMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('4', 'flowable', 'org/flowable/dmn/db/liquibase/flowable-dmn-db-changelog.xml', '2023-09-14 11:05:25', 4, 'EXECUTED', '8:f73aabc4529e7292c2942073d1cff6f9', 'dropColumn columnName=PARENT_DEPLOYMENT_ID_, tableName=ACT_DMN_DECISION_TABLE', '', NULL, '4.3.5', NULL, NULL, '4660725322');
+INSERT INTO `ACT_DMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('5', 'flowable', 'org/flowable/dmn/db/liquibase/flowable-dmn-db-changelog.xml', '2023-09-14 11:05:25', 5, 'EXECUTED', '8:3e03528582dd4eeb4eb41f9b9539140d', 'modifyDataType columnName=DEPLOY_TIME_, tableName=ACT_DMN_DEPLOYMENT; modifyDataType columnName=START_TIME_, tableName=ACT_DMN_HI_DECISION_EXECUTION; modifyDataType columnName=END_TIME_, tableName=ACT_DMN_HI_DECISION_EXECUTION', '', NULL, '4.3.5', NULL, NULL, '4660725322');
+INSERT INTO `ACT_DMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('6', 'flowable', 'org/flowable/dmn/db/liquibase/flowable-dmn-db-changelog.xml', '2023-09-14 11:05:25', 6, 'EXECUTED', '8:646c6a061e0b6e8a62e69844ff96abb0', 'createIndex indexName=ACT_IDX_DEC_TBL_UNIQ, tableName=ACT_DMN_DECISION_TABLE', '', NULL, '4.3.5', NULL, NULL, '4660725322');
+INSERT INTO `ACT_DMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('7', 'flowable', 'org/flowable/dmn/db/liquibase/flowable-dmn-db-changelog.xml', '2023-09-14 11:05:25', 7, 'EXECUTED', '8:215a499ff7ae77685b55355245b8b708', 'dropIndex indexName=ACT_IDX_DEC_TBL_UNIQ, tableName=ACT_DMN_DECISION_TABLE; renameTable newTableName=ACT_DMN_DECISION, oldTableName=ACT_DMN_DECISION_TABLE; createIndex indexName=ACT_IDX_DMN_DEC_UNIQ, tableName=ACT_DMN_DECISION', '', NULL, '4.3.5', NULL, NULL, '4660725322');
+INSERT INTO `ACT_DMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('8', 'flowable', 'org/flowable/dmn/db/liquibase/flowable-dmn-db-changelog.xml', '2023-09-14 11:05:25', 8, 'EXECUTED', '8:5355bee389318afed91a11702f2df032', 'addColumn tableName=ACT_DMN_DECISION', '', NULL, '4.3.5', NULL, NULL, '4660725322');
+INSERT INTO `ACT_DMN_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('9', 'flowable', 'org/flowable/dmn/db/liquibase/flowable-dmn-db-changelog.xml', '2023-09-14 11:05:25', 9, 'EXECUTED', '8:0fe82086431b1953d293f0199f805876', 'createIndex indexName=ACT_IDX_DMN_INSTANCE_ID, tableName=ACT_DMN_HI_DECISION_EXECUTION', '', NULL, '4.3.5', NULL, NULL, '4660725322');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_DMN_DATABASECHANGELOGLOCK
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_DMN_DATABASECHANGELOGLOCK`;
+CREATE TABLE `ACT_DMN_DATABASECHANGELOGLOCK` (
+                                                 `ID` int(11) NOT NULL,
+                                                 `LOCKED` bit(1) NOT NULL,
+                                                 `LOCKGRANTED` datetime DEFAULT NULL,
+                                                 `LOCKEDBY` varchar(255) DEFAULT NULL,
+                                                 PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_DMN_DATABASECHANGELOGLOCK
+-- ----------------------------
+BEGIN;
+INSERT INTO `ACT_DMN_DATABASECHANGELOGLOCK` (`ID`, `LOCKED`, `LOCKGRANTED`, `LOCKEDBY`) VALUES (1, b'0', NULL, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_DMN_DECISION
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_DMN_DECISION`;
+CREATE TABLE `ACT_DMN_DECISION` (
+                                    `ID_` varchar(255) NOT NULL,
+                                    `NAME_` varchar(255) DEFAULT NULL,
+                                    `VERSION_` int(11) DEFAULT NULL,
+                                    `KEY_` varchar(255) DEFAULT NULL,
+                                    `CATEGORY_` varchar(255) DEFAULT NULL,
+                                    `DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
+                                    `TENANT_ID_` varchar(255) DEFAULT NULL,
+                                    `RESOURCE_NAME_` varchar(255) DEFAULT NULL,
+                                    `DESCRIPTION_` varchar(255) DEFAULT NULL,
+                                    `DECISION_TYPE_` varchar(255) DEFAULT NULL,
+                                    PRIMARY KEY (`ID_`),
+                                    UNIQUE KEY `ACT_IDX_DMN_DEC_UNIQ` (`KEY_`,`VERSION_`,`TENANT_ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_DMN_DECISION
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_DMN_DEPLOYMENT
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_DMN_DEPLOYMENT`;
+CREATE TABLE `ACT_DMN_DEPLOYMENT` (
+                                      `ID_` varchar(255) NOT NULL,
+                                      `NAME_` varchar(255) DEFAULT NULL,
+                                      `CATEGORY_` varchar(255) DEFAULT NULL,
+                                      `DEPLOY_TIME_` datetime(3) DEFAULT NULL,
+                                      `TENANT_ID_` varchar(255) DEFAULT NULL,
+                                      `PARENT_DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
+                                      PRIMARY KEY (`ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_DMN_DEPLOYMENT
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_DMN_DEPLOYMENT_RESOURCE
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_DMN_DEPLOYMENT_RESOURCE`;
+CREATE TABLE `ACT_DMN_DEPLOYMENT_RESOURCE` (
+                                               `ID_` varchar(255) NOT NULL,
+                                               `NAME_` varchar(255) DEFAULT NULL,
+                                               `DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
+                                               `RESOURCE_BYTES_` longblob,
+                                               PRIMARY KEY (`ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_DMN_DEPLOYMENT_RESOURCE
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_DMN_HI_DECISION_EXECUTION
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_DMN_HI_DECISION_EXECUTION`;
+CREATE TABLE `ACT_DMN_HI_DECISION_EXECUTION` (
+                                                 `ID_` varchar(255) NOT NULL,
+                                                 `DECISION_DEFINITION_ID_` varchar(255) DEFAULT NULL,
+                                                 `DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
+                                                 `START_TIME_` datetime(3) DEFAULT NULL,
+                                                 `END_TIME_` datetime(3) DEFAULT NULL,
+                                                 `INSTANCE_ID_` varchar(255) DEFAULT NULL,
+                                                 `EXECUTION_ID_` varchar(255) DEFAULT NULL,
+                                                 `ACTIVITY_ID_` varchar(255) DEFAULT NULL,
+                                                 `FAILED_` bit(1) DEFAULT b'0',
+                                                 `TENANT_ID_` varchar(255) DEFAULT NULL,
+                                                 `EXECUTION_JSON_` longtext,
+                                                 `SCOPE_TYPE_` varchar(255) DEFAULT NULL,
+                                                 PRIMARY KEY (`ID_`),
+                                                 KEY `ACT_IDX_DMN_INSTANCE_ID` (`INSTANCE_ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_DMN_HI_DECISION_EXECUTION
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
 -- Table structure for ACT_EVT_LOG
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_EVT_LOG`;
 CREATE TABLE `ACT_EVT_LOG` (
-  `LOG_NR_` bigint(20) NOT NULL AUTO_INCREMENT,
-  `TYPE_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `TIME_STAMP_` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-  `USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `DATA_` longblob,
-  `LOCK_OWNER_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `LOCK_TIME_` timestamp(3) NULL DEFAULT NULL,
-  `IS_PROCESSED_` tinyint(4) DEFAULT '0',
-  PRIMARY KEY (`LOG_NR_`)
+                               `LOG_NR_` bigint(20) NOT NULL AUTO_INCREMENT,
+                               `TYPE_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                               `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                               `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                               `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                               `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                               `TIME_STAMP_` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+                               `USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `DATA_` longblob,
+                               `LOCK_OWNER_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `LOCK_TIME_` timestamp(3) NULL DEFAULT NULL,
+                               `IS_PROCESSED_` tinyint(4) DEFAULT '0',
+                               PRIMARY KEY (`LOG_NR_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -44,19 +768,162 @@ BEGIN;
 COMMIT;
 
 -- ----------------------------
+-- Table structure for ACT_FO_DATABASECHANGELOG
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_FO_DATABASECHANGELOG`;
+CREATE TABLE `ACT_FO_DATABASECHANGELOG` (
+                                            `ID` varchar(255) NOT NULL,
+                                            `AUTHOR` varchar(255) NOT NULL,
+                                            `FILENAME` varchar(255) NOT NULL,
+                                            `DATEEXECUTED` datetime NOT NULL,
+                                            `ORDEREXECUTED` int(11) NOT NULL,
+                                            `EXECTYPE` varchar(10) NOT NULL,
+                                            `MD5SUM` varchar(35) DEFAULT NULL,
+                                            `DESCRIPTION` varchar(255) DEFAULT NULL,
+                                            `COMMENTS` varchar(255) DEFAULT NULL,
+                                            `TAG` varchar(255) DEFAULT NULL,
+                                            `LIQUIBASE` varchar(20) DEFAULT NULL,
+                                            `CONTEXTS` varchar(255) DEFAULT NULL,
+                                            `LABELS` varchar(255) DEFAULT NULL,
+                                            `DEPLOYMENT_ID` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_FO_DATABASECHANGELOG
+-- ----------------------------
+BEGIN;
+INSERT INTO `ACT_FO_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('1', 'activiti', 'org/flowable/form/db/liquibase/flowable-form-db-changelog.xml', '2023-09-14 11:05:25', 1, 'EXECUTED', '8:033ebf9380889aed7c453927ecc3250d', 'createTable tableName=ACT_FO_FORM_DEPLOYMENT; createTable tableName=ACT_FO_FORM_RESOURCE; createTable tableName=ACT_FO_FORM_DEFINITION; createTable tableName=ACT_FO_FORM_INSTANCE', '', NULL, '4.3.5', NULL, NULL, '4660725875');
+INSERT INTO `ACT_FO_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('2', 'flowable', 'org/flowable/form/db/liquibase/flowable-form-db-changelog.xml', '2023-09-14 11:05:25', 2, 'EXECUTED', '8:986365ceb40445ce3b27a8e6b40f159b', 'addColumn tableName=ACT_FO_FORM_INSTANCE', '', NULL, '4.3.5', NULL, NULL, '4660725875');
+INSERT INTO `ACT_FO_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('3', 'flowable', 'org/flowable/form/db/liquibase/flowable-form-db-changelog.xml', '2023-09-14 11:05:25', 3, 'EXECUTED', '8:abf482518ceb09830ef674e52c06bf15', 'dropColumn columnName=PARENT_DEPLOYMENT_ID_, tableName=ACT_FO_FORM_DEFINITION', '', NULL, '4.3.5', NULL, NULL, '4660725875');
+INSERT INTO `ACT_FO_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('4', 'flowable', 'org/flowable/form/db/liquibase/flowable-form-db-changelog.xml', '2023-09-14 11:05:26', 4, 'EXECUTED', '8:2087829f22a4b2298dbf530681c74854', 'modifyDataType columnName=DEPLOY_TIME_, tableName=ACT_FO_FORM_DEPLOYMENT; modifyDataType columnName=SUBMITTED_DATE_, tableName=ACT_FO_FORM_INSTANCE', '', NULL, '4.3.5', NULL, NULL, '4660725875');
+INSERT INTO `ACT_FO_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('5', 'flowable', 'org/flowable/form/db/liquibase/flowable-form-db-changelog.xml', '2023-09-14 11:05:26', 5, 'EXECUTED', '8:b4be732b89e5ca028bdd520c6ad4d446', 'createIndex indexName=ACT_IDX_FORM_DEF_UNIQ, tableName=ACT_FO_FORM_DEFINITION', '', NULL, '4.3.5', NULL, NULL, '4660725875');
+INSERT INTO `ACT_FO_DATABASECHANGELOG` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES ('6', 'flowable', 'org/flowable/form/db/liquibase/flowable-form-db-changelog.xml', '2023-09-14 11:05:26', 6, 'EXECUTED', '8:384bbd364a649b67c3ca1bcb72fe537f', 'createIndex indexName=ACT_IDX_FORM_TASK, tableName=ACT_FO_FORM_INSTANCE; createIndex indexName=ACT_IDX_FORM_PROC, tableName=ACT_FO_FORM_INSTANCE; createIndex indexName=ACT_IDX_FORM_SCOPE, tableName=ACT_FO_FORM_INSTANCE', '', NULL, '4.3.5', NULL, NULL, '4660725875');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_FO_DATABASECHANGELOGLOCK
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_FO_DATABASECHANGELOGLOCK`;
+CREATE TABLE `ACT_FO_DATABASECHANGELOGLOCK` (
+                                                `ID` int(11) NOT NULL,
+                                                `LOCKED` bit(1) NOT NULL,
+                                                `LOCKGRANTED` datetime DEFAULT NULL,
+                                                `LOCKEDBY` varchar(255) DEFAULT NULL,
+                                                PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_FO_DATABASECHANGELOGLOCK
+-- ----------------------------
+BEGIN;
+INSERT INTO `ACT_FO_DATABASECHANGELOGLOCK` (`ID`, `LOCKED`, `LOCKGRANTED`, `LOCKEDBY`) VALUES (1, b'0', NULL, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_FO_FORM_DEFINITION
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_FO_FORM_DEFINITION`;
+CREATE TABLE `ACT_FO_FORM_DEFINITION` (
+                                          `ID_` varchar(255) NOT NULL,
+                                          `NAME_` varchar(255) DEFAULT NULL,
+                                          `VERSION_` int(11) DEFAULT NULL,
+                                          `KEY_` varchar(255) DEFAULT NULL,
+                                          `CATEGORY_` varchar(255) DEFAULT NULL,
+                                          `DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
+                                          `TENANT_ID_` varchar(255) DEFAULT NULL,
+                                          `RESOURCE_NAME_` varchar(255) DEFAULT NULL,
+                                          `DESCRIPTION_` varchar(255) DEFAULT NULL,
+                                          PRIMARY KEY (`ID_`),
+                                          UNIQUE KEY `ACT_IDX_FORM_DEF_UNIQ` (`KEY_`,`VERSION_`,`TENANT_ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_FO_FORM_DEFINITION
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_FO_FORM_DEPLOYMENT
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_FO_FORM_DEPLOYMENT`;
+CREATE TABLE `ACT_FO_FORM_DEPLOYMENT` (
+                                          `ID_` varchar(255) NOT NULL,
+                                          `NAME_` varchar(255) DEFAULT NULL,
+                                          `CATEGORY_` varchar(255) DEFAULT NULL,
+                                          `DEPLOY_TIME_` datetime(3) DEFAULT NULL,
+                                          `TENANT_ID_` varchar(255) DEFAULT NULL,
+                                          `PARENT_DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
+                                          PRIMARY KEY (`ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_FO_FORM_DEPLOYMENT
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_FO_FORM_INSTANCE
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_FO_FORM_INSTANCE`;
+CREATE TABLE `ACT_FO_FORM_INSTANCE` (
+                                        `ID_` varchar(255) NOT NULL,
+                                        `FORM_DEFINITION_ID_` varchar(255) NOT NULL,
+                                        `TASK_ID_` varchar(255) DEFAULT NULL,
+                                        `PROC_INST_ID_` varchar(255) DEFAULT NULL,
+                                        `PROC_DEF_ID_` varchar(255) DEFAULT NULL,
+                                        `SUBMITTED_DATE_` datetime(3) DEFAULT NULL,
+                                        `SUBMITTED_BY_` varchar(255) DEFAULT NULL,
+                                        `FORM_VALUES_ID_` varchar(255) DEFAULT NULL,
+                                        `TENANT_ID_` varchar(255) DEFAULT NULL,
+                                        `SCOPE_ID_` varchar(255) DEFAULT NULL,
+                                        `SCOPE_TYPE_` varchar(255) DEFAULT NULL,
+                                        `SCOPE_DEFINITION_ID_` varchar(255) DEFAULT NULL,
+                                        PRIMARY KEY (`ID_`),
+                                        KEY `ACT_IDX_FORM_TASK` (`TASK_ID_`),
+                                        KEY `ACT_IDX_FORM_PROC` (`PROC_INST_ID_`),
+                                        KEY `ACT_IDX_FORM_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_FO_FORM_INSTANCE
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ACT_FO_FORM_RESOURCE
+-- ----------------------------
+DROP TABLE IF EXISTS `ACT_FO_FORM_RESOURCE`;
+CREATE TABLE `ACT_FO_FORM_RESOURCE` (
+                                        `ID_` varchar(255) NOT NULL,
+                                        `NAME_` varchar(255) DEFAULT NULL,
+                                        `DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
+                                        `RESOURCE_BYTES_` longblob,
+                                        PRIMARY KEY (`ID_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of ACT_FO_FORM_RESOURCE
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
 -- Table structure for ACT_GE_BYTEARRAY
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_GE_BYTEARRAY`;
 CREATE TABLE `ACT_GE_BYTEARRAY` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `DEPLOYMENT_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `BYTES_` longblob,
-  `GENERATED_` tinyint(4) DEFAULT NULL,
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_FK_BYTEARR_DEPL` (`DEPLOYMENT_ID_`),
-  CONSTRAINT `ACT_FK_BYTEARR_DEPL` FOREIGN KEY (`DEPLOYMENT_ID_`) REFERENCES `ACT_RE_DEPLOYMENT` (`ID_`)
+                                    `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                    `REV_` int(11) DEFAULT NULL,
+                                    `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `DEPLOYMENT_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                    `BYTES_` longblob,
+                                    `GENERATED_` tinyint(4) DEFAULT NULL,
+                                    PRIMARY KEY (`ID_`),
+                                    KEY `ACT_FK_BYTEARR_DEPL` (`DEPLOYMENT_ID_`),
+                                    CONSTRAINT `ACT_FK_BYTEARR_DEPL` FOREIGN KEY (`DEPLOYMENT_ID_`) REFERENCES `ACT_RE_DEPLOYMENT` (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -78,29 +945,29 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_GE_PROPERTY`;
 CREATE TABLE `ACT_GE_PROPERTY` (
-  `NAME_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `VALUE_` varchar(300) COLLATE utf8_bin DEFAULT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  PRIMARY KEY (`NAME_`)
+                                   `NAME_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                   `VALUE_` varchar(300) COLLATE utf8_bin DEFAULT NULL,
+                                   `REV_` int(11) DEFAULT NULL,
+                                   PRIMARY KEY (`NAME_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
 -- Records of ACT_GE_PROPERTY
 -- ----------------------------
 BEGIN;
-INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('batch.schema.version', '6.7.2.0', 1);
+INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('batch.schema.version', '6.7.2.3', 1);
 INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('cfg.execution-related-entities-count', 'true', 1);
 INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('cfg.task-related-entities-count', 'true', 1);
-INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('common.schema.version', '6.7.2.0', 1);
-INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('entitylink.schema.version', '6.7.2.0', 1);
-INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('eventsubscription.schema.version', '6.7.2.0', 1);
-INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('identitylink.schema.version', '6.7.2.0', 1);
-INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('job.schema.version', '6.7.2.0', 1);
+INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('common.schema.version', '6.8.0.0', 1);
+INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('entitylink.schema.version', '6.8.0.0', 1);
+INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('eventsubscription.schema.version', '6.8.0.0', 1);
+INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('identitylink.schema.version', '6.8.0.0', 1);
+INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('job.schema.version', '6.8.0.0', 1);
 INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('next.dbid', '7501', 4);
-INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('schema.history', 'create(6.7.2.0)', 1);
-INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('schema.version', '6.7.2.0', 1);
-INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('task.schema.version', '6.7.2.0', 1);
-INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('variable.schema.version', '6.7.2.0', 1);
+INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('schema.history', 'upgrade(6.7.2.0->6.8.0.0)', 2);
+INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('schema.version', '6.8.0.0', 2);
+INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('task.schema.version', '6.8.0.0', 1);
+INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('variable.schema.version', '6.8.0.0', 1);
 COMMIT;
 
 -- ----------------------------
@@ -108,28 +975,28 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_HI_ACTINST`;
 CREATE TABLE `ACT_HI_ACTINST` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT '1',
-  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `ACT_ID_` varchar(255) COLLATE utf8_bin NOT NULL,
-  `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `CALL_PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `ACT_NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `ACT_TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
-  `ASSIGNEE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `START_TIME_` datetime(3) NOT NULL,
-  `END_TIME_` datetime(3) DEFAULT NULL,
-  `TRANSACTION_ORDER_` int(11) DEFAULT NULL,
-  `DURATION_` bigint(20) DEFAULT NULL,
-  `DELETE_REASON_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_IDX_HI_ACT_INST_START` (`START_TIME_`),
-  KEY `ACT_IDX_HI_ACT_INST_END` (`END_TIME_`),
-  KEY `ACT_IDX_HI_ACT_INST_PROCINST` (`PROC_INST_ID_`,`ACT_ID_`),
-  KEY `ACT_IDX_HI_ACT_INST_EXEC` (`EXECUTION_ID_`,`ACT_ID_`)
+                                  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                  `REV_` int(11) DEFAULT '1',
+                                  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                  `ACT_ID_` varchar(255) COLLATE utf8_bin NOT NULL,
+                                  `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                  `CALL_PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                  `ACT_NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                  `ACT_TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
+                                  `ASSIGNEE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                  `START_TIME_` datetime(3) NOT NULL,
+                                  `END_TIME_` datetime(3) DEFAULT NULL,
+                                  `TRANSACTION_ORDER_` int(11) DEFAULT NULL,
+                                  `DURATION_` bigint(20) DEFAULT NULL,
+                                  `DELETE_REASON_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                                  PRIMARY KEY (`ID_`),
+                                  KEY `ACT_IDX_HI_ACT_INST_START` (`START_TIME_`),
+                                  KEY `ACT_IDX_HI_ACT_INST_END` (`END_TIME_`),
+                                  KEY `ACT_IDX_HI_ACT_INST_PROCINST` (`PROC_INST_ID_`,`ACT_ID_`),
+                                  KEY `ACT_IDX_HI_ACT_INST_EXEC` (`EXECUTION_ID_`,`ACT_ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -155,18 +1022,18 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_HI_ATTACHMENT`;
 CREATE TABLE `ACT_HI_ATTACHMENT` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `DESCRIPTION_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `URL_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `CONTENT_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `TIME_` datetime(3) DEFAULT NULL,
-  PRIMARY KEY (`ID_`)
+                                     `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                     `REV_` int(11) DEFAULT NULL,
+                                     `USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `DESCRIPTION_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                     `TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                     `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                     `URL_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                     `CONTENT_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                     `TIME_` datetime(3) DEFAULT NULL,
+                                     PRIMARY KEY (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -180,16 +1047,16 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_HI_COMMENT`;
 CREATE TABLE `ACT_HI_COMMENT` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TIME_` datetime(3) NOT NULL,
-  `USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `ACTION_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `MESSAGE_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `FULL_MSG_` longblob,
-  PRIMARY KEY (`ID_`)
+                                  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                  `TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                  `TIME_` datetime(3) NOT NULL,
+                                  `USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                  `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                  `ACTION_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                  `MESSAGE_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                  `FULL_MSG_` longblob,
+                                  PRIMARY KEY (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -209,27 +1076,27 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_HI_DETAIL`;
 CREATE TABLE `ACT_HI_DETAIL` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
-  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `ACT_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `NAME_` varchar(255) COLLATE utf8_bin NOT NULL,
-  `VAR_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `TIME_` datetime(3) NOT NULL,
-  `BYTEARRAY_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `DOUBLE_` double DEFAULT NULL,
-  `LONG_` bigint(20) DEFAULT NULL,
-  `TEXT_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `TEXT2_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_IDX_HI_DETAIL_PROC_INST` (`PROC_INST_ID_`),
-  KEY `ACT_IDX_HI_DETAIL_ACT_INST` (`ACT_INST_ID_`),
-  KEY `ACT_IDX_HI_DETAIL_TIME` (`TIME_`),
-  KEY `ACT_IDX_HI_DETAIL_NAME` (`NAME_`),
-  KEY `ACT_IDX_HI_DETAIL_TASK_ID` (`TASK_ID_`)
+                                 `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                 `TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
+                                 `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                 `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                 `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                 `ACT_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                 `NAME_` varchar(255) COLLATE utf8_bin NOT NULL,
+                                 `VAR_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                 `REV_` int(11) DEFAULT NULL,
+                                 `TIME_` datetime(3) NOT NULL,
+                                 `BYTEARRAY_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                 `DOUBLE_` double DEFAULT NULL,
+                                 `LONG_` bigint(20) DEFAULT NULL,
+                                 `TEXT_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                 `TEXT2_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                 PRIMARY KEY (`ID_`),
+                                 KEY `ACT_IDX_HI_DETAIL_PROC_INST` (`PROC_INST_ID_`),
+                                 KEY `ACT_IDX_HI_DETAIL_ACT_INST` (`ACT_INST_ID_`),
+                                 KEY `ACT_IDX_HI_DETAIL_TIME` (`TIME_`),
+                                 KEY `ACT_IDX_HI_DETAIL_NAME` (`NAME_`),
+                                 KEY `ACT_IDX_HI_DETAIL_TASK_ID` (`TASK_ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -243,25 +1110,25 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_HI_ENTITYLINK`;
 CREATE TABLE `ACT_HI_ENTITYLINK` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `LINK_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `CREATE_TIME_` datetime(3) DEFAULT NULL,
-  `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `PARENT_ELEMENT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `REF_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `REF_SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `REF_SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `ROOT_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `ROOT_SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `HIERARCHY_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_IDX_HI_ENT_LNK_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`,`LINK_TYPE_`),
-  KEY `ACT_IDX_HI_ENT_LNK_REF_SCOPE` (`REF_SCOPE_ID_`,`REF_SCOPE_TYPE_`,`LINK_TYPE_`),
-  KEY `ACT_IDX_HI_ENT_LNK_ROOT_SCOPE` (`ROOT_SCOPE_ID_`,`ROOT_SCOPE_TYPE_`,`LINK_TYPE_`),
-  KEY `ACT_IDX_HI_ENT_LNK_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`,`LINK_TYPE_`)
+                                     `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                     `LINK_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `CREATE_TIME_` datetime(3) DEFAULT NULL,
+                                     `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `PARENT_ELEMENT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `REF_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `REF_SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `REF_SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `ROOT_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `ROOT_SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `HIERARCHY_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     PRIMARY KEY (`ID_`),
+                                     KEY `ACT_IDX_HI_ENT_LNK_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`,`LINK_TYPE_`),
+                                     KEY `ACT_IDX_HI_ENT_LNK_REF_SCOPE` (`REF_SCOPE_ID_`,`REF_SCOPE_TYPE_`,`LINK_TYPE_`),
+                                     KEY `ACT_IDX_HI_ENT_LNK_ROOT_SCOPE` (`ROOT_SCOPE_ID_`,`ROOT_SCOPE_TYPE_`,`LINK_TYPE_`),
+                                     KEY `ACT_IDX_HI_ENT_LNK_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`,`LINK_TYPE_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -275,24 +1142,24 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_HI_IDENTITYLINK`;
 CREATE TABLE `ACT_HI_IDENTITYLINK` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `GROUP_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `CREATE_TIME_` datetime(3) DEFAULT NULL,
-  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_IDX_HI_IDENT_LNK_USER` (`USER_ID_`),
-  KEY `ACT_IDX_HI_IDENT_LNK_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_HI_IDENT_LNK_SUB_SCOPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_HI_IDENT_LNK_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_HI_IDENT_LNK_TASK` (`TASK_ID_`),
-  KEY `ACT_IDX_HI_IDENT_LNK_PROCINST` (`PROC_INST_ID_`)
+                                       `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                       `GROUP_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                       `CREATE_TIME_` datetime(3) DEFAULT NULL,
+                                       `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                       `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       PRIMARY KEY (`ID_`),
+                                       KEY `ACT_IDX_HI_IDENT_LNK_USER` (`USER_ID_`),
+                                       KEY `ACT_IDX_HI_IDENT_LNK_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
+                                       KEY `ACT_IDX_HI_IDENT_LNK_SUB_SCOPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
+                                       KEY `ACT_IDX_HI_IDENT_LNK_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`),
+                                       KEY `ACT_IDX_HI_IDENT_LNK_TASK` (`TASK_ID_`),
+                                       KEY `ACT_IDX_HI_IDENT_LNK_PROCINST` (`PROC_INST_ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -323,31 +1190,32 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_HI_PROCINST`;
 CREATE TABLE `ACT_HI_PROCINST` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT '1',
-  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `BUSINESS_KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `START_TIME_` datetime(3) NOT NULL,
-  `END_TIME_` datetime(3) DEFAULT NULL,
-  `DURATION_` bigint(20) DEFAULT NULL,
-  `START_USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `START_ACT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `END_ACT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SUPER_PROCESS_INSTANCE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `DELETE_REASON_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `CALLBACK_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `CALLBACK_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `REFERENCE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `REFERENCE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `PROPAGATED_STAGE_INST_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `BUSINESS_STATUS_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`ID_`),
-  UNIQUE KEY `PROC_INST_ID_` (`PROC_INST_ID_`),
-  KEY `ACT_IDX_HI_PRO_INST_END` (`END_TIME_`),
-  KEY `ACT_IDX_HI_PRO_I_BUSKEY` (`BUSINESS_KEY_`)
+                                   `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                   `REV_` int(11) DEFAULT '1',
+                                   `PROC_INST_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                   `BUSINESS_KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                   `START_TIME_` datetime(3) NOT NULL,
+                                   `END_TIME_` datetime(3) DEFAULT NULL,
+                                   `DURATION_` bigint(20) DEFAULT NULL,
+                                   `START_USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `START_ACT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `END_ACT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `SUPER_PROCESS_INSTANCE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                   `DELETE_REASON_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                   `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                                   `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `CALLBACK_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `CALLBACK_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `REFERENCE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `REFERENCE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `PROPAGATED_STAGE_INST_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `BUSINESS_STATUS_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   PRIMARY KEY (`ID_`),
+                                   UNIQUE KEY `PROC_INST_ID_` (`PROC_INST_ID_`),
+                                   KEY `ACT_IDX_HI_PRO_INST_END` (`END_TIME_`),
+                                   KEY `ACT_IDX_HI_PRO_I_BUSKEY` (`BUSINESS_KEY_`),
+                                   KEY `ACT_IDX_HI_PRO_SUPER_PROCINST` (`SUPER_PROCESS_INSTANCE_ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -363,39 +1231,39 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_HI_TASKINST`;
 CREATE TABLE `ACT_HI_TASKINST` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT '1',
-  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `TASK_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `TASK_DEF_KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `PROPAGATED_STAGE_INST_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `PARENT_TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `DESCRIPTION_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `OWNER_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `ASSIGNEE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `START_TIME_` datetime(3) NOT NULL,
-  `CLAIM_TIME_` datetime(3) DEFAULT NULL,
-  `END_TIME_` datetime(3) DEFAULT NULL,
-  `DURATION_` bigint(20) DEFAULT NULL,
-  `DELETE_REASON_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `PRIORITY_` int(11) DEFAULT NULL,
-  `DUE_DATE_` datetime(3) DEFAULT NULL,
-  `FORM_KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  `LAST_UPDATED_TIME_` datetime(3) DEFAULT NULL,
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_IDX_HI_TASK_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_HI_TASK_SUB_SCOPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_HI_TASK_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_HI_TASK_INST_PROCINST` (`PROC_INST_ID_`)
+                                   `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                   `REV_` int(11) DEFAULT '1',
+                                   `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                   `TASK_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                   `TASK_DEF_KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                   `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                   `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `PROPAGATED_STAGE_INST_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `PARENT_TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                   `DESCRIPTION_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                   `OWNER_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `ASSIGNEE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `START_TIME_` datetime(3) NOT NULL,
+                                   `CLAIM_TIME_` datetime(3) DEFAULT NULL,
+                                   `END_TIME_` datetime(3) DEFAULT NULL,
+                                   `DURATION_` bigint(20) DEFAULT NULL,
+                                   `DELETE_REASON_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                   `PRIORITY_` int(11) DEFAULT NULL,
+                                   `DUE_DATE_` datetime(3) DEFAULT NULL,
+                                   `FORM_KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                                   `LAST_UPDATED_TIME_` datetime(3) DEFAULT NULL,
+                                   PRIMARY KEY (`ID_`),
+                                   KEY `ACT_IDX_HI_TASK_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
+                                   KEY `ACT_IDX_HI_TASK_SUB_SCOPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
+                                   KEY `ACT_IDX_HI_TASK_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`),
+                                   KEY `ACT_IDX_HI_TASK_INST_PROCINST` (`PROC_INST_ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -413,21 +1281,21 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_HI_TSK_LOG`;
 CREATE TABLE `ACT_HI_TSK_LOG` (
-  `ID_` bigint(20) NOT NULL AUTO_INCREMENT,
-  `TYPE_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `TASK_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `TIME_STAMP_` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
-  `USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `DATA_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  PRIMARY KEY (`ID_`)
+                                  `ID_` bigint(20) NOT NULL AUTO_INCREMENT,
+                                  `TYPE_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                  `TASK_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                  `TIME_STAMP_` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+                                  `USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                  `DATA_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                  `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                  `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                  `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                  `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                                  PRIMARY KEY (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -441,30 +1309,30 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_HI_VARINST`;
 CREATE TABLE `ACT_HI_VARINST` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT '1',
-  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `NAME_` varchar(255) COLLATE utf8_bin NOT NULL,
-  `VAR_TYPE_` varchar(100) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `BYTEARRAY_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `DOUBLE_` double DEFAULT NULL,
-  `LONG_` bigint(20) DEFAULT NULL,
-  `TEXT_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `TEXT2_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `CREATE_TIME_` datetime(3) DEFAULT NULL,
-  `LAST_UPDATED_TIME_` datetime(3) DEFAULT NULL,
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_IDX_HI_PROCVAR_NAME_TYPE` (`NAME_`,`VAR_TYPE_`),
-  KEY `ACT_IDX_HI_VAR_SCOPE_ID_TYPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_HI_VAR_SUB_ID_TYPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_HI_PROCVAR_PROC_INST` (`PROC_INST_ID_`),
-  KEY `ACT_IDX_HI_PROCVAR_TASK_ID` (`TASK_ID_`),
-  KEY `ACT_IDX_HI_PROCVAR_EXE` (`EXECUTION_ID_`)
+                                  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                  `REV_` int(11) DEFAULT '1',
+                                  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                  `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                  `NAME_` varchar(255) COLLATE utf8_bin NOT NULL,
+                                  `VAR_TYPE_` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+                                  `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                  `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                  `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                  `BYTEARRAY_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                  `DOUBLE_` double DEFAULT NULL,
+                                  `LONG_` bigint(20) DEFAULT NULL,
+                                  `TEXT_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                  `TEXT2_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                  `CREATE_TIME_` datetime(3) DEFAULT NULL,
+                                  `LAST_UPDATED_TIME_` datetime(3) DEFAULT NULL,
+                                  PRIMARY KEY (`ID_`),
+                                  KEY `ACT_IDX_HI_PROCVAR_NAME_TYPE` (`NAME_`,`VAR_TYPE_`),
+                                  KEY `ACT_IDX_HI_VAR_SCOPE_ID_TYPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
+                                  KEY `ACT_IDX_HI_VAR_SUB_ID_TYPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
+                                  KEY `ACT_IDX_HI_PROCVAR_PROC_INST` (`PROC_INST_ID_`),
+                                  KEY `ACT_IDX_HI_PROCVAR_TASK_ID` (`TASK_ID_`),
+                                  KEY `ACT_IDX_HI_PROCVAR_EXE` (`EXECUTION_ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -512,11 +1380,11 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_ID_BYTEARRAY`;
 CREATE TABLE `ACT_ID_BYTEARRAY` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `BYTES_` longblob,
-  PRIMARY KEY (`ID_`)
+                                    `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                    `REV_` int(11) DEFAULT NULL,
+                                    `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `BYTES_` longblob,
+                                    PRIMARY KEY (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -530,11 +1398,11 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_ID_GROUP`;
 CREATE TABLE `ACT_ID_GROUP` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`ID_`)
+                                `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                `REV_` int(11) DEFAULT NULL,
+                                `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                `TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                PRIMARY KEY (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -548,15 +1416,15 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_ID_INFO`;
 CREATE TABLE `ACT_ID_INFO` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `USER_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `TYPE_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `VALUE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `PASSWORD_` longblob,
-  `PARENT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`ID_`)
+                               `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                               `REV_` int(11) DEFAULT NULL,
+                               `USER_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                               `TYPE_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                               `KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `VALUE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `PASSWORD_` longblob,
+                               `PARENT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               PRIMARY KEY (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -570,12 +1438,12 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_ID_MEMBERSHIP`;
 CREATE TABLE `ACT_ID_MEMBERSHIP` (
-  `USER_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `GROUP_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`USER_ID_`,`GROUP_ID_`),
-  KEY `ACT_FK_MEMB_GROUP` (`GROUP_ID_`),
-  CONSTRAINT `ACT_FK_MEMB_GROUP` FOREIGN KEY (`GROUP_ID_`) REFERENCES `ACT_ID_GROUP` (`ID_`),
-  CONSTRAINT `ACT_FK_MEMB_USER` FOREIGN KEY (`USER_ID_`) REFERENCES `ACT_ID_USER` (`ID_`)
+                                     `USER_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                     `GROUP_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                     PRIMARY KEY (`USER_ID_`,`GROUP_ID_`),
+                                     KEY `ACT_FK_MEMB_GROUP` (`GROUP_ID_`),
+                                     CONSTRAINT `ACT_FK_MEMB_GROUP` FOREIGN KEY (`GROUP_ID_`) REFERENCES `ACT_ID_GROUP` (`ID_`),
+                                     CONSTRAINT `ACT_FK_MEMB_USER` FOREIGN KEY (`USER_ID_`) REFERENCES `ACT_ID_USER` (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -589,10 +1457,10 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_ID_PRIV`;
 CREATE TABLE `ACT_ID_PRIV` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `NAME_` varchar(255) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`ID_`),
-  UNIQUE KEY `ACT_UNIQ_PRIV_NAME` (`NAME_`)
+                               `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                               `NAME_` varchar(255) COLLATE utf8_bin NOT NULL,
+                               PRIMARY KEY (`ID_`),
+                               UNIQUE KEY `ACT_UNIQ_PRIV_NAME` (`NAME_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -606,15 +1474,15 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_ID_PRIV_MAPPING`;
 CREATE TABLE `ACT_ID_PRIV_MAPPING` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `PRIV_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `GROUP_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_FK_PRIV_MAPPING` (`PRIV_ID_`),
-  KEY `ACT_IDX_PRIV_USER` (`USER_ID_`),
-  KEY `ACT_IDX_PRIV_GROUP` (`GROUP_ID_`),
-  CONSTRAINT `ACT_FK_PRIV_MAPPING` FOREIGN KEY (`PRIV_ID_`) REFERENCES `ACT_ID_PRIV` (`ID_`)
+                                       `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                       `PRIV_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                       `USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `GROUP_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       PRIMARY KEY (`ID_`),
+                                       KEY `ACT_FK_PRIV_MAPPING` (`PRIV_ID_`),
+                                       KEY `ACT_IDX_PRIV_USER` (`USER_ID_`),
+                                       KEY `ACT_IDX_PRIV_GROUP` (`GROUP_ID_`),
+                                       CONSTRAINT `ACT_FK_PRIV_MAPPING` FOREIGN KEY (`PRIV_ID_`) REFERENCES `ACT_ID_PRIV` (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -628,17 +1496,17 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_ID_PROPERTY`;
 CREATE TABLE `ACT_ID_PROPERTY` (
-  `NAME_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `VALUE_` varchar(300) COLLATE utf8_bin DEFAULT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  PRIMARY KEY (`NAME_`)
+                                   `NAME_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                   `VALUE_` varchar(300) COLLATE utf8_bin DEFAULT NULL,
+                                   `REV_` int(11) DEFAULT NULL,
+                                   PRIMARY KEY (`NAME_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
 -- Records of ACT_ID_PROPERTY
 -- ----------------------------
 BEGIN;
-INSERT INTO `ACT_ID_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('schema.version', '6.7.2.0', 1);
+INSERT INTO `ACT_ID_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('schema.version', '6.8.0.0', 1);
 COMMIT;
 
 -- ----------------------------
@@ -646,15 +1514,15 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_ID_TOKEN`;
 CREATE TABLE `ACT_ID_TOKEN` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `TOKEN_VALUE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TOKEN_DATE_` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
-  `IP_ADDRESS_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `USER_AGENT_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TOKEN_DATA_` varchar(2000) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`ID_`)
+                                `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                `REV_` int(11) DEFAULT NULL,
+                                `TOKEN_VALUE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                `TOKEN_DATE_` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+                                `IP_ADDRESS_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                `USER_AGENT_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                `USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                `TOKEN_DATA_` varchar(2000) COLLATE utf8_bin DEFAULT NULL,
+                                PRIMARY KEY (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -668,16 +1536,16 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_ID_USER`;
 CREATE TABLE `ACT_ID_USER` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `FIRST_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `LAST_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `DISPLAY_NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `EMAIL_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `PWD_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `PICTURE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  PRIMARY KEY (`ID_`)
+                               `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                               `REV_` int(11) DEFAULT NULL,
+                               `FIRST_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `LAST_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `DISPLAY_NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `EMAIL_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `PWD_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `PICTURE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                               `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                               PRIMARY KEY (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -691,16 +1559,16 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_PROCDEF_INFO`;
 CREATE TABLE `ACT_PROCDEF_INFO` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `INFO_JSON_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`ID_`),
-  UNIQUE KEY `ACT_UNIQ_INFO_PROCDEF` (`PROC_DEF_ID_`),
-  KEY `ACT_IDX_INFO_PROCDEF` (`PROC_DEF_ID_`),
-  KEY `ACT_FK_INFO_JSON_BA` (`INFO_JSON_ID_`),
-  CONSTRAINT `ACT_FK_INFO_JSON_BA` FOREIGN KEY (`INFO_JSON_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
-  CONSTRAINT `ACT_FK_INFO_PROCDEF` FOREIGN KEY (`PROC_DEF_ID_`) REFERENCES `ACT_RE_PROCDEF` (`ID_`)
+                                    `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                    `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                    `REV_` int(11) DEFAULT NULL,
+                                    `INFO_JSON_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                    PRIMARY KEY (`ID_`),
+                                    UNIQUE KEY `ACT_UNIQ_INFO_PROCDEF` (`PROC_DEF_ID_`),
+                                    KEY `ACT_IDX_INFO_PROCDEF` (`PROC_DEF_ID_`),
+                                    KEY `ACT_FK_INFO_JSON_BA` (`INFO_JSON_ID_`),
+                                    CONSTRAINT `ACT_FK_INFO_JSON_BA` FOREIGN KEY (`INFO_JSON_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
+                                    CONSTRAINT `ACT_FK_INFO_PROCDEF` FOREIGN KEY (`PROC_DEF_ID_`) REFERENCES `ACT_RE_PROCDEF` (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -714,17 +1582,17 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_RE_DEPLOYMENT`;
 CREATE TABLE `ACT_RE_DEPLOYMENT` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  `DEPLOY_TIME_` timestamp(3) NULL DEFAULT NULL,
-  `DERIVED_FROM_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `DERIVED_FROM_ROOT_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PARENT_DEPLOYMENT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `ENGINE_VERSION_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`ID_`)
+                                     `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                     `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                                     `DEPLOY_TIME_` timestamp(3) NULL DEFAULT NULL,
+                                     `DERIVED_FROM_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                     `DERIVED_FROM_ROOT_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                     `PARENT_DEPLOYMENT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `ENGINE_VERSION_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     PRIMARY KEY (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -739,26 +1607,26 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_RE_MODEL`;
 CREATE TABLE `ACT_RE_MODEL` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `CREATE_TIME_` timestamp(3) NULL DEFAULT NULL,
-  `LAST_UPDATE_TIME_` timestamp(3) NULL DEFAULT NULL,
-  `VERSION_` int(11) DEFAULT NULL,
-  `META_INFO_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `DEPLOYMENT_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `EDITOR_SOURCE_VALUE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `EDITOR_SOURCE_EXTRA_VALUE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_FK_MODEL_SOURCE` (`EDITOR_SOURCE_VALUE_ID_`),
-  KEY `ACT_FK_MODEL_SOURCE_EXTRA` (`EDITOR_SOURCE_EXTRA_VALUE_ID_`),
-  KEY `ACT_FK_MODEL_DEPLOYMENT` (`DEPLOYMENT_ID_`),
-  CONSTRAINT `ACT_FK_MODEL_DEPLOYMENT` FOREIGN KEY (`DEPLOYMENT_ID_`) REFERENCES `ACT_RE_DEPLOYMENT` (`ID_`),
-  CONSTRAINT `ACT_FK_MODEL_SOURCE` FOREIGN KEY (`EDITOR_SOURCE_VALUE_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
-  CONSTRAINT `ACT_FK_MODEL_SOURCE_EXTRA` FOREIGN KEY (`EDITOR_SOURCE_EXTRA_VALUE_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`)
+                                `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                `REV_` int(11) DEFAULT NULL,
+                                `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                `KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                `CREATE_TIME_` timestamp(3) NULL DEFAULT NULL,
+                                `LAST_UPDATE_TIME_` timestamp(3) NULL DEFAULT NULL,
+                                `VERSION_` int(11) DEFAULT NULL,
+                                `META_INFO_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                `DEPLOYMENT_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                `EDITOR_SOURCE_VALUE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                `EDITOR_SOURCE_EXTRA_VALUE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                                PRIMARY KEY (`ID_`),
+                                KEY `ACT_FK_MODEL_SOURCE` (`EDITOR_SOURCE_VALUE_ID_`),
+                                KEY `ACT_FK_MODEL_SOURCE_EXTRA` (`EDITOR_SOURCE_EXTRA_VALUE_ID_`),
+                                KEY `ACT_FK_MODEL_DEPLOYMENT` (`DEPLOYMENT_ID_`),
+                                CONSTRAINT `ACT_FK_MODEL_DEPLOYMENT` FOREIGN KEY (`DEPLOYMENT_ID_`) REFERENCES `ACT_RE_DEPLOYMENT` (`ID_`),
+                                CONSTRAINT `ACT_FK_MODEL_SOURCE` FOREIGN KEY (`EDITOR_SOURCE_VALUE_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
+                                CONSTRAINT `ACT_FK_MODEL_SOURCE_EXTRA` FOREIGN KEY (`EDITOR_SOURCE_EXTRA_VALUE_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -772,26 +1640,26 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_RE_PROCDEF`;
 CREATE TABLE `ACT_RE_PROCDEF` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `KEY_` varchar(255) COLLATE utf8_bin NOT NULL,
-  `VERSION_` int(11) NOT NULL,
-  `DEPLOYMENT_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `RESOURCE_NAME_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `DGRM_RESOURCE_NAME_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `DESCRIPTION_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `HAS_START_FORM_KEY_` tinyint(4) DEFAULT NULL,
-  `HAS_GRAPHICAL_NOTATION_` tinyint(4) DEFAULT NULL,
-  `SUSPENSION_STATE_` int(11) DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  `ENGINE_VERSION_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `DERIVED_FROM_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `DERIVED_FROM_ROOT_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `DERIVED_VERSION_` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ID_`),
-  UNIQUE KEY `ACT_UNIQ_PROCDEF` (`KEY_`,`VERSION_`,`DERIVED_VERSION_`,`TENANT_ID_`)
+                                  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                  `REV_` int(11) DEFAULT NULL,
+                                  `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                  `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                  `KEY_` varchar(255) COLLATE utf8_bin NOT NULL,
+                                  `VERSION_` int(11) NOT NULL,
+                                  `DEPLOYMENT_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                  `RESOURCE_NAME_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                  `DGRM_RESOURCE_NAME_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                  `DESCRIPTION_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                  `HAS_START_FORM_KEY_` tinyint(4) DEFAULT NULL,
+                                  `HAS_GRAPHICAL_NOTATION_` tinyint(4) DEFAULT NULL,
+                                  `SUSPENSION_STATE_` int(11) DEFAULT NULL,
+                                  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                                  `ENGINE_VERSION_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                  `DERIVED_FROM_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                  `DERIVED_FROM_ROOT_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                  `DERIVED_VERSION_` int(11) NOT NULL DEFAULT '0',
+                                  PRIMARY KEY (`ID_`),
+                                  UNIQUE KEY `ACT_UNIQ_PROCDEF` (`KEY_`,`VERSION_`,`DERIVED_VERSION_`,`TENANT_ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -806,31 +1674,31 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_RU_ACTINST`;
 CREATE TABLE `ACT_RU_ACTINST` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT '1',
-  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `ACT_ID_` varchar(255) COLLATE utf8_bin NOT NULL,
-  `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `CALL_PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `ACT_NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `ACT_TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
-  `ASSIGNEE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `START_TIME_` datetime(3) NOT NULL,
-  `END_TIME_` datetime(3) DEFAULT NULL,
-  `DURATION_` bigint(20) DEFAULT NULL,
-  `TRANSACTION_ORDER_` int(11) DEFAULT NULL,
-  `DELETE_REASON_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_IDX_RU_ACTI_START` (`START_TIME_`),
-  KEY `ACT_IDX_RU_ACTI_END` (`END_TIME_`),
-  KEY `ACT_IDX_RU_ACTI_PROC` (`PROC_INST_ID_`),
-  KEY `ACT_IDX_RU_ACTI_PROC_ACT` (`PROC_INST_ID_`,`ACT_ID_`),
-  KEY `ACT_IDX_RU_ACTI_EXEC` (`EXECUTION_ID_`),
-  KEY `ACT_IDX_RU_ACTI_EXEC_ACT` (`EXECUTION_ID_`,`ACT_ID_`),
-  KEY `ACT_IDX_RU_ACTI_TASK` (`TASK_ID_`)
+                                  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                  `REV_` int(11) DEFAULT '1',
+                                  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                  `ACT_ID_` varchar(255) COLLATE utf8_bin NOT NULL,
+                                  `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                  `CALL_PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                  `ACT_NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                  `ACT_TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
+                                  `ASSIGNEE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                  `START_TIME_` datetime(3) NOT NULL,
+                                  `END_TIME_` datetime(3) DEFAULT NULL,
+                                  `DURATION_` bigint(20) DEFAULT NULL,
+                                  `TRANSACTION_ORDER_` int(11) DEFAULT NULL,
+                                  `DELETE_REASON_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                                  PRIMARY KEY (`ID_`),
+                                  KEY `ACT_IDX_RU_ACTI_START` (`START_TIME_`),
+                                  KEY `ACT_IDX_RU_ACTI_END` (`END_TIME_`),
+                                  KEY `ACT_IDX_RU_ACTI_PROC` (`PROC_INST_ID_`),
+                                  KEY `ACT_IDX_RU_ACTI_PROC_ACT` (`PROC_INST_ID_`,`ACT_ID_`),
+                                  KEY `ACT_IDX_RU_ACTI_EXEC` (`EXECUTION_ID_`),
+                                  KEY `ACT_IDX_RU_ACTI_EXEC_ACT` (`EXECUTION_ID_`,`ACT_ID_`),
+                                  KEY `ACT_IDX_RU_ACTI_TASK` (`TASK_ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -849,45 +1717,45 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_RU_DEADLETTER_JOB`;
 CREATE TABLE `ACT_RU_DEADLETTER_JOB` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
-  `EXCLUSIVE_` tinyint(1) DEFAULT NULL,
-  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROCESS_INSTANCE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `ELEMENT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `ELEMENT_NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `CORRELATION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `EXCEPTION_STACK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `EXCEPTION_MSG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `DUEDATE_` timestamp(3) NULL DEFAULT NULL,
-  `REPEAT_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `HANDLER_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `HANDLER_CFG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `CUSTOM_VALUES_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `CREATE_TIME_` timestamp(3) NULL DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_IDX_DEADLETTER_JOB_EXCEPTION_STACK_ID` (`EXCEPTION_STACK_ID_`),
-  KEY `ACT_IDX_DEADLETTER_JOB_CUSTOM_VALUES_ID` (`CUSTOM_VALUES_ID_`),
-  KEY `ACT_IDX_DEADLETTER_JOB_CORRELATION_ID` (`CORRELATION_ID_`),
-  KEY `ACT_IDX_DJOB_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_DJOB_SUB_SCOPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_DJOB_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_FK_DEADLETTER_JOB_EXECUTION` (`EXECUTION_ID_`),
-  KEY `ACT_FK_DEADLETTER_JOB_PROCESS_INSTANCE` (`PROCESS_INSTANCE_ID_`),
-  KEY `ACT_FK_DEADLETTER_JOB_PROC_DEF` (`PROC_DEF_ID_`),
-  CONSTRAINT `ACT_FK_DEADLETTER_JOB_CUSTOM_VALUES` FOREIGN KEY (`CUSTOM_VALUES_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
-  CONSTRAINT `ACT_FK_DEADLETTER_JOB_EXCEPTION` FOREIGN KEY (`EXCEPTION_STACK_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
-  CONSTRAINT `ACT_FK_DEADLETTER_JOB_EXECUTION` FOREIGN KEY (`EXECUTION_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
-  CONSTRAINT `ACT_FK_DEADLETTER_JOB_PROCESS_INSTANCE` FOREIGN KEY (`PROCESS_INSTANCE_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
-  CONSTRAINT `ACT_FK_DEADLETTER_JOB_PROC_DEF` FOREIGN KEY (`PROC_DEF_ID_`) REFERENCES `ACT_RE_PROCDEF` (`ID_`)
+                                         `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                         `REV_` int(11) DEFAULT NULL,
+                                         `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                         `TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
+                                         `EXCLUSIVE_` tinyint(1) DEFAULT NULL,
+                                         `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                         `PROCESS_INSTANCE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                         `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                         `ELEMENT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                         `ELEMENT_NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                         `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                         `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                         `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                         `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                         `CORRELATION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                         `EXCEPTION_STACK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                         `EXCEPTION_MSG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                         `DUEDATE_` timestamp(3) NULL DEFAULT NULL,
+                                         `REPEAT_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                         `HANDLER_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                         `HANDLER_CFG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                         `CUSTOM_VALUES_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                         `CREATE_TIME_` timestamp(3) NULL DEFAULT NULL,
+                                         `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                                         PRIMARY KEY (`ID_`),
+                                         KEY `ACT_IDX_DEADLETTER_JOB_EXCEPTION_STACK_ID` (`EXCEPTION_STACK_ID_`),
+                                         KEY `ACT_IDX_DEADLETTER_JOB_CUSTOM_VALUES_ID` (`CUSTOM_VALUES_ID_`),
+                                         KEY `ACT_IDX_DEADLETTER_JOB_CORRELATION_ID` (`CORRELATION_ID_`),
+                                         KEY `ACT_IDX_DJOB_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
+                                         KEY `ACT_IDX_DJOB_SUB_SCOPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
+                                         KEY `ACT_IDX_DJOB_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`),
+                                         KEY `ACT_FK_DEADLETTER_JOB_EXECUTION` (`EXECUTION_ID_`),
+                                         KEY `ACT_FK_DEADLETTER_JOB_PROCESS_INSTANCE` (`PROCESS_INSTANCE_ID_`),
+                                         KEY `ACT_FK_DEADLETTER_JOB_PROC_DEF` (`PROC_DEF_ID_`),
+                                         CONSTRAINT `ACT_FK_DEADLETTER_JOB_CUSTOM_VALUES` FOREIGN KEY (`CUSTOM_VALUES_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
+                                         CONSTRAINT `ACT_FK_DEADLETTER_JOB_EXCEPTION` FOREIGN KEY (`EXCEPTION_STACK_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
+                                         CONSTRAINT `ACT_FK_DEADLETTER_JOB_EXECUTION` FOREIGN KEY (`EXECUTION_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
+                                         CONSTRAINT `ACT_FK_DEADLETTER_JOB_PROCESS_INSTANCE` FOREIGN KEY (`PROCESS_INSTANCE_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
+                                         CONSTRAINT `ACT_FK_DEADLETTER_JOB_PROC_DEF` FOREIGN KEY (`PROC_DEF_ID_`) REFERENCES `ACT_RE_PROCDEF` (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -901,26 +1769,26 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_RU_ENTITYLINK`;
 CREATE TABLE `ACT_RU_ENTITYLINK` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `CREATE_TIME_` datetime(3) DEFAULT NULL,
-  `LINK_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `PARENT_ELEMENT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `REF_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `REF_SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `REF_SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `ROOT_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `ROOT_SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `HIERARCHY_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_IDX_ENT_LNK_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`,`LINK_TYPE_`),
-  KEY `ACT_IDX_ENT_LNK_REF_SCOPE` (`REF_SCOPE_ID_`,`REF_SCOPE_TYPE_`,`LINK_TYPE_`),
-  KEY `ACT_IDX_ENT_LNK_ROOT_SCOPE` (`ROOT_SCOPE_ID_`,`ROOT_SCOPE_TYPE_`,`LINK_TYPE_`),
-  KEY `ACT_IDX_ENT_LNK_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`,`LINK_TYPE_`)
+                                     `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                     `REV_` int(11) DEFAULT NULL,
+                                     `CREATE_TIME_` datetime(3) DEFAULT NULL,
+                                     `LINK_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `PARENT_ELEMENT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `REF_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `REF_SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `REF_SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `ROOT_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `ROOT_SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `HIERARCHY_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     PRIMARY KEY (`ID_`),
+                                     KEY `ACT_IDX_ENT_LNK_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`,`LINK_TYPE_`),
+                                     KEY `ACT_IDX_ENT_LNK_REF_SCOPE` (`REF_SCOPE_ID_`,`REF_SCOPE_TYPE_`,`LINK_TYPE_`),
+                                     KEY `ACT_IDX_ENT_LNK_ROOT_SCOPE` (`ROOT_SCOPE_ID_`,`ROOT_SCOPE_TYPE_`,`LINK_TYPE_`),
+                                     KEY `ACT_IDX_ENT_LNK_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`,`LINK_TYPE_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -934,25 +1802,28 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_RU_EVENT_SUBSCR`;
 CREATE TABLE `ACT_RU_EVENT_SUBSCR` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `EVENT_TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
-  `EVENT_NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `ACTIVITY_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `CONFIGURATION_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `CREATED_` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `SUB_SCOPE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_DEFINITION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_TYPE_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_IDX_EVENT_SUBSCR_CONFIG_` (`CONFIGURATION_`),
-  KEY `ACT_FK_EVENT_EXEC` (`EXECUTION_ID_`),
-  CONSTRAINT `ACT_FK_EVENT_EXEC` FOREIGN KEY (`EXECUTION_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`)
+                                       `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                       `REV_` int(11) DEFAULT NULL,
+                                       `EVENT_TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
+                                       `EVENT_NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                       `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                       `ACTIVITY_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                       `CONFIGURATION_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `CREATED_` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+                                       `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                       `SUB_SCOPE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                       `SCOPE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                       `SCOPE_DEFINITION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                       `SCOPE_TYPE_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                       `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                                       `LOCK_TIME_` timestamp(3) NULL DEFAULT NULL,
+                                       `LOCK_OWNER_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       PRIMARY KEY (`ID_`),
+                                       KEY `ACT_IDX_EVENT_SUBSCR_CONFIG_` (`CONFIGURATION_`),
+                                       KEY `ACT_FK_EVENT_EXEC` (`EXECUTION_ID_`),
+                                       KEY `ACT_IDX_EVENT_SUBSCR_SCOPEREF_` (`SCOPE_ID_`,`SCOPE_TYPE_`),
+                                       CONSTRAINT `ACT_FK_EVENT_EXEC` FOREIGN KEY (`EXECUTION_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -966,57 +1837,57 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_RU_EXECUTION`;
 CREATE TABLE `ACT_RU_EXECUTION` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `BUSINESS_KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `PARENT_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `SUPER_EXEC_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `ROOT_PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `ACT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `IS_ACTIVE_` tinyint(4) DEFAULT NULL,
-  `IS_CONCURRENT_` tinyint(4) DEFAULT NULL,
-  `IS_SCOPE_` tinyint(4) DEFAULT NULL,
-  `IS_EVENT_SCOPE_` tinyint(4) DEFAULT NULL,
-  `IS_MI_ROOT_` tinyint(4) DEFAULT NULL,
-  `SUSPENSION_STATE_` int(11) DEFAULT NULL,
-  `CACHED_ENT_STATE_` int(11) DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `START_ACT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `START_TIME_` datetime(3) DEFAULT NULL,
-  `START_USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `LOCK_TIME_` timestamp(3) NULL DEFAULT NULL,
-  `LOCK_OWNER_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `IS_COUNT_ENABLED_` tinyint(4) DEFAULT NULL,
-  `EVT_SUBSCR_COUNT_` int(11) DEFAULT NULL,
-  `TASK_COUNT_` int(11) DEFAULT NULL,
-  `JOB_COUNT_` int(11) DEFAULT NULL,
-  `TIMER_JOB_COUNT_` int(11) DEFAULT NULL,
-  `SUSP_JOB_COUNT_` int(11) DEFAULT NULL,
-  `DEADLETTER_JOB_COUNT_` int(11) DEFAULT NULL,
-  `EXTERNAL_WORKER_JOB_COUNT_` int(11) DEFAULT NULL,
-  `VAR_COUNT_` int(11) DEFAULT NULL,
-  `ID_LINK_COUNT_` int(11) DEFAULT NULL,
-  `CALLBACK_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `CALLBACK_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `REFERENCE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `REFERENCE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `PROPAGATED_STAGE_INST_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `BUSINESS_STATUS_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_IDX_EXEC_BUSKEY` (`BUSINESS_KEY_`),
-  KEY `ACT_IDC_EXEC_ROOT` (`ROOT_PROC_INST_ID_`),
-  KEY `ACT_IDX_EXEC_REF_ID_` (`REFERENCE_ID_`),
-  KEY `ACT_FK_EXE_PROCINST` (`PROC_INST_ID_`),
-  KEY `ACT_FK_EXE_PARENT` (`PARENT_ID_`),
-  KEY `ACT_FK_EXE_SUPER` (`SUPER_EXEC_`),
-  KEY `ACT_FK_EXE_PROCDEF` (`PROC_DEF_ID_`),
-  CONSTRAINT `ACT_FK_EXE_PARENT` FOREIGN KEY (`PARENT_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`) ON DELETE CASCADE,
-  CONSTRAINT `ACT_FK_EXE_PROCDEF` FOREIGN KEY (`PROC_DEF_ID_`) REFERENCES `ACT_RE_PROCDEF` (`ID_`),
-  CONSTRAINT `ACT_FK_EXE_PROCINST` FOREIGN KEY (`PROC_INST_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `ACT_FK_EXE_SUPER` FOREIGN KEY (`SUPER_EXEC_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`) ON DELETE CASCADE
+                                    `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                    `REV_` int(11) DEFAULT NULL,
+                                    `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                    `BUSINESS_KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `PARENT_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                    `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                    `SUPER_EXEC_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                    `ROOT_PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                    `ACT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `IS_ACTIVE_` tinyint(4) DEFAULT NULL,
+                                    `IS_CONCURRENT_` tinyint(4) DEFAULT NULL,
+                                    `IS_SCOPE_` tinyint(4) DEFAULT NULL,
+                                    `IS_EVENT_SCOPE_` tinyint(4) DEFAULT NULL,
+                                    `IS_MI_ROOT_` tinyint(4) DEFAULT NULL,
+                                    `SUSPENSION_STATE_` int(11) DEFAULT NULL,
+                                    `CACHED_ENT_STATE_` int(11) DEFAULT NULL,
+                                    `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                                    `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `START_ACT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `START_TIME_` datetime(3) DEFAULT NULL,
+                                    `START_USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `LOCK_TIME_` timestamp(3) NULL DEFAULT NULL,
+                                    `LOCK_OWNER_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `IS_COUNT_ENABLED_` tinyint(4) DEFAULT NULL,
+                                    `EVT_SUBSCR_COUNT_` int(11) DEFAULT NULL,
+                                    `TASK_COUNT_` int(11) DEFAULT NULL,
+                                    `JOB_COUNT_` int(11) DEFAULT NULL,
+                                    `TIMER_JOB_COUNT_` int(11) DEFAULT NULL,
+                                    `SUSP_JOB_COUNT_` int(11) DEFAULT NULL,
+                                    `DEADLETTER_JOB_COUNT_` int(11) DEFAULT NULL,
+                                    `EXTERNAL_WORKER_JOB_COUNT_` int(11) DEFAULT NULL,
+                                    `VAR_COUNT_` int(11) DEFAULT NULL,
+                                    `ID_LINK_COUNT_` int(11) DEFAULT NULL,
+                                    `CALLBACK_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `CALLBACK_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `REFERENCE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `REFERENCE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `PROPAGATED_STAGE_INST_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `BUSINESS_STATUS_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    PRIMARY KEY (`ID_`),
+                                    KEY `ACT_IDX_EXEC_BUSKEY` (`BUSINESS_KEY_`),
+                                    KEY `ACT_IDC_EXEC_ROOT` (`ROOT_PROC_INST_ID_`),
+                                    KEY `ACT_IDX_EXEC_REF_ID_` (`REFERENCE_ID_`),
+                                    KEY `ACT_FK_EXE_PROCINST` (`PROC_INST_ID_`),
+                                    KEY `ACT_FK_EXE_PARENT` (`PARENT_ID_`),
+                                    KEY `ACT_FK_EXE_SUPER` (`SUPER_EXEC_`),
+                                    KEY `ACT_FK_EXE_PROCDEF` (`PROC_DEF_ID_`),
+                                    CONSTRAINT `ACT_FK_EXE_PARENT` FOREIGN KEY (`PARENT_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`) ON DELETE CASCADE,
+                                    CONSTRAINT `ACT_FK_EXE_PROCDEF` FOREIGN KEY (`PROC_DEF_ID_`) REFERENCES `ACT_RE_PROCDEF` (`ID_`),
+                                    CONSTRAINT `ACT_FK_EXE_PROCINST` FOREIGN KEY (`PROC_INST_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`) ON DELETE CASCADE ON UPDATE CASCADE,
+                                    CONSTRAINT `ACT_FK_EXE_SUPER` FOREIGN KEY (`SUPER_EXEC_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -1032,42 +1903,42 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_RU_EXTERNAL_JOB`;
 CREATE TABLE `ACT_RU_EXTERNAL_JOB` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
-  `LOCK_EXP_TIME_` timestamp(3) NULL DEFAULT NULL,
-  `LOCK_OWNER_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `EXCLUSIVE_` tinyint(1) DEFAULT NULL,
-  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROCESS_INSTANCE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `ELEMENT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `ELEMENT_NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `CORRELATION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `RETRIES_` int(11) DEFAULT NULL,
-  `EXCEPTION_STACK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `EXCEPTION_MSG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `DUEDATE_` timestamp(3) NULL DEFAULT NULL,
-  `REPEAT_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `HANDLER_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `HANDLER_CFG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `CUSTOM_VALUES_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `CREATE_TIME_` timestamp(3) NULL DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_IDX_EXTERNAL_JOB_EXCEPTION_STACK_ID` (`EXCEPTION_STACK_ID_`),
-  KEY `ACT_IDX_EXTERNAL_JOB_CUSTOM_VALUES_ID` (`CUSTOM_VALUES_ID_`),
-  KEY `ACT_IDX_EXTERNAL_JOB_CORRELATION_ID` (`CORRELATION_ID_`),
-  KEY `ACT_IDX_EJOB_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_EJOB_SUB_SCOPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_EJOB_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`),
-  CONSTRAINT `ACT_FK_EXTERNAL_JOB_CUSTOM_VALUES` FOREIGN KEY (`CUSTOM_VALUES_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
-  CONSTRAINT `ACT_FK_EXTERNAL_JOB_EXCEPTION` FOREIGN KEY (`EXCEPTION_STACK_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`)
+                                       `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                       `REV_` int(11) DEFAULT NULL,
+                                       `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
+                                       `LOCK_EXP_TIME_` timestamp(3) NULL DEFAULT NULL,
+                                       `LOCK_OWNER_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `EXCLUSIVE_` tinyint(1) DEFAULT NULL,
+                                       `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                       `PROCESS_INSTANCE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                       `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                       `ELEMENT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `ELEMENT_NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `CORRELATION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `RETRIES_` int(11) DEFAULT NULL,
+                                       `EXCEPTION_STACK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                       `EXCEPTION_MSG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                       `DUEDATE_` timestamp(3) NULL DEFAULT NULL,
+                                       `REPEAT_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `HANDLER_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `HANDLER_CFG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                       `CUSTOM_VALUES_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                       `CREATE_TIME_` timestamp(3) NULL DEFAULT NULL,
+                                       `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                                       PRIMARY KEY (`ID_`),
+                                       KEY `ACT_IDX_EXTERNAL_JOB_EXCEPTION_STACK_ID` (`EXCEPTION_STACK_ID_`),
+                                       KEY `ACT_IDX_EXTERNAL_JOB_CUSTOM_VALUES_ID` (`CUSTOM_VALUES_ID_`),
+                                       KEY `ACT_IDX_EXTERNAL_JOB_CORRELATION_ID` (`CORRELATION_ID_`),
+                                       KEY `ACT_IDX_EJOB_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
+                                       KEY `ACT_IDX_EJOB_SUB_SCOPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
+                                       KEY `ACT_IDX_EJOB_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`),
+                                       CONSTRAINT `ACT_FK_EXTERNAL_JOB_CUSTOM_VALUES` FOREIGN KEY (`CUSTOM_VALUES_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
+                                       CONSTRAINT `ACT_FK_EXTERNAL_JOB_EXCEPTION` FOREIGN KEY (`EXCEPTION_STACK_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -1081,21 +1952,21 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_RU_HISTORY_JOB`;
 CREATE TABLE `ACT_RU_HISTORY_JOB` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `LOCK_EXP_TIME_` timestamp(3) NULL DEFAULT NULL,
-  `LOCK_OWNER_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `RETRIES_` int(11) DEFAULT NULL,
-  `EXCEPTION_STACK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `EXCEPTION_MSG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `HANDLER_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `HANDLER_CFG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `CUSTOM_VALUES_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `ADV_HANDLER_CFG_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `CREATE_TIME_` timestamp(3) NULL DEFAULT NULL,
-  `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  PRIMARY KEY (`ID_`)
+                                      `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                      `REV_` int(11) DEFAULT NULL,
+                                      `LOCK_EXP_TIME_` timestamp(3) NULL DEFAULT NULL,
+                                      `LOCK_OWNER_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                      `RETRIES_` int(11) DEFAULT NULL,
+                                      `EXCEPTION_STACK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                      `EXCEPTION_MSG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                      `HANDLER_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                      `HANDLER_CFG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                      `CUSTOM_VALUES_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                      `ADV_HANDLER_CFG_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                      `CREATE_TIME_` timestamp(3) NULL DEFAULT NULL,
+                                      `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                      `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                                      PRIMARY KEY (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -1109,30 +1980,30 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_RU_IDENTITYLINK`;
 CREATE TABLE `ACT_RU_IDENTITYLINK` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `GROUP_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_IDX_IDENT_LNK_USER` (`USER_ID_`),
-  KEY `ACT_IDX_IDENT_LNK_GROUP` (`GROUP_ID_`),
-  KEY `ACT_IDX_IDENT_LNK_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_IDENT_LNK_SUB_SCOPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_IDENT_LNK_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_ATHRZ_PROCEDEF` (`PROC_DEF_ID_`),
-  KEY `ACT_FK_TSKASS_TASK` (`TASK_ID_`),
-  KEY `ACT_FK_IDL_PROCINST` (`PROC_INST_ID_`),
-  CONSTRAINT `ACT_FK_ATHRZ_PROCEDEF` FOREIGN KEY (`PROC_DEF_ID_`) REFERENCES `ACT_RE_PROCDEF` (`ID_`),
-  CONSTRAINT `ACT_FK_IDL_PROCINST` FOREIGN KEY (`PROC_INST_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
-  CONSTRAINT `ACT_FK_TSKASS_TASK` FOREIGN KEY (`TASK_ID_`) REFERENCES `ACT_RU_TASK` (`ID_`)
+                                       `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                       `REV_` int(11) DEFAULT NULL,
+                                       `GROUP_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `USER_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                       `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                       `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                       `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                       PRIMARY KEY (`ID_`),
+                                       KEY `ACT_IDX_IDENT_LNK_USER` (`USER_ID_`),
+                                       KEY `ACT_IDX_IDENT_LNK_GROUP` (`GROUP_ID_`),
+                                       KEY `ACT_IDX_IDENT_LNK_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
+                                       KEY `ACT_IDX_IDENT_LNK_SUB_SCOPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
+                                       KEY `ACT_IDX_IDENT_LNK_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`),
+                                       KEY `ACT_IDX_ATHRZ_PROCEDEF` (`PROC_DEF_ID_`),
+                                       KEY `ACT_FK_TSKASS_TASK` (`TASK_ID_`),
+                                       KEY `ACT_FK_IDL_PROCINST` (`PROC_INST_ID_`),
+                                       CONSTRAINT `ACT_FK_ATHRZ_PROCEDEF` FOREIGN KEY (`PROC_DEF_ID_`) REFERENCES `ACT_RE_PROCDEF` (`ID_`),
+                                       CONSTRAINT `ACT_FK_IDL_PROCINST` FOREIGN KEY (`PROC_INST_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
+                                       CONSTRAINT `ACT_FK_TSKASS_TASK` FOREIGN KEY (`TASK_ID_`) REFERENCES `ACT_RU_TASK` (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -1150,48 +2021,48 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_RU_JOB`;
 CREATE TABLE `ACT_RU_JOB` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
-  `LOCK_EXP_TIME_` timestamp(3) NULL DEFAULT NULL,
-  `LOCK_OWNER_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `EXCLUSIVE_` tinyint(1) DEFAULT NULL,
-  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROCESS_INSTANCE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `ELEMENT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `ELEMENT_NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `CORRELATION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `RETRIES_` int(11) DEFAULT NULL,
-  `EXCEPTION_STACK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `EXCEPTION_MSG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `DUEDATE_` timestamp(3) NULL DEFAULT NULL,
-  `REPEAT_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `HANDLER_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `HANDLER_CFG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `CUSTOM_VALUES_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `CREATE_TIME_` timestamp(3) NULL DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_IDX_JOB_EXCEPTION_STACK_ID` (`EXCEPTION_STACK_ID_`),
-  KEY `ACT_IDX_JOB_CUSTOM_VALUES_ID` (`CUSTOM_VALUES_ID_`),
-  KEY `ACT_IDX_JOB_CORRELATION_ID` (`CORRELATION_ID_`),
-  KEY `ACT_IDX_JOB_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_JOB_SUB_SCOPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_JOB_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_FK_JOB_EXECUTION` (`EXECUTION_ID_`),
-  KEY `ACT_FK_JOB_PROCESS_INSTANCE` (`PROCESS_INSTANCE_ID_`),
-  KEY `ACT_FK_JOB_PROC_DEF` (`PROC_DEF_ID_`),
-  CONSTRAINT `ACT_FK_JOB_CUSTOM_VALUES` FOREIGN KEY (`CUSTOM_VALUES_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
-  CONSTRAINT `ACT_FK_JOB_EXCEPTION` FOREIGN KEY (`EXCEPTION_STACK_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
-  CONSTRAINT `ACT_FK_JOB_EXECUTION` FOREIGN KEY (`EXECUTION_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
-  CONSTRAINT `ACT_FK_JOB_PROCESS_INSTANCE` FOREIGN KEY (`PROCESS_INSTANCE_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
-  CONSTRAINT `ACT_FK_JOB_PROC_DEF` FOREIGN KEY (`PROC_DEF_ID_`) REFERENCES `ACT_RE_PROCDEF` (`ID_`)
+                              `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                              `REV_` int(11) DEFAULT NULL,
+                              `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                              `TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
+                              `LOCK_EXP_TIME_` timestamp(3) NULL DEFAULT NULL,
+                              `LOCK_OWNER_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                              `EXCLUSIVE_` tinyint(1) DEFAULT NULL,
+                              `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                              `PROCESS_INSTANCE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                              `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                              `ELEMENT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                              `ELEMENT_NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                              `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                              `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                              `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                              `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                              `CORRELATION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                              `RETRIES_` int(11) DEFAULT NULL,
+                              `EXCEPTION_STACK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                              `EXCEPTION_MSG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                              `DUEDATE_` timestamp(3) NULL DEFAULT NULL,
+                              `REPEAT_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                              `HANDLER_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                              `HANDLER_CFG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                              `CUSTOM_VALUES_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                              `CREATE_TIME_` timestamp(3) NULL DEFAULT NULL,
+                              `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                              PRIMARY KEY (`ID_`),
+                              KEY `ACT_IDX_JOB_EXCEPTION_STACK_ID` (`EXCEPTION_STACK_ID_`),
+                              KEY `ACT_IDX_JOB_CUSTOM_VALUES_ID` (`CUSTOM_VALUES_ID_`),
+                              KEY `ACT_IDX_JOB_CORRELATION_ID` (`CORRELATION_ID_`),
+                              KEY `ACT_IDX_JOB_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
+                              KEY `ACT_IDX_JOB_SUB_SCOPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
+                              KEY `ACT_IDX_JOB_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`),
+                              KEY `ACT_FK_JOB_EXECUTION` (`EXECUTION_ID_`),
+                              KEY `ACT_FK_JOB_PROCESS_INSTANCE` (`PROCESS_INSTANCE_ID_`),
+                              KEY `ACT_FK_JOB_PROC_DEF` (`PROC_DEF_ID_`),
+                              CONSTRAINT `ACT_FK_JOB_CUSTOM_VALUES` FOREIGN KEY (`CUSTOM_VALUES_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
+                              CONSTRAINT `ACT_FK_JOB_EXCEPTION` FOREIGN KEY (`EXCEPTION_STACK_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
+                              CONSTRAINT `ACT_FK_JOB_EXECUTION` FOREIGN KEY (`EXECUTION_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
+                              CONSTRAINT `ACT_FK_JOB_PROCESS_INSTANCE` FOREIGN KEY (`PROCESS_INSTANCE_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
+                              CONSTRAINT `ACT_FK_JOB_PROC_DEF` FOREIGN KEY (`PROC_DEF_ID_`) REFERENCES `ACT_RE_PROCDEF` (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -1205,46 +2076,46 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_RU_SUSPENDED_JOB`;
 CREATE TABLE `ACT_RU_SUSPENDED_JOB` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
-  `EXCLUSIVE_` tinyint(1) DEFAULT NULL,
-  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROCESS_INSTANCE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `ELEMENT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `ELEMENT_NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `CORRELATION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `RETRIES_` int(11) DEFAULT NULL,
-  `EXCEPTION_STACK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `EXCEPTION_MSG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `DUEDATE_` timestamp(3) NULL DEFAULT NULL,
-  `REPEAT_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `HANDLER_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `HANDLER_CFG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `CUSTOM_VALUES_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `CREATE_TIME_` timestamp(3) NULL DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_IDX_SUSPENDED_JOB_EXCEPTION_STACK_ID` (`EXCEPTION_STACK_ID_`),
-  KEY `ACT_IDX_SUSPENDED_JOB_CUSTOM_VALUES_ID` (`CUSTOM_VALUES_ID_`),
-  KEY `ACT_IDX_SUSPENDED_JOB_CORRELATION_ID` (`CORRELATION_ID_`),
-  KEY `ACT_IDX_SJOB_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_SJOB_SUB_SCOPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_SJOB_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_FK_SUSPENDED_JOB_EXECUTION` (`EXECUTION_ID_`),
-  KEY `ACT_FK_SUSPENDED_JOB_PROCESS_INSTANCE` (`PROCESS_INSTANCE_ID_`),
-  KEY `ACT_FK_SUSPENDED_JOB_PROC_DEF` (`PROC_DEF_ID_`),
-  CONSTRAINT `ACT_FK_SUSPENDED_JOB_CUSTOM_VALUES` FOREIGN KEY (`CUSTOM_VALUES_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
-  CONSTRAINT `ACT_FK_SUSPENDED_JOB_EXCEPTION` FOREIGN KEY (`EXCEPTION_STACK_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
-  CONSTRAINT `ACT_FK_SUSPENDED_JOB_EXECUTION` FOREIGN KEY (`EXECUTION_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
-  CONSTRAINT `ACT_FK_SUSPENDED_JOB_PROCESS_INSTANCE` FOREIGN KEY (`PROCESS_INSTANCE_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
-  CONSTRAINT `ACT_FK_SUSPENDED_JOB_PROC_DEF` FOREIGN KEY (`PROC_DEF_ID_`) REFERENCES `ACT_RE_PROCDEF` (`ID_`)
+                                        `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                        `REV_` int(11) DEFAULT NULL,
+                                        `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                        `TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
+                                        `EXCLUSIVE_` tinyint(1) DEFAULT NULL,
+                                        `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                        `PROCESS_INSTANCE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                        `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                        `ELEMENT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                        `ELEMENT_NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                        `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                        `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                        `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                        `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                        `CORRELATION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                        `RETRIES_` int(11) DEFAULT NULL,
+                                        `EXCEPTION_STACK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                        `EXCEPTION_MSG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                        `DUEDATE_` timestamp(3) NULL DEFAULT NULL,
+                                        `REPEAT_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                        `HANDLER_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                        `HANDLER_CFG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                        `CUSTOM_VALUES_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                        `CREATE_TIME_` timestamp(3) NULL DEFAULT NULL,
+                                        `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                                        PRIMARY KEY (`ID_`),
+                                        KEY `ACT_IDX_SUSPENDED_JOB_EXCEPTION_STACK_ID` (`EXCEPTION_STACK_ID_`),
+                                        KEY `ACT_IDX_SUSPENDED_JOB_CUSTOM_VALUES_ID` (`CUSTOM_VALUES_ID_`),
+                                        KEY `ACT_IDX_SUSPENDED_JOB_CORRELATION_ID` (`CORRELATION_ID_`),
+                                        KEY `ACT_IDX_SJOB_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
+                                        KEY `ACT_IDX_SJOB_SUB_SCOPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
+                                        KEY `ACT_IDX_SJOB_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`),
+                                        KEY `ACT_FK_SUSPENDED_JOB_EXECUTION` (`EXECUTION_ID_`),
+                                        KEY `ACT_FK_SUSPENDED_JOB_PROCESS_INSTANCE` (`PROCESS_INSTANCE_ID_`),
+                                        KEY `ACT_FK_SUSPENDED_JOB_PROC_DEF` (`PROC_DEF_ID_`),
+                                        CONSTRAINT `ACT_FK_SUSPENDED_JOB_CUSTOM_VALUES` FOREIGN KEY (`CUSTOM_VALUES_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
+                                        CONSTRAINT `ACT_FK_SUSPENDED_JOB_EXCEPTION` FOREIGN KEY (`EXCEPTION_STACK_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
+                                        CONSTRAINT `ACT_FK_SUSPENDED_JOB_EXECUTION` FOREIGN KEY (`EXECUTION_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
+                                        CONSTRAINT `ACT_FK_SUSPENDED_JOB_PROCESS_INSTANCE` FOREIGN KEY (`PROCESS_INSTANCE_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
+                                        CONSTRAINT `ACT_FK_SUSPENDED_JOB_PROC_DEF` FOREIGN KEY (`PROC_DEF_ID_`) REFERENCES `ACT_RE_PROCDEF` (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -1258,47 +2129,47 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_RU_TASK`;
 CREATE TABLE `ACT_RU_TASK` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `TASK_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `PROPAGATED_STAGE_INST_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `PARENT_TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `DESCRIPTION_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `TASK_DEF_KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `OWNER_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `ASSIGNEE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `DELEGATION_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PRIORITY_` int(11) DEFAULT NULL,
-  `CREATE_TIME_` timestamp(3) NULL DEFAULT NULL,
-  `DUE_DATE_` datetime(3) DEFAULT NULL,
-  `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SUSPENSION_STATE_` int(11) DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  `FORM_KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `CLAIM_TIME_` datetime(3) DEFAULT NULL,
-  `IS_COUNT_ENABLED_` tinyint(4) DEFAULT NULL,
-  `VAR_COUNT_` int(11) DEFAULT NULL,
-  `ID_LINK_COUNT_` int(11) DEFAULT NULL,
-  `SUB_TASK_COUNT_` int(11) DEFAULT NULL,
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_IDX_TASK_CREATE` (`CREATE_TIME_`),
-  KEY `ACT_IDX_TASK_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_TASK_SUB_SCOPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_TASK_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_FK_TASK_EXE` (`EXECUTION_ID_`),
-  KEY `ACT_FK_TASK_PROCINST` (`PROC_INST_ID_`),
-  KEY `ACT_FK_TASK_PROCDEF` (`PROC_DEF_ID_`),
-  CONSTRAINT `ACT_FK_TASK_EXE` FOREIGN KEY (`EXECUTION_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
-  CONSTRAINT `ACT_FK_TASK_PROCDEF` FOREIGN KEY (`PROC_DEF_ID_`) REFERENCES `ACT_RE_PROCDEF` (`ID_`),
-  CONSTRAINT `ACT_FK_TASK_PROCINST` FOREIGN KEY (`PROC_INST_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`)
+                               `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                               `REV_` int(11) DEFAULT NULL,
+                               `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                               `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                               `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                               `TASK_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                               `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `PROPAGATED_STAGE_INST_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `PARENT_TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                               `DESCRIPTION_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                               `TASK_DEF_KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `OWNER_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `ASSIGNEE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `DELEGATION_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                               `PRIORITY_` int(11) DEFAULT NULL,
+                               `CREATE_TIME_` timestamp(3) NULL DEFAULT NULL,
+                               `DUE_DATE_` datetime(3) DEFAULT NULL,
+                               `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `SUSPENSION_STATE_` int(11) DEFAULT NULL,
+                               `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                               `FORM_KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                               `CLAIM_TIME_` datetime(3) DEFAULT NULL,
+                               `IS_COUNT_ENABLED_` tinyint(4) DEFAULT NULL,
+                               `VAR_COUNT_` int(11) DEFAULT NULL,
+                               `ID_LINK_COUNT_` int(11) DEFAULT NULL,
+                               `SUB_TASK_COUNT_` int(11) DEFAULT NULL,
+                               PRIMARY KEY (`ID_`),
+                               KEY `ACT_IDX_TASK_CREATE` (`CREATE_TIME_`),
+                               KEY `ACT_IDX_TASK_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
+                               KEY `ACT_IDX_TASK_SUB_SCOPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
+                               KEY `ACT_IDX_TASK_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`),
+                               KEY `ACT_FK_TASK_EXE` (`EXECUTION_ID_`),
+                               KEY `ACT_FK_TASK_PROCINST` (`PROC_INST_ID_`),
+                               KEY `ACT_FK_TASK_PROCDEF` (`PROC_DEF_ID_`),
+                               CONSTRAINT `ACT_FK_TASK_EXE` FOREIGN KEY (`EXECUTION_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
+                               CONSTRAINT `ACT_FK_TASK_PROCDEF` FOREIGN KEY (`PROC_DEF_ID_`) REFERENCES `ACT_RE_PROCDEF` (`ID_`),
+                               CONSTRAINT `ACT_FK_TASK_PROCINST` FOREIGN KEY (`PROC_INST_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -1313,49 +2184,49 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_RU_TIMER_JOB`;
 CREATE TABLE `ACT_RU_TIMER_JOB` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
-  `LOCK_EXP_TIME_` timestamp(3) NULL DEFAULT NULL,
-  `LOCK_OWNER_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `EXCLUSIVE_` tinyint(1) DEFAULT NULL,
-  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROCESS_INSTANCE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `ELEMENT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `ELEMENT_NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `CORRELATION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `RETRIES_` int(11) DEFAULT NULL,
-  `EXCEPTION_STACK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `EXCEPTION_MSG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `DUEDATE_` timestamp(3) NULL DEFAULT NULL,
-  `REPEAT_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `HANDLER_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `HANDLER_CFG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `CUSTOM_VALUES_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `CREATE_TIME_` timestamp(3) NULL DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_IDX_TIMER_JOB_EXCEPTION_STACK_ID` (`EXCEPTION_STACK_ID_`),
-  KEY `ACT_IDX_TIMER_JOB_CUSTOM_VALUES_ID` (`CUSTOM_VALUES_ID_`),
-  KEY `ACT_IDX_TIMER_JOB_CORRELATION_ID` (`CORRELATION_ID_`),
-  KEY `ACT_IDX_TIMER_JOB_DUEDATE` (`DUEDATE_`),
-  KEY `ACT_IDX_TJOB_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_TJOB_SUB_SCOPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_TJOB_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_FK_TIMER_JOB_EXECUTION` (`EXECUTION_ID_`),
-  KEY `ACT_FK_TIMER_JOB_PROCESS_INSTANCE` (`PROCESS_INSTANCE_ID_`),
-  KEY `ACT_FK_TIMER_JOB_PROC_DEF` (`PROC_DEF_ID_`),
-  CONSTRAINT `ACT_FK_TIMER_JOB_CUSTOM_VALUES` FOREIGN KEY (`CUSTOM_VALUES_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
-  CONSTRAINT `ACT_FK_TIMER_JOB_EXCEPTION` FOREIGN KEY (`EXCEPTION_STACK_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
-  CONSTRAINT `ACT_FK_TIMER_JOB_EXECUTION` FOREIGN KEY (`EXECUTION_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
-  CONSTRAINT `ACT_FK_TIMER_JOB_PROCESS_INSTANCE` FOREIGN KEY (`PROCESS_INSTANCE_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
-  CONSTRAINT `ACT_FK_TIMER_JOB_PROC_DEF` FOREIGN KEY (`PROC_DEF_ID_`) REFERENCES `ACT_RE_PROCDEF` (`ID_`)
+                                    `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                    `REV_` int(11) DEFAULT NULL,
+                                    `CATEGORY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
+                                    `LOCK_EXP_TIME_` timestamp(3) NULL DEFAULT NULL,
+                                    `LOCK_OWNER_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `EXCLUSIVE_` tinyint(1) DEFAULT NULL,
+                                    `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                    `PROCESS_INSTANCE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                    `PROC_DEF_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                    `ELEMENT_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `ELEMENT_NAME_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `SCOPE_DEFINITION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `CORRELATION_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `RETRIES_` int(11) DEFAULT NULL,
+                                    `EXCEPTION_STACK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                    `EXCEPTION_MSG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                    `DUEDATE_` timestamp(3) NULL DEFAULT NULL,
+                                    `REPEAT_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `HANDLER_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                    `HANDLER_CFG_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                    `CUSTOM_VALUES_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                    `CREATE_TIME_` timestamp(3) NULL DEFAULT NULL,
+                                    `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                                    PRIMARY KEY (`ID_`),
+                                    KEY `ACT_IDX_TIMER_JOB_EXCEPTION_STACK_ID` (`EXCEPTION_STACK_ID_`),
+                                    KEY `ACT_IDX_TIMER_JOB_CUSTOM_VALUES_ID` (`CUSTOM_VALUES_ID_`),
+                                    KEY `ACT_IDX_TIMER_JOB_CORRELATION_ID` (`CORRELATION_ID_`),
+                                    KEY `ACT_IDX_TIMER_JOB_DUEDATE` (`DUEDATE_`),
+                                    KEY `ACT_IDX_TJOB_SCOPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
+                                    KEY `ACT_IDX_TJOB_SUB_SCOPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
+                                    KEY `ACT_IDX_TJOB_SCOPE_DEF` (`SCOPE_DEFINITION_ID_`,`SCOPE_TYPE_`),
+                                    KEY `ACT_FK_TIMER_JOB_EXECUTION` (`EXECUTION_ID_`),
+                                    KEY `ACT_FK_TIMER_JOB_PROCESS_INSTANCE` (`PROCESS_INSTANCE_ID_`),
+                                    KEY `ACT_FK_TIMER_JOB_PROC_DEF` (`PROC_DEF_ID_`),
+                                    CONSTRAINT `ACT_FK_TIMER_JOB_CUSTOM_VALUES` FOREIGN KEY (`CUSTOM_VALUES_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
+                                    CONSTRAINT `ACT_FK_TIMER_JOB_EXCEPTION` FOREIGN KEY (`EXCEPTION_STACK_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
+                                    CONSTRAINT `ACT_FK_TIMER_JOB_EXECUTION` FOREIGN KEY (`EXECUTION_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
+                                    CONSTRAINT `ACT_FK_TIMER_JOB_PROCESS_INSTANCE` FOREIGN KEY (`PROCESS_INSTANCE_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
+                                    CONSTRAINT `ACT_FK_TIMER_JOB_PROC_DEF` FOREIGN KEY (`PROC_DEF_ID_`) REFERENCES `ACT_RE_PROCDEF` (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -1369,31 +2240,31 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `ACT_RU_VARIABLE`;
 CREATE TABLE `ACT_RU_VARIABLE` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
-  `NAME_` varchar(255) COLLATE utf8_bin NOT NULL,
-  `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `BYTEARRAY_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `DOUBLE_` double DEFAULT NULL,
-  `LONG_` bigint(20) DEFAULT NULL,
-  `TEXT_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  `TEXT2_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`ID_`),
-  KEY `ACT_IDX_RU_VAR_SCOPE_ID_TYPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_IDX_RU_VAR_SUB_ID_TYPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
-  KEY `ACT_FK_VAR_BYTEARRAY` (`BYTEARRAY_ID_`),
-  KEY `ACT_IDX_VARIABLE_TASK_ID` (`TASK_ID_`),
-  KEY `ACT_FK_VAR_EXE` (`EXECUTION_ID_`),
-  KEY `ACT_FK_VAR_PROCINST` (`PROC_INST_ID_`),
-  CONSTRAINT `ACT_FK_VAR_BYTEARRAY` FOREIGN KEY (`BYTEARRAY_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
-  CONSTRAINT `ACT_FK_VAR_EXE` FOREIGN KEY (`EXECUTION_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
-  CONSTRAINT `ACT_FK_VAR_PROCINST` FOREIGN KEY (`PROC_INST_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`)
+                                   `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                   `REV_` int(11) DEFAULT NULL,
+                                   `TYPE_` varchar(255) COLLATE utf8_bin NOT NULL,
+                                   `NAME_` varchar(255) COLLATE utf8_bin NOT NULL,
+                                   `EXECUTION_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                   `PROC_INST_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                   `TASK_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                   `SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `SUB_SCOPE_ID_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `SCOPE_TYPE_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                   `BYTEARRAY_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                   `DOUBLE_` double DEFAULT NULL,
+                                   `LONG_` bigint(20) DEFAULT NULL,
+                                   `TEXT_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                   `TEXT2_` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
+                                   PRIMARY KEY (`ID_`),
+                                   KEY `ACT_IDX_RU_VAR_SCOPE_ID_TYPE` (`SCOPE_ID_`,`SCOPE_TYPE_`),
+                                   KEY `ACT_IDX_RU_VAR_SUB_ID_TYPE` (`SUB_SCOPE_ID_`,`SCOPE_TYPE_`),
+                                   KEY `ACT_FK_VAR_BYTEARRAY` (`BYTEARRAY_ID_`),
+                                   KEY `ACT_IDX_VARIABLE_TASK_ID` (`TASK_ID_`),
+                                   KEY `ACT_FK_VAR_EXE` (`EXECUTION_ID_`),
+                                   KEY `ACT_FK_VAR_PROCINST` (`PROC_INST_ID_`),
+                                   CONSTRAINT `ACT_FK_VAR_BYTEARRAY` FOREIGN KEY (`BYTEARRAY_ID_`) REFERENCES `ACT_GE_BYTEARRAY` (`ID_`),
+                                   CONSTRAINT `ACT_FK_VAR_EXE` FOREIGN KEY (`EXECUTION_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`),
+                                   CONSTRAINT `ACT_FK_VAR_PROCINST` FOREIGN KEY (`PROC_INST_ID_`) REFERENCES `ACT_RU_EXECUTION` (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -1424,20 +2295,20 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `FLW_CHANNEL_DEFINITION`;
 CREATE TABLE `FLW_CHANNEL_DEFINITION` (
-  `ID_` varchar(255) NOT NULL,
-  `NAME_` varchar(255) DEFAULT NULL,
-  `VERSION_` int(11) DEFAULT NULL,
-  `KEY_` varchar(255) DEFAULT NULL,
-  `CATEGORY_` varchar(255) DEFAULT NULL,
-  `DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
-  `CREATE_TIME_` datetime(3) DEFAULT NULL,
-  `TENANT_ID_` varchar(255) DEFAULT NULL,
-  `RESOURCE_NAME_` varchar(255) DEFAULT NULL,
-  `DESCRIPTION_` varchar(255) DEFAULT NULL,
-  `TYPE_` varchar(255) DEFAULT NULL,
-  `IMPLEMENTATION_` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ID_`),
-  UNIQUE KEY `ACT_IDX_CHANNEL_DEF_UNIQ` (`KEY_`,`VERSION_`,`TENANT_ID_`)
+                                          `ID_` varchar(255) NOT NULL,
+                                          `NAME_` varchar(255) DEFAULT NULL,
+                                          `VERSION_` int(11) DEFAULT NULL,
+                                          `KEY_` varchar(255) DEFAULT NULL,
+                                          `CATEGORY_` varchar(255) DEFAULT NULL,
+                                          `DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
+                                          `CREATE_TIME_` datetime(3) DEFAULT NULL,
+                                          `TENANT_ID_` varchar(255) DEFAULT NULL,
+                                          `RESOURCE_NAME_` varchar(255) DEFAULT NULL,
+                                          `DESCRIPTION_` varchar(255) DEFAULT NULL,
+                                          `TYPE_` varchar(255) DEFAULT NULL,
+                                          `IMPLEMENTATION_` varchar(255) DEFAULT NULL,
+                                          PRIMARY KEY (`ID_`),
+                                          UNIQUE KEY `ACT_IDX_CHANNEL_DEF_UNIQ` (`KEY_`,`VERSION_`,`TENANT_ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -1451,17 +2322,17 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `FLW_EVENT_DEFINITION`;
 CREATE TABLE `FLW_EVENT_DEFINITION` (
-  `ID_` varchar(255) NOT NULL,
-  `NAME_` varchar(255) DEFAULT NULL,
-  `VERSION_` int(11) DEFAULT NULL,
-  `KEY_` varchar(255) DEFAULT NULL,
-  `CATEGORY_` varchar(255) DEFAULT NULL,
-  `DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
-  `TENANT_ID_` varchar(255) DEFAULT NULL,
-  `RESOURCE_NAME_` varchar(255) DEFAULT NULL,
-  `DESCRIPTION_` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ID_`),
-  UNIQUE KEY `ACT_IDX_EVENT_DEF_UNIQ` (`KEY_`,`VERSION_`,`TENANT_ID_`)
+                                        `ID_` varchar(255) NOT NULL,
+                                        `NAME_` varchar(255) DEFAULT NULL,
+                                        `VERSION_` int(11) DEFAULT NULL,
+                                        `KEY_` varchar(255) DEFAULT NULL,
+                                        `CATEGORY_` varchar(255) DEFAULT NULL,
+                                        `DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
+                                        `TENANT_ID_` varchar(255) DEFAULT NULL,
+                                        `RESOURCE_NAME_` varchar(255) DEFAULT NULL,
+                                        `DESCRIPTION_` varchar(255) DEFAULT NULL,
+                                        PRIMARY KEY (`ID_`),
+                                        UNIQUE KEY `ACT_IDX_EVENT_DEF_UNIQ` (`KEY_`,`VERSION_`,`TENANT_ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -1475,13 +2346,13 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `FLW_EVENT_DEPLOYMENT`;
 CREATE TABLE `FLW_EVENT_DEPLOYMENT` (
-  `ID_` varchar(255) NOT NULL,
-  `NAME_` varchar(255) DEFAULT NULL,
-  `CATEGORY_` varchar(255) DEFAULT NULL,
-  `DEPLOY_TIME_` datetime(3) DEFAULT NULL,
-  `TENANT_ID_` varchar(255) DEFAULT NULL,
-  `PARENT_DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ID_`)
+                                        `ID_` varchar(255) NOT NULL,
+                                        `NAME_` varchar(255) DEFAULT NULL,
+                                        `CATEGORY_` varchar(255) DEFAULT NULL,
+                                        `DEPLOY_TIME_` datetime(3) DEFAULT NULL,
+                                        `TENANT_ID_` varchar(255) DEFAULT NULL,
+                                        `PARENT_DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
+                                        PRIMARY KEY (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -1495,11 +2366,11 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `FLW_EVENT_RESOURCE`;
 CREATE TABLE `FLW_EVENT_RESOURCE` (
-  `ID_` varchar(255) NOT NULL,
-  `NAME_` varchar(255) DEFAULT NULL,
-  `DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
-  `RESOURCE_BYTES_` longblob,
-  PRIMARY KEY (`ID_`)
+                                      `ID_` varchar(255) NOT NULL,
+                                      `NAME_` varchar(255) DEFAULT NULL,
+                                      `DEPLOYMENT_ID_` varchar(255) DEFAULT NULL,
+                                      `RESOURCE_BYTES_` longblob,
+                                      PRIMARY KEY (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -1513,20 +2384,20 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `FLW_EV_DATABASECHANGELOG`;
 CREATE TABLE `FLW_EV_DATABASECHANGELOG` (
-  `ID` varchar(255) NOT NULL,
-  `AUTHOR` varchar(255) NOT NULL,
-  `FILENAME` varchar(255) NOT NULL,
-  `DATEEXECUTED` datetime NOT NULL,
-  `ORDEREXECUTED` int(11) NOT NULL,
-  `EXECTYPE` varchar(10) NOT NULL,
-  `MD5SUM` varchar(35) DEFAULT NULL,
-  `DESCRIPTION` varchar(255) DEFAULT NULL,
-  `COMMENTS` varchar(255) DEFAULT NULL,
-  `TAG` varchar(255) DEFAULT NULL,
-  `LIQUIBASE` varchar(20) DEFAULT NULL,
-  `CONTEXTS` varchar(255) DEFAULT NULL,
-  `LABELS` varchar(255) DEFAULT NULL,
-  `DEPLOYMENT_ID` varchar(10) DEFAULT NULL
+                                            `ID` varchar(255) NOT NULL,
+                                            `AUTHOR` varchar(255) NOT NULL,
+                                            `FILENAME` varchar(255) NOT NULL,
+                                            `DATEEXECUTED` datetime NOT NULL,
+                                            `ORDEREXECUTED` int(11) NOT NULL,
+                                            `EXECTYPE` varchar(10) NOT NULL,
+                                            `MD5SUM` varchar(35) DEFAULT NULL,
+                                            `DESCRIPTION` varchar(255) DEFAULT NULL,
+                                            `COMMENTS` varchar(255) DEFAULT NULL,
+                                            `TAG` varchar(255) DEFAULT NULL,
+                                            `LIQUIBASE` varchar(20) DEFAULT NULL,
+                                            `CONTEXTS` varchar(255) DEFAULT NULL,
+                                            `LABELS` varchar(255) DEFAULT NULL,
+                                            `DEPLOYMENT_ID` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -1543,11 +2414,11 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `FLW_EV_DATABASECHANGELOGLOCK`;
 CREATE TABLE `FLW_EV_DATABASECHANGELOGLOCK` (
-  `ID` int(11) NOT NULL,
-  `LOCKED` bit(1) NOT NULL,
-  `LOCKGRANTED` datetime DEFAULT NULL,
-  `LOCKEDBY` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ID`)
+                                                `ID` int(11) NOT NULL,
+                                                `LOCKED` bit(1) NOT NULL,
+                                                `LOCKGRANTED` datetime DEFAULT NULL,
+                                                `LOCKEDBY` varchar(255) DEFAULT NULL,
+                                                PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -1562,17 +2433,17 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `FLW_RU_BATCH`;
 CREATE TABLE `FLW_RU_BATCH` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `TYPE_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `SEARCH_KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SEARCH_KEY2_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `CREATE_TIME_` datetime(3) NOT NULL,
-  `COMPLETE_TIME_` datetime(3) DEFAULT NULL,
-  `STATUS_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `BATCH_DOC_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  PRIMARY KEY (`ID_`)
+                                `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                `REV_` int(11) DEFAULT NULL,
+                                `TYPE_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                `SEARCH_KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                `SEARCH_KEY2_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                `CREATE_TIME_` datetime(3) NOT NULL,
+                                `COMPLETE_TIME_` datetime(3) DEFAULT NULL,
+                                `STATUS_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                `BATCH_DOC_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                                PRIMARY KEY (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -1586,23 +2457,23 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `FLW_RU_BATCH_PART`;
 CREATE TABLE `FLW_RU_BATCH_PART` (
-  `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `REV_` int(11) DEFAULT NULL,
-  `BATCH_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `TYPE_` varchar(64) COLLATE utf8_bin NOT NULL,
-  `SCOPE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `SUB_SCOPE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `SCOPE_TYPE_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `SEARCH_KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `SEARCH_KEY2_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `CREATE_TIME_` datetime(3) NOT NULL,
-  `COMPLETE_TIME_` datetime(3) DEFAULT NULL,
-  `STATUS_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `RESULT_DOC_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
-  PRIMARY KEY (`ID_`),
-  KEY `FLW_IDX_BATCH_PART` (`BATCH_ID_`),
-  CONSTRAINT `FLW_FK_BATCH_PART_PARENT` FOREIGN KEY (`BATCH_ID_`) REFERENCES `FLW_RU_BATCH` (`ID_`)
+                                     `ID_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                     `REV_` int(11) DEFAULT NULL,
+                                     `BATCH_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                     `TYPE_` varchar(64) COLLATE utf8_bin NOT NULL,
+                                     `SCOPE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                     `SUB_SCOPE_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                     `SCOPE_TYPE_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                     `SEARCH_KEY_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `SEARCH_KEY2_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `CREATE_TIME_` datetime(3) NOT NULL,
+                                     `COMPLETE_TIME_` datetime(3) DEFAULT NULL,
+                                     `STATUS_` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+                                     `RESULT_DOC_ID_` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+                                     `TENANT_ID_` varchar(255) COLLATE utf8_bin DEFAULT '',
+                                     PRIMARY KEY (`ID_`),
+                                     KEY `FLW_IDX_BATCH_PART` (`BATCH_ID_`),
+                                     CONSTRAINT `FLW_FK_BATCH_PART_PARENT` FOREIGN KEY (`BATCH_ID_`) REFERENCES `FLW_RU_BATCH` (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -1616,12 +2487,12 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `QRTZ_BLOB_TRIGGERS`;
 CREATE TABLE `QRTZ_BLOB_TRIGGERS` (
-  `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
-  `trigger_name` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
-  `trigger_group` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
-  `blob_data` blob COMMENT '存放持久化Trigger对象',
-  PRIMARY KEY (`sched_name`,`trigger_name`,`trigger_group`),
-  CONSTRAINT `qrtz_blob_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `QRTZ_TRIGGERS` (`sched_name`, `trigger_name`, `trigger_group`)
+                                      `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
+                                      `trigger_name` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
+                                      `trigger_group` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
+                                      `blob_data` blob COMMENT '存放持久化Trigger对象',
+                                      PRIMARY KEY (`sched_name`,`trigger_name`,`trigger_group`),
+                                      CONSTRAINT `qrtz_blob_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `QRTZ_TRIGGERS` (`sched_name`, `trigger_name`, `trigger_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Blob类型的触发器表';
 
 -- ----------------------------
@@ -1635,10 +2506,10 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `QRTZ_CALENDARS`;
 CREATE TABLE `QRTZ_CALENDARS` (
-  `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
-  `calendar_name` varchar(200) NOT NULL COMMENT '日历名称',
-  `calendar` blob NOT NULL COMMENT '存放持久化calendar对象',
-  PRIMARY KEY (`sched_name`,`calendar_name`)
+                                  `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
+                                  `calendar_name` varchar(200) NOT NULL COMMENT '日历名称',
+                                  `calendar` blob NOT NULL COMMENT '存放持久化calendar对象',
+                                  PRIMARY KEY (`sched_name`,`calendar_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='日历信息表';
 
 -- ----------------------------
@@ -1652,13 +2523,13 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `QRTZ_CRON_TRIGGERS`;
 CREATE TABLE `QRTZ_CRON_TRIGGERS` (
-  `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
-  `trigger_name` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
-  `trigger_group` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
-  `cron_expression` varchar(200) NOT NULL COMMENT 'cron表达式',
-  `time_zone_id` varchar(80) DEFAULT NULL COMMENT '时区',
-  PRIMARY KEY (`sched_name`,`trigger_name`,`trigger_group`),
-  CONSTRAINT `qrtz_cron_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `QRTZ_TRIGGERS` (`sched_name`, `trigger_name`, `trigger_group`)
+                                      `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
+                                      `trigger_name` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
+                                      `trigger_group` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
+                                      `cron_expression` varchar(200) NOT NULL COMMENT 'cron表达式',
+                                      `time_zone_id` varchar(80) DEFAULT NULL COMMENT '时区',
+                                      PRIMARY KEY (`sched_name`,`trigger_name`,`trigger_group`),
+                                      CONSTRAINT `qrtz_cron_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `QRTZ_TRIGGERS` (`sched_name`, `trigger_name`, `trigger_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Cron类型的触发器表';
 
 -- ----------------------------
@@ -1672,20 +2543,20 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `QRTZ_FIRED_TRIGGERS`;
 CREATE TABLE `QRTZ_FIRED_TRIGGERS` (
-  `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
-  `entry_id` varchar(95) NOT NULL COMMENT '调度器实例id',
-  `trigger_name` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
-  `trigger_group` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
-  `instance_name` varchar(200) NOT NULL COMMENT '调度器实例名',
-  `fired_time` bigint(13) NOT NULL COMMENT '触发的时间',
-  `sched_time` bigint(13) NOT NULL COMMENT '定时器制定的时间',
-  `priority` int(11) NOT NULL COMMENT '优先级',
-  `state` varchar(16) NOT NULL COMMENT '状态',
-  `job_name` varchar(200) DEFAULT NULL COMMENT '任务名称',
-  `job_group` varchar(200) DEFAULT NULL COMMENT '任务组名',
-  `is_nonconcurrent` varchar(1) DEFAULT NULL COMMENT '是否并发',
-  `requests_recovery` varchar(1) DEFAULT NULL COMMENT '是否接受恢复执行',
-  PRIMARY KEY (`sched_name`,`entry_id`)
+                                       `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
+                                       `entry_id` varchar(95) NOT NULL COMMENT '调度器实例id',
+                                       `trigger_name` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
+                                       `trigger_group` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
+                                       `instance_name` varchar(200) NOT NULL COMMENT '调度器实例名',
+                                       `fired_time` bigint(13) NOT NULL COMMENT '触发的时间',
+                                       `sched_time` bigint(13) NOT NULL COMMENT '定时器制定的时间',
+                                       `priority` int(11) NOT NULL COMMENT '优先级',
+                                       `state` varchar(16) NOT NULL COMMENT '状态',
+                                       `job_name` varchar(200) DEFAULT NULL COMMENT '任务名称',
+                                       `job_group` varchar(200) DEFAULT NULL COMMENT '任务组名',
+                                       `is_nonconcurrent` varchar(1) DEFAULT NULL COMMENT '是否并发',
+                                       `requests_recovery` varchar(1) DEFAULT NULL COMMENT '是否接受恢复执行',
+                                       PRIMARY KEY (`sched_name`,`entry_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='已触发的触发器表';
 
 -- ----------------------------
@@ -1699,17 +2570,17 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `QRTZ_JOB_DETAILS`;
 CREATE TABLE `QRTZ_JOB_DETAILS` (
-  `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
-  `job_name` varchar(200) NOT NULL COMMENT '任务名称',
-  `job_group` varchar(200) NOT NULL COMMENT '任务组名',
-  `description` varchar(250) DEFAULT NULL COMMENT '相关介绍',
-  `job_class_name` varchar(250) NOT NULL COMMENT '执行任务类名称',
-  `is_durable` varchar(1) NOT NULL COMMENT '是否持久化',
-  `is_nonconcurrent` varchar(1) NOT NULL COMMENT '是否并发',
-  `is_update_data` varchar(1) NOT NULL COMMENT '是否更新数据',
-  `requests_recovery` varchar(1) NOT NULL COMMENT '是否接受恢复执行',
-  `job_data` blob COMMENT '存放持久化job对象',
-  PRIMARY KEY (`sched_name`,`job_name`,`job_group`)
+                                    `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
+                                    `job_name` varchar(200) NOT NULL COMMENT '任务名称',
+                                    `job_group` varchar(200) NOT NULL COMMENT '任务组名',
+                                    `description` varchar(250) DEFAULT NULL COMMENT '相关介绍',
+                                    `job_class_name` varchar(250) NOT NULL COMMENT '执行任务类名称',
+                                    `is_durable` varchar(1) NOT NULL COMMENT '是否持久化',
+                                    `is_nonconcurrent` varchar(1) NOT NULL COMMENT '是否并发',
+                                    `is_update_data` varchar(1) NOT NULL COMMENT '是否更新数据',
+                                    `requests_recovery` varchar(1) NOT NULL COMMENT '是否接受恢复执行',
+                                    `job_data` blob COMMENT '存放持久化job对象',
+                                    PRIMARY KEY (`sched_name`,`job_name`,`job_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='任务详细信息表';
 
 -- ----------------------------
@@ -1723,9 +2594,9 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `QRTZ_LOCKS`;
 CREATE TABLE `QRTZ_LOCKS` (
-  `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
-  `lock_name` varchar(40) NOT NULL COMMENT '悲观锁名称',
-  PRIMARY KEY (`sched_name`,`lock_name`)
+                              `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
+                              `lock_name` varchar(40) NOT NULL COMMENT '悲观锁名称',
+                              PRIMARY KEY (`sched_name`,`lock_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='存储的悲观锁信息表';
 
 -- ----------------------------
@@ -1739,9 +2610,9 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `QRTZ_PAUSED_TRIGGER_GRPS`;
 CREATE TABLE `QRTZ_PAUSED_TRIGGER_GRPS` (
-  `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
-  `trigger_group` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
-  PRIMARY KEY (`sched_name`,`trigger_group`)
+                                            `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
+                                            `trigger_group` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
+                                            PRIMARY KEY (`sched_name`,`trigger_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='暂停的触发器表';
 
 -- ----------------------------
@@ -1755,11 +2626,11 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `QRTZ_SCHEDULER_STATE`;
 CREATE TABLE `QRTZ_SCHEDULER_STATE` (
-  `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
-  `instance_name` varchar(200) NOT NULL COMMENT '实例名称',
-  `last_checkin_time` bigint(13) NOT NULL COMMENT '上次检查时间',
-  `checkin_interval` bigint(13) NOT NULL COMMENT '检查间隔时间',
-  PRIMARY KEY (`sched_name`,`instance_name`)
+                                        `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
+                                        `instance_name` varchar(200) NOT NULL COMMENT '实例名称',
+                                        `last_checkin_time` bigint(13) NOT NULL COMMENT '上次检查时间',
+                                        `checkin_interval` bigint(13) NOT NULL COMMENT '检查间隔时间',
+                                        PRIMARY KEY (`sched_name`,`instance_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='调度器状态表';
 
 -- ----------------------------
@@ -1773,14 +2644,14 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `QRTZ_SIMPLE_TRIGGERS`;
 CREATE TABLE `QRTZ_SIMPLE_TRIGGERS` (
-  `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
-  `trigger_name` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
-  `trigger_group` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
-  `repeat_count` bigint(7) NOT NULL COMMENT '重复的次数统计',
-  `repeat_interval` bigint(12) NOT NULL COMMENT '重复的间隔时间',
-  `times_triggered` bigint(10) NOT NULL COMMENT '已经触发的次数',
-  PRIMARY KEY (`sched_name`,`trigger_name`,`trigger_group`),
-  CONSTRAINT `qrtz_simple_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `QRTZ_TRIGGERS` (`sched_name`, `trigger_name`, `trigger_group`)
+                                        `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
+                                        `trigger_name` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
+                                        `trigger_group` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
+                                        `repeat_count` bigint(7) NOT NULL COMMENT '重复的次数统计',
+                                        `repeat_interval` bigint(12) NOT NULL COMMENT '重复的间隔时间',
+                                        `times_triggered` bigint(10) NOT NULL COMMENT '已经触发的次数',
+                                        PRIMARY KEY (`sched_name`,`trigger_name`,`trigger_group`),
+                                        CONSTRAINT `qrtz_simple_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `QRTZ_TRIGGERS` (`sched_name`, `trigger_name`, `trigger_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='简单触发器的信息表';
 
 -- ----------------------------
@@ -1794,22 +2665,22 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `QRTZ_SIMPROP_TRIGGERS`;
 CREATE TABLE `QRTZ_SIMPROP_TRIGGERS` (
-  `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
-  `trigger_name` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
-  `trigger_group` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
-  `str_prop_1` varchar(512) DEFAULT NULL COMMENT 'String类型的trigger的第一个参数',
-  `str_prop_2` varchar(512) DEFAULT NULL COMMENT 'String类型的trigger的第二个参数',
-  `str_prop_3` varchar(512) DEFAULT NULL COMMENT 'String类型的trigger的第三个参数',
-  `int_prop_1` int(11) DEFAULT NULL COMMENT 'int类型的trigger的第一个参数',
-  `int_prop_2` int(11) DEFAULT NULL COMMENT 'int类型的trigger的第二个参数',
-  `long_prop_1` bigint(20) DEFAULT NULL COMMENT 'long类型的trigger的第一个参数',
-  `long_prop_2` bigint(20) DEFAULT NULL COMMENT 'long类型的trigger的第二个参数',
-  `dec_prop_1` decimal(13,4) DEFAULT NULL COMMENT 'decimal类型的trigger的第一个参数',
-  `dec_prop_2` decimal(13,4) DEFAULT NULL COMMENT 'decimal类型的trigger的第二个参数',
-  `bool_prop_1` varchar(1) DEFAULT NULL COMMENT 'Boolean类型的trigger的第一个参数',
-  `bool_prop_2` varchar(1) DEFAULT NULL COMMENT 'Boolean类型的trigger的第二个参数',
-  PRIMARY KEY (`sched_name`,`trigger_name`,`trigger_group`),
-  CONSTRAINT `qrtz_simprop_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `QRTZ_TRIGGERS` (`sched_name`, `trigger_name`, `trigger_group`)
+                                         `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
+                                         `trigger_name` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
+                                         `trigger_group` varchar(200) NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
+                                         `str_prop_1` varchar(512) DEFAULT NULL COMMENT 'String类型的trigger的第一个参数',
+                                         `str_prop_2` varchar(512) DEFAULT NULL COMMENT 'String类型的trigger的第二个参数',
+                                         `str_prop_3` varchar(512) DEFAULT NULL COMMENT 'String类型的trigger的第三个参数',
+                                         `int_prop_1` int(11) DEFAULT NULL COMMENT 'int类型的trigger的第一个参数',
+                                         `int_prop_2` int(11) DEFAULT NULL COMMENT 'int类型的trigger的第二个参数',
+                                         `long_prop_1` bigint(20) DEFAULT NULL COMMENT 'long类型的trigger的第一个参数',
+                                         `long_prop_2` bigint(20) DEFAULT NULL COMMENT 'long类型的trigger的第二个参数',
+                                         `dec_prop_1` decimal(13,4) DEFAULT NULL COMMENT 'decimal类型的trigger的第一个参数',
+                                         `dec_prop_2` decimal(13,4) DEFAULT NULL COMMENT 'decimal类型的trigger的第二个参数',
+                                         `bool_prop_1` varchar(1) DEFAULT NULL COMMENT 'Boolean类型的trigger的第一个参数',
+                                         `bool_prop_2` varchar(1) DEFAULT NULL COMMENT 'Boolean类型的trigger的第二个参数',
+                                         PRIMARY KEY (`sched_name`,`trigger_name`,`trigger_group`),
+                                         CONSTRAINT `qrtz_simprop_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `QRTZ_TRIGGERS` (`sched_name`, `trigger_name`, `trigger_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='同步机制的行锁表';
 
 -- ----------------------------
@@ -1823,25 +2694,25 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `QRTZ_TRIGGERS`;
 CREATE TABLE `QRTZ_TRIGGERS` (
-  `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
-  `trigger_name` varchar(200) NOT NULL COMMENT '触发器的名字',
-  `trigger_group` varchar(200) NOT NULL COMMENT '触发器所属组的名字',
-  `job_name` varchar(200) NOT NULL COMMENT 'qrtz_job_details表job_name的外键',
-  `job_group` varchar(200) NOT NULL COMMENT 'qrtz_job_details表job_group的外键',
-  `description` varchar(250) DEFAULT NULL COMMENT '相关介绍',
-  `next_fire_time` bigint(13) DEFAULT NULL COMMENT '上一次触发时间（毫秒）',
-  `prev_fire_time` bigint(13) DEFAULT NULL COMMENT '下一次触发时间（默认为-1表示不触发）',
-  `priority` int(11) DEFAULT NULL COMMENT '优先级',
-  `trigger_state` varchar(16) NOT NULL COMMENT '触发器状态',
-  `trigger_type` varchar(8) NOT NULL COMMENT '触发器的类型',
-  `start_time` bigint(13) NOT NULL COMMENT '开始时间',
-  `end_time` bigint(13) DEFAULT NULL COMMENT '结束时间',
-  `calendar_name` varchar(200) DEFAULT NULL COMMENT '日程表名称',
-  `misfire_instr` smallint(2) DEFAULT NULL COMMENT '补偿执行的策略',
-  `job_data` blob COMMENT '存放持久化job对象',
-  PRIMARY KEY (`sched_name`,`trigger_name`,`trigger_group`),
-  KEY `sched_name` (`sched_name`,`job_name`,`job_group`),
-  CONSTRAINT `qrtz_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `job_name`, `job_group`) REFERENCES `QRTZ_JOB_DETAILS` (`sched_name`, `job_name`, `job_group`)
+                                 `sched_name` varchar(120) NOT NULL COMMENT '调度名称',
+                                 `trigger_name` varchar(200) NOT NULL COMMENT '触发器的名字',
+                                 `trigger_group` varchar(200) NOT NULL COMMENT '触发器所属组的名字',
+                                 `job_name` varchar(200) NOT NULL COMMENT 'qrtz_job_details表job_name的外键',
+                                 `job_group` varchar(200) NOT NULL COMMENT 'qrtz_job_details表job_group的外键',
+                                 `description` varchar(250) DEFAULT NULL COMMENT '相关介绍',
+                                 `next_fire_time` bigint(13) DEFAULT NULL COMMENT '上一次触发时间（毫秒）',
+                                 `prev_fire_time` bigint(13) DEFAULT NULL COMMENT '下一次触发时间（默认为-1表示不触发）',
+                                 `priority` int(11) DEFAULT NULL COMMENT '优先级',
+                                 `trigger_state` varchar(16) NOT NULL COMMENT '触发器状态',
+                                 `trigger_type` varchar(8) NOT NULL COMMENT '触发器的类型',
+                                 `start_time` bigint(13) NOT NULL COMMENT '开始时间',
+                                 `end_time` bigint(13) DEFAULT NULL COMMENT '结束时间',
+                                 `calendar_name` varchar(200) DEFAULT NULL COMMENT '日程表名称',
+                                 `misfire_instr` smallint(2) DEFAULT NULL COMMENT '补偿执行的策略',
+                                 `job_data` blob COMMENT '存放持久化job对象',
+                                 PRIMARY KEY (`sched_name`,`trigger_name`,`trigger_group`),
+                                 KEY `sched_name` (`sched_name`,`job_name`,`job_group`),
+                                 CONSTRAINT `qrtz_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `job_name`, `job_group`) REFERENCES `QRTZ_JOB_DETAILS` (`sched_name`, `job_name`, `job_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='触发器详细信息表';
 
 -- ----------------------------
@@ -1855,27 +2726,27 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `gen_table`;
 CREATE TABLE `gen_table` (
-  `table_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
-  `table_name` varchar(200) DEFAULT '' COMMENT '表名称',
-  `table_comment` varchar(500) DEFAULT '' COMMENT '表描述',
-  `sub_table_name` varchar(64) DEFAULT NULL COMMENT '关联子表的表名',
-  `sub_table_fk_name` varchar(64) DEFAULT NULL COMMENT '子表关联的外键名',
-  `class_name` varchar(100) DEFAULT '' COMMENT '实体类名称',
-  `tpl_category` varchar(200) DEFAULT 'crud' COMMENT '使用的模板（crud单表操作 tree树表操作）',
-  `package_name` varchar(100) DEFAULT NULL COMMENT '生成包路径',
-  `module_name` varchar(30) DEFAULT NULL COMMENT '生成模块名',
-  `business_name` varchar(30) DEFAULT NULL COMMENT '生成业务名',
-  `function_name` varchar(50) DEFAULT NULL COMMENT '生成功能名',
-  `function_author` varchar(50) DEFAULT NULL COMMENT '生成功能作者',
-  `gen_type` char(1) DEFAULT '0' COMMENT '生成代码方式（0zip压缩包 1自定义路径）',
-  `gen_path` varchar(200) DEFAULT '/' COMMENT '生成路径（不填默认项目路径）',
-  `options` varchar(1000) DEFAULT NULL COMMENT '其它生成选项',
-  `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`table_id`)
+                             `table_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+                             `table_name` varchar(200) DEFAULT '' COMMENT '表名称',
+                             `table_comment` varchar(500) DEFAULT '' COMMENT '表描述',
+                             `sub_table_name` varchar(64) DEFAULT NULL COMMENT '关联子表的表名',
+                             `sub_table_fk_name` varchar(64) DEFAULT NULL COMMENT '子表关联的外键名',
+                             `class_name` varchar(100) DEFAULT '' COMMENT '实体类名称',
+                             `tpl_category` varchar(200) DEFAULT 'crud' COMMENT '使用的模板（crud单表操作 tree树表操作）',
+                             `package_name` varchar(100) DEFAULT NULL COMMENT '生成包路径',
+                             `module_name` varchar(30) DEFAULT NULL COMMENT '生成模块名',
+                             `business_name` varchar(30) DEFAULT NULL COMMENT '生成业务名',
+                             `function_name` varchar(50) DEFAULT NULL COMMENT '生成功能名',
+                             `function_author` varchar(50) DEFAULT NULL COMMENT '生成功能作者',
+                             `gen_type` char(1) DEFAULT '0' COMMENT '生成代码方式（0zip压缩包 1自定义路径）',
+                             `gen_path` varchar(200) DEFAULT '/' COMMENT '生成路径（不填默认项目路径）',
+                             `options` varchar(1000) DEFAULT NULL COMMENT '其它生成选项',
+                             `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
+                             `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                             `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
+                             `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                             `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+                             PRIMARY KEY (`table_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='代码生成业务表';
 
 -- ----------------------------
@@ -1889,29 +2760,29 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `gen_table_column`;
 CREATE TABLE `gen_table_column` (
-  `column_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
-  `table_id` varchar(64) DEFAULT NULL COMMENT '归属表编号',
-  `column_name` varchar(200) DEFAULT NULL COMMENT '列名称',
-  `column_comment` varchar(500) DEFAULT NULL COMMENT '列描述',
-  `column_type` varchar(100) DEFAULT NULL COMMENT '列类型',
-  `java_type` varchar(500) DEFAULT NULL COMMENT 'JAVA类型',
-  `java_field` varchar(200) DEFAULT NULL COMMENT 'JAVA字段名',
-  `is_pk` char(1) DEFAULT NULL COMMENT '是否主键（1是）',
-  `is_increment` char(1) DEFAULT NULL COMMENT '是否自增（1是）',
-  `is_required` char(1) DEFAULT NULL COMMENT '是否必填（1是）',
-  `is_insert` char(1) DEFAULT NULL COMMENT '是否为插入字段（1是）',
-  `is_edit` char(1) DEFAULT NULL COMMENT '是否编辑字段（1是）',
-  `is_list` char(1) DEFAULT NULL COMMENT '是否列表字段（1是）',
-  `is_query` char(1) DEFAULT NULL COMMENT '是否查询字段（1是）',
-  `query_type` varchar(200) DEFAULT 'EQ' COMMENT '查询方式（等于、不等于、大于、小于、范围）',
-  `html_type` varchar(200) DEFAULT NULL COMMENT '显示类型（文本框、文本域、下拉框、复选框、单选框、日期控件）',
-  `dict_type` varchar(200) DEFAULT '' COMMENT '字典类型',
-  `sort` int(11) DEFAULT NULL COMMENT '排序',
-  `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`column_id`)
+                                    `column_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                    `table_id` varchar(64) DEFAULT NULL COMMENT '归属表编号',
+                                    `column_name` varchar(200) DEFAULT NULL COMMENT '列名称',
+                                    `column_comment` varchar(500) DEFAULT NULL COMMENT '列描述',
+                                    `column_type` varchar(100) DEFAULT NULL COMMENT '列类型',
+                                    `java_type` varchar(500) DEFAULT NULL COMMENT 'JAVA类型',
+                                    `java_field` varchar(200) DEFAULT NULL COMMENT 'JAVA字段名',
+                                    `is_pk` char(1) DEFAULT NULL COMMENT '是否主键（1是）',
+                                    `is_increment` char(1) DEFAULT NULL COMMENT '是否自增（1是）',
+                                    `is_required` char(1) DEFAULT NULL COMMENT '是否必填（1是）',
+                                    `is_insert` char(1) DEFAULT NULL COMMENT '是否为插入字段（1是）',
+                                    `is_edit` char(1) DEFAULT NULL COMMENT '是否编辑字段（1是）',
+                                    `is_list` char(1) DEFAULT NULL COMMENT '是否列表字段（1是）',
+                                    `is_query` char(1) DEFAULT NULL COMMENT '是否查询字段（1是）',
+                                    `query_type` varchar(200) DEFAULT 'EQ' COMMENT '查询方式（等于、不等于、大于、小于、范围）',
+                                    `html_type` varchar(200) DEFAULT NULL COMMENT '显示类型（文本框、文本域、下拉框、复选框、单选框、日期控件）',
+                                    `dict_type` varchar(200) DEFAULT '' COMMENT '字典类型',
+                                    `sort` int(11) DEFAULT NULL COMMENT '排序',
+                                    `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
+                                    `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                    `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
+                                    `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                    PRIMARY KEY (`column_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COMMENT='代码生成业务表字段';
 
 -- ----------------------------
@@ -1925,17 +2796,17 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_config`;
 CREATE TABLE `sys_config` (
-  `config_id` int(5) NOT NULL AUTO_INCREMENT COMMENT '参数主键',
-  `config_name` varchar(100) DEFAULT '' COMMENT '参数名称',
-  `config_key` varchar(100) DEFAULT '' COMMENT '参数键名',
-  `config_value` varchar(500) DEFAULT '' COMMENT '参数键值',
-  `config_type` char(1) DEFAULT 'N' COMMENT '系统内置（Y是 N否）',
-  `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`config_id`)
+                              `config_id` int(5) NOT NULL AUTO_INCREMENT COMMENT '参数主键',
+                              `config_name` varchar(100) DEFAULT '' COMMENT '参数名称',
+                              `config_key` varchar(100) DEFAULT '' COMMENT '参数键名',
+                              `config_value` varchar(500) DEFAULT '' COMMENT '参数键值',
+                              `config_type` char(1) DEFAULT 'N' COMMENT '系统内置（Y是 N否）',
+                              `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
+                              `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                              `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
+                              `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                              `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+                              PRIMARY KEY (`config_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='参数配置表';
 
 -- ----------------------------
@@ -1954,10 +2825,10 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_deploy_form`;
 CREATE TABLE `sys_deploy_form` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `form_id` bigint(20) DEFAULT NULL COMMENT '表单主键',
-  `deploy_id` varchar(50) DEFAULT NULL COMMENT '流程实例主键',
-  PRIMARY KEY (`id`) USING BTREE
+                                   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                   `form_id` bigint(20) DEFAULT NULL COMMENT '表单主键',
+                                   `deploy_id` varchar(50) DEFAULT NULL COMMENT '流程实例主键',
+                                   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=6201 DEFAULT CHARSET=utf8mb4 COMMENT='流程实例关联表单';
 
 -- ----------------------------
@@ -1992,21 +2863,21 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_dept`;
 CREATE TABLE `sys_dept` (
-  `dept_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '部门id',
-  `parent_id` bigint(20) DEFAULT '0' COMMENT '父部门id',
-  `ancestors` varchar(50) DEFAULT '' COMMENT '祖级列表',
-  `dept_name` varchar(30) DEFAULT '' COMMENT '部门名称',
-  `order_num` int(4) DEFAULT '0' COMMENT '显示顺序',
-  `leader` varchar(20) DEFAULT NULL COMMENT '负责人',
-  `phone` varchar(11) DEFAULT NULL COMMENT '联系电话',
-  `email` varchar(50) DEFAULT NULL COMMENT '邮箱',
-  `status` char(1) DEFAULT '0' COMMENT '部门状态（0正常 1停用）',
-  `del_flag` char(1) DEFAULT '0' COMMENT '删除标志（0代表存在 2代表删除）',
-  `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`dept_id`)
+                            `dept_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '部门id',
+                            `parent_id` bigint(20) DEFAULT '0' COMMENT '父部门id',
+                            `ancestors` varchar(50) DEFAULT '' COMMENT '祖级列表',
+                            `dept_name` varchar(30) DEFAULT '' COMMENT '部门名称',
+                            `order_num` int(4) DEFAULT '0' COMMENT '显示顺序',
+                            `leader` varchar(20) DEFAULT NULL COMMENT '负责人',
+                            `phone` varchar(11) DEFAULT NULL COMMENT '联系电话',
+                            `email` varchar(50) DEFAULT NULL COMMENT '邮箱',
+                            `status` char(1) DEFAULT '0' COMMENT '部门状态（0正常 1停用）',
+                            `del_flag` char(1) DEFAULT '0' COMMENT '删除标志（0代表存在 2代表删除）',
+                            `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
+                            `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                            `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
+                            `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                            PRIMARY KEY (`dept_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=utf8mb4 COMMENT='部门表';
 
 -- ----------------------------
@@ -2030,21 +2901,21 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_dict_data`;
 CREATE TABLE `sys_dict_data` (
-  `dict_code` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '字典编码',
-  `dict_sort` int(4) DEFAULT '0' COMMENT '字典排序',
-  `dict_label` varchar(100) DEFAULT '' COMMENT '字典标签',
-  `dict_value` varchar(100) DEFAULT '' COMMENT '字典键值',
-  `dict_type` varchar(100) DEFAULT '' COMMENT '字典类型',
-  `css_class` varchar(100) DEFAULT NULL COMMENT '样式属性（其他样式扩展）',
-  `list_class` varchar(100) DEFAULT NULL COMMENT '表格回显样式',
-  `is_default` char(1) DEFAULT 'N' COMMENT '是否默认（Y是 N否）',
-  `status` char(1) DEFAULT '0' COMMENT '状态（0正常 1停用）',
-  `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`dict_code`)
+                                 `dict_code` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '字典编码',
+                                 `dict_sort` int(4) DEFAULT '0' COMMENT '字典排序',
+                                 `dict_label` varchar(100) DEFAULT '' COMMENT '字典标签',
+                                 `dict_value` varchar(100) DEFAULT '' COMMENT '字典键值',
+                                 `dict_type` varchar(100) DEFAULT '' COMMENT '字典类型',
+                                 `css_class` varchar(100) DEFAULT NULL COMMENT '样式属性（其他样式扩展）',
+                                 `list_class` varchar(100) DEFAULT NULL COMMENT '表格回显样式',
+                                 `is_default` char(1) DEFAULT 'N' COMMENT '是否默认（Y是 N否）',
+                                 `status` char(1) DEFAULT '0' COMMENT '状态（0正常 1停用）',
+                                 `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
+                                 `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                 `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
+                                 `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                 `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+                                 PRIMARY KEY (`dict_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8mb4 COMMENT='字典数据表';
 
 -- ----------------------------
@@ -2096,17 +2967,17 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_dict_type`;
 CREATE TABLE `sys_dict_type` (
-  `dict_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '字典主键',
-  `dict_name` varchar(100) DEFAULT '' COMMENT '字典名称',
-  `dict_type` varchar(100) DEFAULT '' COMMENT '字典类型',
-  `status` char(1) DEFAULT '0' COMMENT '状态（0正常 1停用）',
-  `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`dict_id`),
-  UNIQUE KEY `dict_type` (`dict_type`)
+                                 `dict_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '字典主键',
+                                 `dict_name` varchar(100) DEFAULT '' COMMENT '字典名称',
+                                 `dict_type` varchar(100) DEFAULT '' COMMENT '字典类型',
+                                 `status` char(1) DEFAULT '0' COMMENT '状态（0正常 1停用）',
+                                 `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
+                                 `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                 `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
+                                 `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                 `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+                                 PRIMARY KEY (`dict_id`),
+                                 UNIQUE KEY `dict_type` (`dict_type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=105 DEFAULT CHARSET=utf8mb4 COMMENT='字典类型表';
 
 -- ----------------------------
@@ -2135,16 +3006,16 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_expression`;
 CREATE TABLE `sys_expression` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '表单主键',
-  `name` varchar(50) DEFAULT NULL COMMENT '表达式名称',
-  `expression` varchar(255) DEFAULT NULL COMMENT '表达式内容',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  `create_by` bigint(20) DEFAULT NULL COMMENT '创建人员',
-  `update_by` bigint(20) DEFAULT NULL COMMENT '更新人员',
-  `status` tinyint(2) DEFAULT '0' COMMENT '状态',
-  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`id`) USING BTREE
+                                  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '表单主键',
+                                  `name` varchar(50) DEFAULT NULL COMMENT '表达式名称',
+                                  `expression` varchar(255) DEFAULT NULL COMMENT '表达式内容',
+                                  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                  `create_by` bigint(20) DEFAULT NULL COMMENT '创建人员',
+                                  `update_by` bigint(20) DEFAULT NULL COMMENT '更新人员',
+                                  `status` tinyint(2) DEFAULT '0' COMMENT '状态',
+                                  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+                                  PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='流程表达式';
 
 -- ----------------------------
@@ -2160,15 +3031,15 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_form`;
 CREATE TABLE `sys_form` (
-  `form_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '表单主键',
-  `form_name` varchar(50) DEFAULT NULL COMMENT '表单名称',
-  `form_content` longtext COMMENT '表单内容',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  `create_by` bigint(20) DEFAULT NULL COMMENT '创建人员',
-  `update_by` bigint(20) DEFAULT NULL COMMENT '更新人员',
-  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`form_id`) USING BTREE
+                            `form_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '表单主键',
+                            `form_name` varchar(50) DEFAULT NULL COMMENT '表单名称',
+                            `form_content` longtext COMMENT '表单内容',
+                            `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                            `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                            `create_by` bigint(20) DEFAULT NULL COMMENT '创建人员',
+                            `update_by` bigint(20) DEFAULT NULL COMMENT '更新人员',
+                            `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+                            PRIMARY KEY (`form_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=3171 DEFAULT CHARSET=utf8mb4 COMMENT='流程表单';
 
 -- ----------------------------
@@ -2183,20 +3054,20 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_job`;
 CREATE TABLE `sys_job` (
-  `job_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '任务ID',
-  `job_name` varchar(64) NOT NULL DEFAULT '' COMMENT '任务名称',
-  `job_group` varchar(64) NOT NULL DEFAULT 'DEFAULT' COMMENT '任务组名',
-  `invoke_target` varchar(500) NOT NULL COMMENT '调用目标字符串',
-  `cron_expression` varchar(255) DEFAULT '' COMMENT 'cron执行表达式',
-  `misfire_policy` varchar(20) DEFAULT '3' COMMENT '计划执行错误策略（1立即执行 2执行一次 3放弃执行）',
-  `concurrent` char(1) DEFAULT '1' COMMENT '是否并发执行（0允许 1禁止）',
-  `status` char(1) DEFAULT '0' COMMENT '状态（0正常 1暂停）',
-  `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  `remark` varchar(500) DEFAULT '' COMMENT '备注信息',
-  PRIMARY KEY (`job_id`,`job_name`,`job_group`)
+                           `job_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '任务ID',
+                           `job_name` varchar(64) NOT NULL DEFAULT '' COMMENT '任务名称',
+                           `job_group` varchar(64) NOT NULL DEFAULT 'DEFAULT' COMMENT '任务组名',
+                           `invoke_target` varchar(500) NOT NULL COMMENT '调用目标字符串',
+                           `cron_expression` varchar(255) DEFAULT '' COMMENT 'cron执行表达式',
+                           `misfire_policy` varchar(20) DEFAULT '3' COMMENT '计划执行错误策略（1立即执行 2执行一次 3放弃执行）',
+                           `concurrent` char(1) DEFAULT '1' COMMENT '是否并发执行（0允许 1禁止）',
+                           `status` char(1) DEFAULT '0' COMMENT '状态（0正常 1暂停）',
+                           `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
+                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                           `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
+                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                           `remark` varchar(500) DEFAULT '' COMMENT '备注信息',
+                           PRIMARY KEY (`job_id`,`job_name`,`job_group`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='定时任务调度表';
 
 -- ----------------------------
@@ -2213,15 +3084,15 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_job_log`;
 CREATE TABLE `sys_job_log` (
-  `job_log_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '任务日志ID',
-  `job_name` varchar(64) NOT NULL COMMENT '任务名称',
-  `job_group` varchar(64) NOT NULL COMMENT '任务组名',
-  `invoke_target` varchar(500) NOT NULL COMMENT '调用目标字符串',
-  `job_message` varchar(500) DEFAULT NULL COMMENT '日志信息',
-  `status` char(1) DEFAULT '0' COMMENT '执行状态（0正常 1失败）',
-  `exception_info` varchar(2000) DEFAULT '' COMMENT '异常信息',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  PRIMARY KEY (`job_log_id`)
+                               `job_log_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '任务日志ID',
+                               `job_name` varchar(64) NOT NULL COMMENT '任务名称',
+                               `job_group` varchar(64) NOT NULL COMMENT '任务组名',
+                               `invoke_target` varchar(500) NOT NULL COMMENT '调用目标字符串',
+                               `job_message` varchar(500) DEFAULT NULL COMMENT '日志信息',
+                               `status` char(1) DEFAULT '0' COMMENT '执行状态（0正常 1失败）',
+                               `exception_info` varchar(2000) DEFAULT '' COMMENT '异常信息',
+                               `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                               PRIMARY KEY (`job_log_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='定时任务调度日志表';
 
 -- ----------------------------
@@ -2235,19 +3106,19 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_listener`;
 CREATE TABLE `sys_listener` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '表单主键',
-  `name` varchar(128) DEFAULT NULL COMMENT '名称',
-  `type` char(2) DEFAULT NULL COMMENT '监听类型',
-  `event_type` varchar(32) DEFAULT NULL COMMENT '事件类型',
-  `value_type` char(2) DEFAULT NULL COMMENT '值类型',
-  `value` varchar(255) DEFAULT NULL COMMENT '执行内容',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  `create_by` bigint(20) DEFAULT NULL COMMENT '创建人员',
-  `update_by` bigint(20) DEFAULT NULL COMMENT '更新人员',
-  `status` tinyint(2) DEFAULT '0' COMMENT '状态',
-  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`id`) USING BTREE
+                                `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '表单主键',
+                                `name` varchar(128) DEFAULT NULL COMMENT '名称',
+                                `type` char(2) DEFAULT NULL COMMENT '监听类型',
+                                `event_type` varchar(32) DEFAULT NULL COMMENT '事件类型',
+                                `value_type` char(2) DEFAULT NULL COMMENT '值类型',
+                                `value` varchar(255) DEFAULT NULL COMMENT '执行内容',
+                                `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                `create_by` bigint(20) DEFAULT NULL COMMENT '创建人员',
+                                `update_by` bigint(20) DEFAULT NULL COMMENT '更新人员',
+                                `status` tinyint(2) DEFAULT '0' COMMENT '状态',
+                                `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+                                PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='流程监听';
 
 -- ----------------------------
@@ -2263,16 +3134,16 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_logininfor`;
 CREATE TABLE `sys_logininfor` (
-  `info_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '访问ID',
-  `user_name` varchar(50) DEFAULT '' COMMENT '用户账号',
-  `ipaddr` varchar(128) DEFAULT '' COMMENT '登录IP地址',
-  `login_location` varchar(255) DEFAULT '' COMMENT '登录地点',
-  `browser` varchar(50) DEFAULT '' COMMENT '浏览器类型',
-  `os` varchar(50) DEFAULT '' COMMENT '操作系统',
-  `status` char(1) DEFAULT '0' COMMENT '登录状态（0成功 1失败）',
-  `msg` varchar(255) DEFAULT '' COMMENT '提示消息',
-  `login_time` datetime DEFAULT NULL COMMENT '访问时间',
-  PRIMARY KEY (`info_id`)
+                                  `info_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '访问ID',
+                                  `user_name` varchar(50) DEFAULT '' COMMENT '用户账号',
+                                  `ipaddr` varchar(128) DEFAULT '' COMMENT '登录IP地址',
+                                  `login_location` varchar(255) DEFAULT '' COMMENT '登录地点',
+                                  `browser` varchar(50) DEFAULT '' COMMENT '浏览器类型',
+                                  `os` varchar(50) DEFAULT '' COMMENT '操作系统',
+                                  `status` char(1) DEFAULT '0' COMMENT '登录状态（0成功 1失败）',
+                                  `msg` varchar(255) DEFAULT '' COMMENT '提示消息',
+                                  `login_time` datetime DEFAULT NULL COMMENT '访问时间',
+                                  PRIMARY KEY (`info_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=178 DEFAULT CHARSET=utf8mb4 COMMENT='系统访问记录';
 
 -- ----------------------------
@@ -2286,26 +3157,26 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_menu`;
 CREATE TABLE `sys_menu` (
-  `menu_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
-  `menu_name` varchar(50) NOT NULL COMMENT '菜单名称',
-  `parent_id` bigint(20) DEFAULT '0' COMMENT '父菜单ID',
-  `order_num` int(4) DEFAULT '0' COMMENT '显示顺序',
-  `path` varchar(200) DEFAULT '' COMMENT '路由地址',
-  `component` varchar(255) DEFAULT NULL COMMENT '组件路径',
-  `query` varchar(255) DEFAULT NULL COMMENT '路由参数',
-  `is_frame` int(1) DEFAULT '1' COMMENT '是否为外链（0是 1否）',
-  `is_cache` int(1) DEFAULT '0' COMMENT '是否缓存（0缓存 1不缓存）',
-  `menu_type` char(1) DEFAULT '' COMMENT '菜单类型（M目录 C菜单 F按钮）',
-  `visible` char(1) DEFAULT '0' COMMENT '菜单状态（0显示 1隐藏）',
-  `status` char(1) DEFAULT '0' COMMENT '菜单状态（0正常 1停用）',
-  `perms` varchar(100) DEFAULT NULL COMMENT '权限标识',
-  `icon` varchar(100) DEFAULT '#' COMMENT '菜单图标',
-  `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  `remark` varchar(500) DEFAULT '' COMMENT '备注',
-  PRIMARY KEY (`menu_id`)
+                            `menu_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
+                            `menu_name` varchar(50) NOT NULL COMMENT '菜单名称',
+                            `parent_id` bigint(20) DEFAULT '0' COMMENT '父菜单ID',
+                            `order_num` int(4) DEFAULT '0' COMMENT '显示顺序',
+                            `path` varchar(200) DEFAULT '' COMMENT '路由地址',
+                            `component` varchar(255) DEFAULT NULL COMMENT '组件路径',
+                            `query` varchar(255) DEFAULT NULL COMMENT '路由参数',
+                            `is_frame` int(1) DEFAULT '1' COMMENT '是否为外链（0是 1否）',
+                            `is_cache` int(1) DEFAULT '0' COMMENT '是否缓存（0缓存 1不缓存）',
+                            `menu_type` char(1) DEFAULT '' COMMENT '菜单类型（M目录 C菜单 F按钮）',
+                            `visible` char(1) DEFAULT '0' COMMENT '菜单状态（0显示 1隐藏）',
+                            `status` char(1) DEFAULT '0' COMMENT '菜单状态（0正常 1停用）',
+                            `perms` varchar(100) DEFAULT NULL COMMENT '权限标识',
+                            `icon` varchar(100) DEFAULT '#' COMMENT '菜单图标',
+                            `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
+                            `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                            `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
+                            `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                            `remark` varchar(500) DEFAULT '' COMMENT '备注',
+                            PRIMARY KEY (`menu_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2048 DEFAULT CHARSET=utf8mb4 COMMENT='菜单权限表';
 
 -- ----------------------------
@@ -2431,17 +3302,17 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_notice`;
 CREATE TABLE `sys_notice` (
-  `notice_id` int(4) NOT NULL AUTO_INCREMENT COMMENT '公告ID',
-  `notice_title` varchar(50) NOT NULL COMMENT '公告标题',
-  `notice_type` char(1) NOT NULL COMMENT '公告类型（1通知 2公告）',
-  `notice_content` longblob COMMENT '公告内容',
-  `status` char(1) DEFAULT '0' COMMENT '公告状态（0正常 1关闭）',
-  `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`notice_id`)
+                              `notice_id` int(4) NOT NULL AUTO_INCREMENT COMMENT '公告ID',
+                              `notice_title` varchar(50) NOT NULL COMMENT '公告标题',
+                              `notice_type` char(1) NOT NULL COMMENT '公告类型（1通知 2公告）',
+                              `notice_content` longblob COMMENT '公告内容',
+                              `status` char(1) DEFAULT '0' COMMENT '公告状态（0正常 1关闭）',
+                              `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
+                              `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                              `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
+                              `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                              `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+                              PRIMARY KEY (`notice_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='通知公告表';
 
 -- ----------------------------
@@ -2457,42 +3328,48 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_oper_log`;
 CREATE TABLE `sys_oper_log` (
-  `oper_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '日志主键',
-  `title` varchar(50) DEFAULT '' COMMENT '模块标题',
-  `business_type` int(2) DEFAULT '0' COMMENT '业务类型（0其它 1新增 2修改 3删除）',
-  `method` varchar(100) DEFAULT '' COMMENT '方法名称',
-  `request_method` varchar(10) DEFAULT '' COMMENT '请求方式',
-  `operator_type` int(1) DEFAULT '0' COMMENT '操作类别（0其它 1后台用户 2手机端用户）',
-  `oper_name` varchar(50) DEFAULT '' COMMENT '操作人员',
-  `dept_name` varchar(50) DEFAULT '' COMMENT '部门名称',
-  `oper_url` varchar(255) DEFAULT '' COMMENT '请求URL',
-  `oper_ip` varchar(128) DEFAULT '' COMMENT '主机地址',
-  `oper_location` varchar(255) DEFAULT '' COMMENT '操作地点',
-  `oper_param` varchar(2000) DEFAULT '' COMMENT '请求参数',
-  `json_result` varchar(2000) DEFAULT '' COMMENT '返回参数',
-  `status` int(1) DEFAULT '0' COMMENT '操作状态（0正常 1异常）',
-  `error_msg` varchar(2000) DEFAULT '' COMMENT '错误消息',
-  `oper_time` datetime DEFAULT NULL COMMENT '操作时间',
-  `cost_time`  bigint(20) DEFAULT 0  COMMENT '消耗时间',
-  PRIMARY KEY (`oper_id`)
+                                `oper_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '日志主键',
+                                `title` varchar(50) DEFAULT '' COMMENT '模块标题',
+                                `business_type` int(2) DEFAULT '0' COMMENT '业务类型（0其它 1新增 2修改 3删除）',
+                                `method` varchar(100) DEFAULT '' COMMENT '方法名称',
+                                `request_method` varchar(10) DEFAULT '' COMMENT '请求方式',
+                                `operator_type` int(1) DEFAULT '0' COMMENT '操作类别（0其它 1后台用户 2手机端用户）',
+                                `oper_name` varchar(50) DEFAULT '' COMMENT '操作人员',
+                                `dept_name` varchar(50) DEFAULT '' COMMENT '部门名称',
+                                `oper_url` varchar(255) DEFAULT '' COMMENT '请求URL',
+                                `oper_ip` varchar(128) DEFAULT '' COMMENT '主机地址',
+                                `oper_location` varchar(255) DEFAULT '' COMMENT '操作地点',
+                                `oper_param` varchar(2000) DEFAULT '' COMMENT '请求参数',
+                                `json_result` varchar(2000) DEFAULT '' COMMENT '返回参数',
+                                `status` int(1) DEFAULT '0' COMMENT '操作状态（0正常 1异常）',
+                                `error_msg` varchar(2000) DEFAULT '' COMMENT '错误消息',
+                                `oper_time` datetime DEFAULT NULL COMMENT '操作时间',
+                                `cost_time` bigint(20) DEFAULT '0' COMMENT '消耗时间',
+                                PRIMARY KEY (`oper_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=166 DEFAULT CHARSET=utf8mb4 COMMENT='操作日志记录';
+
+-- ----------------------------
+-- Records of sys_oper_log
+-- ----------------------------
+BEGIN;
+COMMIT;
 
 -- ----------------------------
 -- Table structure for sys_post
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_post`;
 CREATE TABLE `sys_post` (
-  `post_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '岗位ID',
-  `post_code` varchar(64) NOT NULL COMMENT '岗位编码',
-  `post_name` varchar(50) NOT NULL COMMENT '岗位名称',
-  `post_sort` int(4) NOT NULL COMMENT '显示顺序',
-  `status` char(1) NOT NULL COMMENT '状态（0正常 1停用）',
-  `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`post_id`)
+                            `post_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '岗位ID',
+                            `post_code` varchar(64) NOT NULL COMMENT '岗位编码',
+                            `post_name` varchar(50) NOT NULL COMMENT '岗位名称',
+                            `post_sort` int(4) NOT NULL COMMENT '显示顺序',
+                            `status` char(1) NOT NULL COMMENT '状态（0正常 1停用）',
+                            `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
+                            `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                            `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
+                            `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                            `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+                            PRIMARY KEY (`post_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='岗位信息表';
 
 -- ----------------------------
@@ -2510,21 +3387,21 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_role`;
 CREATE TABLE `sys_role` (
-  `role_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '角色ID',
-  `role_name` varchar(30) NOT NULL COMMENT '角色名称',
-  `role_key` varchar(100) NOT NULL COMMENT '角色权限字符串',
-  `role_sort` int(4) NOT NULL COMMENT '显示顺序',
-  `data_scope` char(1) DEFAULT '1' COMMENT '数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限）',
-  `menu_check_strictly` tinyint(1) DEFAULT '1' COMMENT '菜单树选择项是否关联显示',
-  `dept_check_strictly` tinyint(1) DEFAULT '1' COMMENT '部门树选择项是否关联显示',
-  `status` char(1) NOT NULL COMMENT '角色状态（0正常 1停用）',
-  `del_flag` char(1) DEFAULT '0' COMMENT '删除标志（0代表存在 2代表删除）',
-  `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`role_id`)
+                            `role_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '角色ID',
+                            `role_name` varchar(30) NOT NULL COMMENT '角色名称',
+                            `role_key` varchar(100) NOT NULL COMMENT '角色权限字符串',
+                            `role_sort` int(4) NOT NULL COMMENT '显示顺序',
+                            `data_scope` char(1) DEFAULT '1' COMMENT '数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限）',
+                            `menu_check_strictly` tinyint(1) DEFAULT '1' COMMENT '菜单树选择项是否关联显示',
+                            `dept_check_strictly` tinyint(1) DEFAULT '1' COMMENT '部门树选择项是否关联显示',
+                            `status` char(1) NOT NULL COMMENT '角色状态（0正常 1停用）',
+                            `del_flag` char(1) DEFAULT '0' COMMENT '删除标志（0代表存在 2代表删除）',
+                            `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
+                            `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                            `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
+                            `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                            `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+                            PRIMARY KEY (`role_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='角色信息表';
 
 -- ----------------------------
@@ -2540,9 +3417,9 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_role_dept`;
 CREATE TABLE `sys_role_dept` (
-  `role_id` bigint(20) NOT NULL COMMENT '角色ID',
-  `dept_id` bigint(20) NOT NULL COMMENT '部门ID',
-  PRIMARY KEY (`role_id`,`dept_id`)
+                                 `role_id` bigint(20) NOT NULL COMMENT '角色ID',
+                                 `dept_id` bigint(20) NOT NULL COMMENT '部门ID',
+                                 PRIMARY KEY (`role_id`,`dept_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色和部门关联表';
 
 -- ----------------------------
@@ -2559,9 +3436,9 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_role_menu`;
 CREATE TABLE `sys_role_menu` (
-  `role_id` bigint(20) NOT NULL COMMENT '角色ID',
-  `menu_id` bigint(20) NOT NULL COMMENT '菜单ID',
-  PRIMARY KEY (`role_id`,`menu_id`)
+                                 `role_id` bigint(20) NOT NULL COMMENT '角色ID',
+                                 `menu_id` bigint(20) NOT NULL COMMENT '菜单ID',
+                                 PRIMARY KEY (`role_id`,`menu_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色和菜单关联表';
 
 -- ----------------------------
@@ -2674,10 +3551,10 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_task_form`;
 CREATE TABLE `sys_task_form` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `form_id` bigint(20) DEFAULT NULL COMMENT '表单主键',
-  `task_id` varchar(50) DEFAULT NULL COMMENT '所属任务',
-  PRIMARY KEY (`id`) USING BTREE
+                                 `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                 `form_id` bigint(20) DEFAULT NULL COMMENT '表单主键',
+                                 `task_id` varchar(50) DEFAULT NULL COMMENT '所属任务',
+                                 PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='流程任务关联表单';
 
 -- ----------------------------
@@ -2691,26 +3568,26 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_user`;
 CREATE TABLE `sys_user` (
-  `user_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
-  `dept_id` bigint(20) DEFAULT NULL COMMENT '部门ID',
-  `user_name` varchar(30) NOT NULL COMMENT '用户账号',
-  `nick_name` varchar(30) NOT NULL COMMENT '用户昵称',
-  `user_type` varchar(2) DEFAULT '00' COMMENT '用户类型（00系统用户）',
-  `email` varchar(50) DEFAULT '' COMMENT '用户邮箱',
-  `phonenumber` varchar(11) DEFAULT '' COMMENT '手机号码',
-  `sex` char(1) DEFAULT '0' COMMENT '用户性别（0男 1女 2未知）',
-  `avatar` varchar(100) DEFAULT '' COMMENT '头像地址',
-  `password` varchar(100) DEFAULT '' COMMENT '密码',
-  `status` char(1) DEFAULT '0' COMMENT '帐号状态（0正常 1停用）',
-  `del_flag` char(1) DEFAULT '0' COMMENT '删除标志（0代表存在 2代表删除）',
-  `login_ip` varchar(128) DEFAULT '' COMMENT '最后登录IP',
-  `login_date` datetime DEFAULT NULL COMMENT '最后登录时间',
-  `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`user_id`)
+                            `user_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+                            `dept_id` bigint(20) DEFAULT NULL COMMENT '部门ID',
+                            `user_name` varchar(30) NOT NULL COMMENT '用户账号',
+                            `nick_name` varchar(30) NOT NULL COMMENT '用户昵称',
+                            `user_type` varchar(2) DEFAULT '00' COMMENT '用户类型（00系统用户）',
+                            `email` varchar(50) DEFAULT '' COMMENT '用户邮箱',
+                            `phonenumber` varchar(11) DEFAULT '' COMMENT '手机号码',
+                            `sex` char(1) DEFAULT '0' COMMENT '用户性别（0男 1女 2未知）',
+                            `avatar` varchar(100) DEFAULT '' COMMENT '头像地址',
+                            `password` varchar(100) DEFAULT '' COMMENT '密码',
+                            `status` char(1) DEFAULT '0' COMMENT '帐号状态（0正常 1停用）',
+                            `del_flag` char(1) DEFAULT '0' COMMENT '删除标志（0代表存在 2代表删除）',
+                            `login_ip` varchar(128) DEFAULT '' COMMENT '最后登录IP',
+                            `login_date` datetime DEFAULT NULL COMMENT '最后登录时间',
+                            `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
+                            `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                            `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
+                            `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                            `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+                            PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='用户信息表';
 
 -- ----------------------------
@@ -2726,9 +3603,9 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_user_post`;
 CREATE TABLE `sys_user_post` (
-  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
-  `post_id` bigint(20) NOT NULL COMMENT '岗位ID',
-  PRIMARY KEY (`user_id`,`post_id`)
+                                 `user_id` bigint(20) NOT NULL COMMENT '用户ID',
+                                 `post_id` bigint(20) NOT NULL COMMENT '岗位ID',
+                                 PRIMARY KEY (`user_id`,`post_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户与岗位关联表';
 
 -- ----------------------------
@@ -2744,9 +3621,9 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_user_role`;
 CREATE TABLE `sys_user_role` (
-  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
-  `role_id` bigint(20) NOT NULL COMMENT '角色ID',
-  PRIMARY KEY (`user_id`,`role_id`)
+                                 `user_id` bigint(20) NOT NULL COMMENT '用户ID',
+                                 `role_id` bigint(20) NOT NULL COMMENT '角色ID',
+                                 PRIMARY KEY (`user_id`,`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户和角色关联表';
 
 -- ----------------------------
