@@ -1,6 +1,8 @@
 package com.ruoyi.framework.web.exception;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.ruoyi.common.exception.NonCaptureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -134,5 +136,14 @@ public class GlobalExceptionHandler
     public AjaxResult handleDemoModeException(DemoModeException e)
     {
         return AjaxResult.error("演示模式，不允许操作");
+    }
+
+    /**
+     * 不进行捕获的异常
+     */
+    @ExceptionHandler(NonCaptureException.class)
+    public AjaxResult handleNonCaptureException(NonCaptureException e)
+    {
+        throw e;
     }
 }
