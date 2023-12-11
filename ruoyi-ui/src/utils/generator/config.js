@@ -499,7 +499,7 @@ export const selectComponents = [
     __slot__: {
       'list-type': true
     },
-    action: 'https://jsonplaceholder.typicode.com/posts/',
+    action: 'http://localhost:8080/file/upload',
     disabled: false,
     accept: '',
     name: 'file',
