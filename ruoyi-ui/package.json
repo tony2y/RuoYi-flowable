@@ -1,6 +1,6 @@
 {
   "name": "ruoyi",
-  "version": "3.8.6",
+  "version": "3.8.7",
   "description": "若依管理系统",
   "author": "若依",
   "license": "MIT",
@@ -47,7 +47,7 @@
     "core-js": "3.25.3",
     "diagram-js": "^11.4.1",
     "echarts": "5.4.0",
-    "element-ui": "2.15.13",
+    "element-ui": "2.15.14",
     "file-saver": "2.0.5",
     "fuse.js": "6.4.3",
     "highlight.js": "9.18.5",

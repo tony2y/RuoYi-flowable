@@ -6,25 +6,25 @@
 
     <groupId>com.ruoyi</groupId>
     <artifactId>ruoyi</artifactId>
-    <version>3.8.6</version>
+    <version>3.8.7</version>
 
     <name>ruoyi</name>
     <url>http://www.ruoyi.vip</url>
     <description>若依管理系统</description>
 
     <properties>
-        <ruoyi.version>3.8.6</ruoyi.version>
+        <ruoyi.version>3.8.7</ruoyi.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
-        <druid.version>1.2.16</druid.version>
+        <druid.version>1.2.20</druid.version>
         <bitwalker.version>1.21</bitwalker.version>
         <swagger.version>3.0.0</swagger.version>
         <kaptcha.version>2.3.3</kaptcha.version>
-        <pagehelper.boot.version>1.4.6</pagehelper.boot.version>
-        <fastjson.version>2.0.41</fastjson.version>
-        <oshi.version>6.4.6</oshi.version>
+        <pagehelper.boot.version>1.4.7</pagehelper.boot.version>
+        <fastjson.version>2.0.43</fastjson.version>
+        <oshi.version>6.4.8</oshi.version>
         <commons.io.version>2.13.0</commons.io.version>
         <commons.collections.version>3.2.2</commons.collections.version>
         <poi.version>4.1.2</poi.version>
