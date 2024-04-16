@@ -786,7 +786,9 @@ public class FlowTaskServiceImpl extends FlowServiceFactory implements IFlowTask
             SysUser startUser = sysUserService.selectUserById(Long.parseLong(historicProcessInstance.getStartUserId()));
             flowTask.setStartUserId(startUser.getNickName());
             flowTask.setStartUserName(startUser.getNickName());
-            flowTask.setStartDeptName(startUser.getDept().getDeptName());
+            if(Objects.nonNull(startUser.getDept())) {
+                flowTask.setStartDeptName(startUser.getDept().getDeptName());
+            }
             hisTaskList.add(flowTask);
         }
         page.setTotal(taskInstanceQuery.count());
