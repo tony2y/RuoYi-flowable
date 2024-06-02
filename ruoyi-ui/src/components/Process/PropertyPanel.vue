@@ -122,7 +122,9 @@ export default {
         if (element.type === 'bpmn:Process'
           || element.type === 'bpmn:SequenceFlow'
           || element.type === 'bpmn:EndEvent' ) {
-          this.element = element
+          this.$nextTick().then(() => {
+            this.element = element
+          })
         }
       })
       this.modeler.on('selection.changed', e => {
