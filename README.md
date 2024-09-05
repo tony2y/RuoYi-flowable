@@ -7,7 +7,7 @@
 
 ## 平台简介
 
-基于RuoYi-vue  + Flowable 6.x 的工作流管理平台 ~
+基于RuoYi-vue  + Flowable 6.8.x 的工作流管理平台 ~
 
 - 不定时同步[RuoYi-Vue](https://gitee.com/y_project/RuoYi-Vue)至最新版本。
 - 前端采用Vue、Element UI。
