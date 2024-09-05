@@ -7,7 +7,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 流程达式对象 sys_expression
- * 
+ *
  * @author ruoyi
  * @date 2022-12-12
  */
@@ -25,46 +25,57 @@ public class SysExpression extends BaseEntity
     /** 表达式内容 */
     @Excel(name = "表达式内容")
     private String expression;
+    /** 表达式类型 */
+    @Excel(name = "表达式类型")
+    private String dataType;
 
     /** 状态 */
     private Integer status;
 
-    public void setId(Long id) 
+    public void setId(Long id)
     {
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setName(String name) 
+    public void setName(String name)
     {
         this.name = name;
     }
 
-    public String getName() 
+    public String getName()
     {
         return name;
     }
-    public void setExpression(String expression) 
+    public void setExpression(String expression)
     {
         this.expression = expression;
     }
 
-    public String getExpression() 
+    public String getExpression()
     {
         return expression;
     }
-    public void setStatus(Integer status) 
+    public void setStatus(Integer status)
     {
         this.status = status;
     }
 
-    public Integer getStatus() 
+    public Integer getStatus()
     {
         return status;
     }
+
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
+    }
+    public String getDataType() {
+        return dataType;
+    }
+
 
     @Override
     public String toString() {
@@ -72,6 +83,7 @@ public class SysExpression extends BaseEntity
             .append("id", getId())
             .append("name", getName())
             .append("expression", getExpression())
+            .append("dataType", getDataType())
             .append("createTime", getCreateTime())
             .append("updateTime", getUpdateTime())
             .append("createBy", getCreateBy())

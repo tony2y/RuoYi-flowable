@@ -18,6 +18,14 @@ export function flowFormData(query) {
   })
 }
 
+export function flowTaskInfo(query) {
+  return request({
+    url: '/flowable/task/flowTaskInfo',
+    method: 'get',
+    params: query
+  })
+}
+
 // 完成任务
 export function complete(data) {
   return request({

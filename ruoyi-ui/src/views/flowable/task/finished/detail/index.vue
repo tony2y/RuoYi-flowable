@@ -8,10 +8,8 @@
       <el-tabs  tab-position="top" v-model="activeName" @tab-click="handleClick">
         <!--表单信息-->
         <el-tab-pane label="表单信息" name="1">
-          <el-col :span="16" :offset="4" v-if="variableOpen">
-            <div class="test-form">
-              <parser :key="new Date().getTime()" :form-conf="variablesData" />
-            </div>
+          <el-col :span="16" :offset="4">
+              <v-form-render ref="vFormRef"/>
           </el-col>
         </el-tab-pane>
         <!--流程流转记录-->
@@ -61,7 +59,7 @@
           </el-col>
         </el-tab-pane>
         <el-tab-pane label="流程图" name="3">
-          <flow :flowData="flowData"/>
+          <Bpmn-viewer :flowData="flowData" :procInsId="taskForm.procInsId"/>
         </el-tab-pane>
       </el-tabs>
     </el-card>
@@ -70,16 +68,14 @@
 
 <script>
 import {flowRecord} from "@/api/flowable/finished";
-import Parser from '@/components/parser/Parser'
 import {getProcessVariables, flowXmlAndNode} from "@/api/flowable/definition";
-import flow from '@/views/flowable/task/finished/detail/flow'
+import BpmnViewer from '@/components/Process/viewer';
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   name: "Record",
   components: {
-    Parser,
-    flow,
+    BpmnViewer,
   },
   props: {},
   data() {
@@ -87,12 +83,6 @@ export default {
       // 模型xml数据
       flowData: {},
       activeName: '1',
-      // 用户表格数据
-      userList: null,
-      defaultProps: {
-        children: "children",
-        label: "label"
-      },
       // 查询参数
       queryParams: {
         deptId: undefined
@@ -100,8 +90,6 @@ export default {
       // 遮罩层
       loading: true,
       flowRecordList: [], // 流程流转数据
-      formConfCopy: {},
-      src: null,
       taskForm:{
         multiple: false,
         comment:"", // 意见内容
@@ -111,18 +99,13 @@ export default {
         taskId: "" ,// 流程任务编号
         procDefId: "",  // 流程编号
         vars: "",
-        targetKey:""
       },
-      variables: [], // 流程变量数据
-      variablesData: {}, // 流程变量数据
-      variableOpen: false, // 是否加载流程变量数据
     };
   },
   created() {
     this.taskForm.deployId = this.$route.query && this.$route.query.deployId;
     this.taskForm.taskId  = this.$route.query && this.$route.query.taskId;
     this.taskForm.procInsId = this.$route.query && this.$route.query.procInsId;
-    // 回显流程记录
     // 流程任务重获取变量表单
     if (this.taskForm.taskId){
       this.processVariables( this.taskForm.taskId)
@@ -166,8 +149,18 @@ export default {
       if (taskId) {
         // 提交流程申请时填写的表单存入了流程变量中后续任务处理时需要展示
         getProcessVariables(taskId).then(res => {
-          this.variablesData = res.data.variables;
-          this.variableOpen = true
+          // 回显表单
+          this.$nextTick(() => {
+            this.$refs.vFormRef.setFormJson(res.data.formJson);
+            this.$nextTick(() => {
+              // 加载表单填写的数据
+              this.$refs.vFormRef.setFormData(res.data);
+              this.$nextTick(() => {
+                // 表单禁用
+                this.$refs.vFormRef.disableForm();
+              })
+            })
+          })
         });
       }
     },

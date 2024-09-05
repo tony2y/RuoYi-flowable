@@ -5,12 +5,13 @@ import com.googlecode.aviator.Expression;
 //import com.greenpineyu.fel.FelEngine;
 //import com.greenpineyu.fel.FelEngineImpl;
 //import com.greenpineyu.fel.context.FelContext;
-import org.apache.commons.lang3.StringUtils;
+//import org.apache.commons.jexl2.JexlContext;
+//import org.apache.commons.jexl2.JexlEngine;
+//import org.apache.commons.jexl2.MapContext;
+//import org.apache.commons.lang3.StringUtils;
 import org.flowable.bpmn.model.Process;
 import org.flowable.bpmn.model.*;
 import org.flowable.engine.RepositoryService;
-import org.flowable.engine.TaskService;
-import org.flowable.engine.repository.Model;
 import org.flowable.engine.repository.ProcessDefinition;
 
 import java.util.*;
@@ -61,10 +62,15 @@ public class FindNextNodeUtil {
             }
         }
         FlowElement flowElement = bpmnModel.getFlowElement(key);
-        next(flowElements, flowElement, map, data);
+        List<SequenceFlow> sequenceFlows = ((StartEvent)flowElement).getOutgoingFlows();
+        // 获取出口连线, 此时从开始节点往后,只能是一个出口
+        if (!sequenceFlows.isEmpty()) {
+            SequenceFlow sequenceFlow = sequenceFlows.get(0);
+            FlowElement targetFlowElement = sequenceFlow.getTargetFlowElement();
+            next(flowElements, targetFlowElement, map, data);
+        }
         return data;
     }
-
 
 
     /**
@@ -162,13 +168,13 @@ public class FindNextNodeUtil {
     /**
      * 判断是否是多实例子流程并且需要设置集合类型变量
      */
-    public static boolean checkSubProcess(String Id, Collection<FlowElement> flowElements, List<UserTask> nextUser) {
+    public static boolean checkSubProcess(String id, Collection<FlowElement> flowElements, List<UserTask> nextUser) {
         for (FlowElement flowElement1 : flowElements) {
-            if (flowElement1 instanceof SubProcess && flowElement1.getId().equals(Id)) {
+            if (flowElement1 instanceof SubProcess && flowElement1.getId().equals(id)) {
 
                 SubProcess sp = (SubProcess) flowElement1;
                 if (sp.getLoopCharacteristics() != null) {
-                    String inputDataItem = sp.getLoopCharacteristics().getInputDataItem();
+//                    String inputDataItem = sp.getLoopCharacteristics().getInputDataItem();
                     UserTask userTask = new UserTask();
                     userTask.setId(sp.getId());
                     userTask.setLoopCharacteristics(sp.getLoopCharacteristics());
@@ -254,7 +260,7 @@ public class FindNextNodeUtil {
      */
     public static boolean expressionResult(Map<String, Object> map, String expression) {
         Expression exp = AviatorEvaluator.compile(expression);
-        final Object execute = exp.execute(map);
-        return Boolean.parseBoolean(String.valueOf(execute));
+        return (Boolean) exp.execute(map);
+//        return true;
     }
 }

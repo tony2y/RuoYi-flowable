@@ -154,7 +154,7 @@ public interface IFlowTaskService {
      * @param taskId 任务Id
      * @return
      */
-    Task getTaskForm(String taskId);
+    AjaxResult getTaskForm(String taskId);
 
     /**
      * 获取流程过程图
@@ -206,4 +206,13 @@ public interface IFlowTaskService {
      * @return
      */
     AjaxResult flowTaskForm(String taskId) throws Exception;
+
+
+    /**
+     * 流程节点信息
+     * @param procInsId
+     * @param elementId
+     * @return
+     */
+    AjaxResult flowTaskInfo(String procInsId, String elementId);
 }

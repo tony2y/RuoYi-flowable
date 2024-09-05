@@ -174,13 +174,13 @@
     <!-- 流程图 -->
     <el-dialog :title="readImage.title" :visible.sync="readImage.open" width="70%" append-to-body>
       <!-- <el-image :src="readImage.src"></el-image> -->
-      <flow :flowData="flowData"/>
+      <bpmn-viewer :flowData="flowData"/>
     </el-dialog>
 
     <!--表单配置详情-->
     <el-dialog :title="formTitle" :visible.sync="formConfOpen" width="50%" append-to-body>
       <div class="test-form">
-        <parser :key="new Date().getTime()"  :form-conf="formConf" />
+        <v-form-render :form-data="formData" ref="vFormRef"/>
       </div>
     </el-dialog>
 
@@ -215,8 +215,8 @@
           />
         </el-col>
         <el-col :span="14" :xs="24">
-          <div v-if="currentRow">
-            <parser :key="new Date().getTime()" :form-conf="currentRow" />
+          <div class="test-form">
+            <v-form-render :form-data="formData" ref="vFormCurrentRowRef"/>
           </div>
         </el-col>
       </el-row>
@@ -248,16 +248,14 @@ import {
 } from "@/api/flowable/definition";
 import { getToken } from "@/utils/auth";
 import { getForm, addDeployForm ,listForm } from "@/api/flowable/form";
-import Parser from '@/components/parser/Parser'
-import flow from '@/views/flowable/task/myProcess/send/flow'
+import BpmnViewer from '@/components/Process/viewer';
 import Model from './model';
 
 export default {
   name: "Definition",
   dicts: ['sys_process_category'],
   components: {
-    Parser,
-    flow,
+    BpmnViewer,
     Model
   },
   data() {
@@ -287,7 +285,7 @@ export default {
       formDeployTitle: "",
       formList: [],
       formTotal:0,
-      formConf: {}, // 默认表单数据
+      formData: {}, // 默认表单数据
       readImage:{
         open: false,
         src: "",
@@ -432,7 +430,14 @@ export default {
       getForm(formId).then(res =>{
         this.formTitle = "表单详情";
         this.formConfOpen = true;
-        this.formConf = JSON.parse(res.data.formContent)
+        this.$nextTick(() => {
+          // 回显数据
+          this.$refs.vFormRef.setFormJson(JSON.parse(res.data.formContent))
+          this.$nextTick(() => {
+            // 表单禁用
+            this.$refs.vFormRef.disableForm();
+          })
+        })
       })
     },
     /** 启动流程 */
@@ -479,7 +484,14 @@ export default {
     },
     handleCurrentChange(data) {
       if (data) {
-        this.currentRow = JSON.parse(data.formContent);
+        this.$nextTick(() => {
+          // 回显数据
+          this.$refs.vFormCurrentRowRef.setFormJson(JSON.parse(data.formContent))
+          this.$nextTick(() => {
+            // 表单禁用
+            this.$refs.vFormCurrentRowRef.disableForm();
+          })
+        })
       }
     },
     /** 挂起/激活流程 */

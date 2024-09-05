@@ -1,12 +1,15 @@
 package com.ruoyi.flowable.controller;
 
+import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.system.domain.FlowProcDefDto;
 import com.ruoyi.flowable.domain.dto.FlowSaveXmlVo;
 import com.ruoyi.flowable.service.IFlowDefinitionService;
-import com.ruoyi.system.domain.FlowProcDefDto;
 import com.ruoyi.system.domain.SysExpression;
 import com.ruoyi.system.service.ISysExpressionService;
 import com.ruoyi.system.service.ISysRoleService;
@@ -16,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -131,6 +135,7 @@ public class FlowDefinitionController extends BaseController {
 
 
     @ApiOperation(value = "保存流程设计器内的xml文件")
+    @Log(title = "流程定义", businessType = BusinessType.INSERT)
     @PostMapping("/save")
     public AjaxResult save(@RequestBody FlowSaveXmlVo vo) {
         InputStream in = null;
@@ -153,16 +158,16 @@ public class FlowDefinitionController extends BaseController {
         return AjaxResult.success("导入成功");
     }
 
-
     @ApiOperation(value = "发起流程")
+    @Log(title = "发起流程", businessType = BusinessType.INSERT)
     @PostMapping("/start/{procDefId}")
     public AjaxResult start(@ApiParam(value = "流程定义id") @PathVariable(value = "procDefId") String procDefId,
                             @ApiParam(value = "变量集合,json对象") @RequestBody Map<String, Object> variables) {
         return flowDefinitionService.startProcessInstanceById(procDefId, variables);
-
     }
 
     @ApiOperation(value = "激活或挂起流程定义")
+    @Log(title = "激活/挂起流程", businessType = BusinessType.UPDATE)
     @PutMapping(value = "/updateState")
     public AjaxResult updateState(@ApiParam(value = "1:激活,2:挂起", required = true) @RequestParam Integer state,
                                   @ApiParam(value = "流程部署ID", required = true) @RequestParam String deployId) {
@@ -171,6 +176,7 @@ public class FlowDefinitionController extends BaseController {
     }
 
     @ApiOperation(value = "删除流程")
+    @Log(title = "删除流程", businessType = BusinessType.DELETE)
     @DeleteMapping(value = "/{deployIds}")
     public AjaxResult delete(@PathVariable String[] deployIds) {
         for (String deployId : deployIds) {

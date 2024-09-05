@@ -1,3 +1,4 @@
+// https://github.com/bpmn-io/bpmn-js-i18n/blob/master/translations/zn.js
 export default {
   // Labels
   'Activate the global connect tool': '激活全局连接工具',
@@ -107,7 +108,7 @@ export default {
   'out of bounds release': 'out of bounds release',
   'more than {count} child lanes': '子道大于{count} ',
   'element required': '元素不能为空',
-  'diagram not part of bpmn:Definitions': '流程图不符合bpmn规范',
+  'diagram not part of Definitions': '流程图不符合bpmn规范',
   'no diagram to display': '没有可展示的流程图',
   'no process or collaboration to display': '没有可展示的流程/协作',
   'element {element} referenced by {referenced}#{property} not yet drawn': '由{referenced}#{property}引用的{element}元素仍未绘制',
@@ -207,26 +208,70 @@ export default {
   'Priority': '优先级',
   'The follow up date as an EL expression (e.g. ${someDate} or an ISO date (e.g. 2015-06-26T09:54:00)': '跟踪日期必须符合EL表达式，如： ${someDate} ,或者一个ISO标准日期，如：2015-06-26T09:54:00',
   'The due date as an EL expression (e.g. ${someDate} or an ISO date (e.g. 2015-06-26T09:54:00)': '跟踪日期必须符合EL表达式，如： ${someDate} ,或者一个ISO标准日期，如：2015-06-26T09:54:00',
-  'Variables': '变量'
+  'Variables': '变量',
+  // 流程校验器翻译字段
+  '{errors} Errors, {warnings} Warnings': '{errors} 错误, {warnings} 警告',
+  'Element is missing label/name': '元素未设置 label 标签',
+  'Sequence flow is missing condition': '检查从条件分叉网关或任务节点传出的序列流是否为默认流或具有附加条件',
+  'is missing end event': '检查每个流程范围内是否存在结束事件',
+  'Start event is missing event definition': '检查流程中是否具有开始事件',
+  'Incoming flows do not join': '检查事件或者任务节点是否具有隐式的流转规则，默认事件和任务只能有一个流入条件',
+  'Element has disallowed type': '元素具有不允许的类型',
+  'Element is missing bpmndi': '检查可见的元素是否都具有对应的 DI 标签',
+  'Element is not connected': '检查节点是否正常连接',
+  'SequenceFlow is a duplicate': 'SequenceFlow重复',
+  'Duplicate outgoing sequence flows': '重复的传出序列流',
+  'Duplicate incoming sequence flows': '重复的传入序列流',
+  'Gateway forks and joins': '检查网关是否同时有多个流入和流出规则',
+  'Flow splits implicitly': '检查网关或者任务节点是否有多个流出路径且没有配置条件',
+  'has multiple blank start events': '检查流程内是否有多个开始事件',
+  'Event has multiple event definitions': '验证事件是否包含有超过一个事件定义的规则',
+  'is missing start event': '检查流程内是否存在开始事件',
+  'Process is missing end event': '检查流程内是否存在结束事件',
+  'Start event must be blank': '检查子流程的开始事件是否具有启动条件',
+  'Gateway is superfluous. It only has one source and target.': '检查网关是否同时只有一个流入和流出路径，否则需要移除',
 }
 
+//
+// export const NodeName = {
+//   'bpmn:Process': '流程',
+//   'bpmn:StartEvent': '开始事件',
+//   'bpmn:IntermediateThrowEvent': '中间事件',
+//   'bpmn:Task': '任务',
+//   'bpmn:SendTask': '发送任务',
+//   'bpmn:ReceiveTask': '接收任务',
+//   'bpmn:UserTask': '用户任务',
+//   'bpmn:ManualTask': '手工任务',
+//   'bpmn:BusinessRuleTask': '业务规则任务',
+//   'bpmn:ServiceTask': '服务任务',
+//   'bpmn:ScriptTask': '脚本任务',
+//   'bpmn:EndEvent': '结束事件',
+//   'bpmn:SequenceFlow': '流程线',
+//   'bpmn:ExclusiveGateway': '互斥网关',
+//   'bpmn:ParallelGateway': '并行网关',
+//   'bpmn:InclusiveGateway': '相容网关',
+//   'bpmn:ComplexGateway': '复杂网关',
+//   'bpmn:EventBasedGateway': '事件网关'
+// }
+
+
 export const NodeName = {
-  'bpmn:Process': '流程',
-  'bpmn:StartEvent': '开始事件',
-  'bpmn:IntermediateThrowEvent': '中间事件',
-  'bpmn:Task': '任务',
-  'bpmn:SendTask': '发送任务',
-  'bpmn:ReceiveTask': '接收任务',
-  'bpmn:UserTask': '用户任务',
-  'bpmn:ManualTask': '手工任务',
-  'bpmn:BusinessRuleTask': '业务规则任务',
-  'bpmn:ServiceTask': '服务任务',
-  'bpmn:ScriptTask': '脚本任务',
-  'bpmn:EndEvent': '结束事件',
-  'bpmn:SequenceFlow': '流程线',
-  'bpmn:ExclusiveGateway': '互斥网关',
-  'bpmn:ParallelGateway': '并行网关',
-  'bpmn:InclusiveGateway': '相容网关',
-  'bpmn:ComplexGateway': '复杂网关',
-  'bpmn:EventBasedGateway': '事件网关'
+  'Process': '流程',
+  'StartEvent': '开始事件',
+  'IntermediateThrowEvent': '中间事件',
+  'Task': '任务',
+  'SendTask': '发送任务',
+  'ReceiveTask': '接收任务',
+  'UserTask': '用户任务',
+  'ManualTask': '手工任务',
+  'BusinessRuleTask': '业务规则任务',
+  'ServiceTask': '服务任务',
+  'ScriptTask': '脚本任务',
+  'EndEvent': '结束事件',
+  'SequenceFlow': '流程线',
+  'ExclusiveGateway': '互斥网关',
+  'ParallelGateway': '并行网关',
+  'InclusiveGateway': '相容网关',
+  'ComplexGateway': '复杂网关',
+  'EventBasedGateway': '事件网关'
 }

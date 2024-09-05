@@ -6,8 +6,8 @@ import com.github.pagehelper.PageInfo;
 import com.ruoyi.flowable.common.constant.ProcessConstants;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
-import com.ruoyi.flowable.common.enums.FlowComment;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.flowable.common.enums.FlowComment;
 import com.ruoyi.system.domain.FlowProcDefDto;
 import com.ruoyi.flowable.factory.FlowServiceFactory;
 import com.ruoyi.flowable.service.IFlowDefinitionService;
@@ -54,9 +54,6 @@ public class FlowDefinitionServiceImpl extends FlowServiceFactory implements IFl
 
     @Resource
     private ISysDeptService sysDeptService;
-
-    @Resource
-    private ISysPostService postService;
 
     @Resource
     private FlowDeployMapper flowDeployMapper;
@@ -199,19 +196,15 @@ public class FlowDefinitionServiceImpl extends FlowServiceFactory implements IFl
             SysUser sysUser = SecurityUtils.getLoginUser().getUser();
             identityService.setAuthenticatedUserId(sysUser.getUserId().toString());
             variables.put(ProcessConstants.PROCESS_INITIATOR, sysUser.getUserId());
-            runtimeService.startProcessInstanceById(procDefId, variables);
+
             // 流程发起时 跳过发起人节点
-//            SysUser sysUser = SecurityUtils.getLoginUser().getUser();
-//            identityService.setAuthenticatedUserId(sysUser.getUserId().toString());
-//            variables.put(ProcessConstants.PROCESS_INITIATOR, "");
-//            ProcessInstance processInstance = runtimeService.startProcessInstanceById(procDefId, variables);
-//            // 给第一步申请人节点设置任务执行人和意见
-//            Task task = taskService.createTaskQuery().processInstanceId(processInstance.getProcessInstanceId()).singleResult();
-//            if (Objects.nonNull(task)) {
-//                taskService.addComment(task.getId(), processInstance.getProcessInstanceId(), FlowComment.NORMAL.getType(), sysUser.getNickName() + "发起流程申请");
-////                taskService.setAssignee(task.getId(), sysUser.getUserId().toString());
-//                taskService.complete(task.getId(), variables);
-//            }
+            ProcessInstance processInstance = runtimeService.startProcessInstanceById(procDefId, variables);
+            // 给第一步申请人节点设置任务执行人和意见
+            Task task = taskService.createTaskQuery().processInstanceId(processInstance.getProcessInstanceId()).singleResult();
+            if (Objects.nonNull(task)) {
+                taskService.addComment(task.getId(), processInstance.getProcessInstanceId(), FlowComment.NORMAL.getType(), sysUser.getNickName() + "发起流程申请");
+                taskService.complete(task.getId(), variables);
+            }
             return AjaxResult.success("流程启动成功");
         } catch (Exception e) {
             e.printStackTrace();

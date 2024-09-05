@@ -19,15 +19,6 @@ export function flowRecord(query) {
   })
 }
 
-// 撤回任务
-export function revokeProcess(data) {
-  return request({
-    url: '/flowable/task/revokeProcess',
-    method: 'post',
-    data: data
-  })
-}
-
 // 部署流程实例
 export function deployStart(deployId) {
   return request({

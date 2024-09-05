@@ -46,7 +46,6 @@ public class FlowTaskDto implements Serializable {
 
     @ApiModelProperty("任务执行人名称")
     private String assigneeName;
-
     @ApiModelProperty("任务执行人部门")
     private String assigneeDeptName;;
 
@@ -60,7 +59,7 @@ public class FlowTaskDto implements Serializable {
     private String category;
 
     @ApiModelProperty("流程变量信息")
-    private Object procVars;
+    private Object variables;
 
     @ApiModelProperty("局部变量信息")
     private Object taskLocalVars;

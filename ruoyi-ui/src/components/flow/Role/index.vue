@@ -50,6 +50,7 @@
       v-show="total>0"
       :total="total"
       :page-sizes="[5,10]"
+      layout="prev, pager, next"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
@@ -58,8 +59,7 @@
 </template>
 
 <script>
-import { listRole, getRole, delRole, addRole, updateRole, dataScope, changeRoleStatus, deptTreeSelect } from "@/api/system/role";
-import { treeselect as menuTreeselect, roleMenuTreeselect } from "@/api/system/menu";
+import { listRole} from "@/api/system/role";
 import {StrUtil} from "@/utils/StrUtil";
 
 export default {
@@ -109,7 +109,7 @@ export default {
       },
       // 表单参数
       form: {},
-      radioSelected: null, // 单选框传值
+      radioSelected: 0, // 单选框传值
       selectRoleList: [] // 回显数据传值
     };
   },
@@ -138,9 +138,7 @@ export default {
             });
           });
         }
-      },
-      immediate: true, // 立即生效
-      deep: true  //监听对象或数组的时候，要用到深度监听
+      }
     }
   },
   created() {

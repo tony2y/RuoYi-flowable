@@ -3,11 +3,12 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SysExpressionMapper">
-    
+
     <resultMap type="SysExpression" id="SysExpressionResult">
         <result property="id"    column="id"    />
         <result property="name"    column="name"    />
         <result property="expression"    column="expression"    />
+        <result property="dataType" column="data_type"/>
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
         <result property="createBy"    column="create_by"    />
@@ -17,28 +18,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSysExpressionVo">
-        select id, name, expression, create_time, update_time, create_by, update_by, status, remark from sys_expression
+        select id, name, expression, data_type,create_time, update_time, create_by, update_by, status, remark from sys_expression
     </sql>
 
     <select id="selectSysExpressionList" parameterType="SysExpression" resultMap="SysExpressionResult">
         <include refid="selectSysExpressionVo"/>
-        <where>  
+        <where>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="expression != null  and expression != ''"> and expression = #{expression}</if>
             <if test="status != null "> and status = #{status}</if>
         </where>
     </select>
-    
+
     <select id="selectSysExpressionById" parameterType="Long" resultMap="SysExpressionResult">
         <include refid="selectSysExpressionVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertSysExpression" parameterType="SysExpression" useGeneratedKeys="true" keyProperty="id">
         insert into sys_expression
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="name != null">name,</if>
             <if test="expression != null">expression,</if>
+            <if test="dataType != null">data_type,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="createBy != null">create_by,</if>
@@ -49,6 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="name != null">#{name},</if>
             <if test="expression != null">#{expression},</if>
+            <if test="dataType != null">#{dataType},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="createBy != null">#{createBy},</if>
@@ -63,6 +66,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="name != null">name = #{name},</if>
             <if test="expression != null">expression = #{expression},</if>
+            <if test="dataType != null">data_type = #{dataType},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
@@ -78,7 +82,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSysExpressionByIds" parameterType="String">
-        delete from sys_expression where id in 
+        delete from sys_expression where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

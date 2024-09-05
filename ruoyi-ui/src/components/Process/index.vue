@@ -1,9 +1,9 @@
 <template>
   <div v-loading="isView" class="flow-containers" :class="{ 'view-mode': isView }">
     <el-container style="height: 100%">
-      <el-header style="border-bottom: 1px solid rgb(218 218 218);height: auto;padding-left:0px">
-        <div style="display: flex; padding: 10px 0px; justify-content: space-between;">
-          <div>
+      <el-header style="border-bottom: 1px solid rgb(218 218 218);height: auto;padding-left:0">
+        <div style="display: flex; padding: 10px 0; justify-content: space-between;">
+          <el-button-group>
             <el-upload action="" :before-upload="openBpmn" style="margin-right: 10px; display:inline-block;">
               <el-tooltip effect="dark" content="加载xml" placement="bottom">
                 <el-button size="mini" icon="el-icon-folder-opened" />
@@ -27,23 +27,32 @@
             <el-tooltip effect="dark" content="前进" placement="bottom">
               <el-button size="mini" icon="el-icon-right" @click="modeler.get('commandStack').redo()" />
             </el-tooltip>
-          </div>
-          <div>
-<!--            <el-button size="mini" icon="el-icon-s-check" @click="verifyXML">校验xml</el-button>-->
+<!--            <el-button size="mini" icon="el-icon-share" @click="processSimulation">-->
+<!--              {{ this.simulationStatus ? '退出模拟' : '开启模拟' }}-->
+<!--            </el-button>-->
+<!--            <el-button size="mini" icon="el-icon-first-aid-kit" @click="handlerIntegrityCheck">-->
+<!--              {{ this.bpmnlintStatus ? '关闭检查' : '开启检查' }}-->
+<!--            </el-button>-->
+          </el-button-group>
+          <el-button-group>
             <el-button size="mini" icon="el-icon-view" @click="showXML">查看xml</el-button>
             <el-button size="mini" icon="el-icon-download" @click="saveXML(true)">下载xml</el-button>
             <el-button size="mini" icon="el-icon-picture" @click="saveImg('svg', true)">下载svg</el-button>
             <el-button size="mini" type="primary" @click="save">保存模型</el-button>
-          </div>
+            <el-button size="mini" type="danger" @click="goBack">关闭</el-button>
+          </el-button-group>
         </div>
       </el-header>
+      <!-- 流程设计页面 -->
       <el-container style="align-items: stretch">
-        <el-main style="padding: 0;">
+        <el-main>
           <div ref="canvas" class="canvas" />
         </el-main>
-        <el-aside style="width: 400px; min-height: 650px; background-color: #f0f2f5">
-          <panel v-if="modeler" :modeler="modeler" :users="users" :groups="groups" :exps="exps" :categorys="categorys" />
-        </el-aside>
+
+        <!--右侧属性栏-->
+        <el-card shadow="never" class="normalPanel">
+          <designer v-if="loadCanvas"></designer>
+        </el-card>
       </el-container>
     </el-container>
   </div>
@@ -51,41 +60,22 @@
 
 <script>
 // 汉化
-import customTranslate from './common/customTranslate'
-import lintModule from 'bpmn-js-bpmnlint';
+import customTranslate from './customPanel/customTranslate'
 import Modeler from 'bpmn-js/lib/Modeler'
-// import bpmnlintConfig from './.bpmnlintrc';
-import panel from './PropertyPanel'
+import Designer from './designer'
 import getInitStr from './flowable/init'
+import {StrUtil} from '@/utils/StrUtil'
 // 引入flowable的节点文件
 import FlowableModule from './flowable/flowable.json'
 import customControlsModule from './customPanel'
-
 export default {
-  name: 'WorkflowBpmnModeler',
-  components: {
-    panel
-  },
-  props: {
+  name: "BpmnModel",
+  components: {Designer},
+  /** 组件传值  */
+  props : {
     xml: {
       type: String,
       default: ''
-    },
-    users: {
-      type: Array,
-      default: () => []
-    },
-    groups: {
-      type: Array,
-      default: () => []
-    },
-    categorys: {
-      type: Array,
-      default: () => []
-    },
-    exps: {
-      type: Array,
-      default: () => []
     },
     isView: {
       type: Boolean,
@@ -95,105 +85,134 @@ export default {
   data() {
     return {
       modeler: null,
-      zoom: 1
+      zoom: 1,
+      loadCanvas: false,  // 当前组件渲染然后再加载canvas
+      simulationStatus: false,
+      bpmnlintStatus: false,
+      simulation: true,
+      designer: true,
     }
   },
+  /** 传值监听 */
   watch: {
-    xml: function(val) {
-      if (val) {
-        this.createNewDiagram(val)
-      }
-    }
+    xml: {
+      handler(newVal) {
+        if (StrUtil.isNotBlank(newVal)) {
+          this.createNewDiagram(newVal)
+        } else {
+          this.newDiagram()
+        }
+      },
+      immediate: true, // 立即生效
+    },
+  },
+  computed: {
+    additionalModules() {
+      const Modules = [];
+      Modules.push(customControlsModule);
+      Modules.push({ //汉化
+        translate: ['value', customTranslate]
+      });
+      return Modules;
+    },
   },
   mounted() {
-    // 生成实例
-    this.modeler = new Modeler({
+    /** 创建bpmn 实例 */
+    const modeler = new Modeler({
       container: this.$refs.canvas,
-      additionalModules: [
-        lintModule,
-        customControlsModule,
-        { //汉化
-          translate: ['value', customTranslate]
-        },
-      ],
-      // 去除流程校验器,有需求可自行添加,需要在package.json 加入 "bpmnlint-plugin-local": "file:bpmnlint-plugin-local"
-      // linting: {
-      //   bpmnlint: bpmnlintConfig
-      // },
+      additionalModules: this.additionalModules,
       moddleExtensions: {
         flowable: FlowableModule
-      }
+      },
+      keyboard: { bindTo: document },
     })
-    // 新增流程定义
-    if (!this.xml) {
+    this.modeler = modeler;
+    // 注册 modeler 相关信息
+    this.modelerStore.modeler = modeler;
+    this.modelerStore.modeling = modeler.get("modeling");
+    this.modelerStore.moddle = modeler.get("moddle");
+    this.modelerStore.canvas = modeler.get("canvas");
+    this.modelerStore.bpmnFactory = modeler.get("bpmnFactory");
+    this.modelerStore.elRegistry = modeler.get("elementRegistry");
+    // 直接点击新建按钮时,进行新增流程图
+    if (StrUtil.isBlank(this.xml)) {
       this.newDiagram()
     } else {
       this.createNewDiagram(this.xml)
     }
   },
   methods: {
+    // 根据默认文件初始化流程图
     newDiagram() {
       this.createNewDiagram(getInitStr())
     },
+
+    // 根据提供的xml创建流程图
+    async createNewDiagram(data) {
+      // 将字符串转换成图显示出来
+      // data = data.replace(/<!\[CDATA\[(.+?)]]>/g, '&lt;![CDATA[$1]]&gt;')
+      if (StrUtil.isNotBlank(this.modelerStore.modeler)) {
+        data = data.replace(/<!\[CDATA\[(.+?)]]>/g, function (match, str) {
+            return str.replace(/</g, '&lt;')
+          }
+        )
+        try {
+          await this.modelerStore.modeler.importXML(data)
+          this.fitViewport()
+        } catch (err) {
+          console.error(err.message, err.warnings)
+        }
+      }
+    },
+
     // 让图能自适应屏幕
     fitViewport() {
-      this.zoom = this.modeler.get('canvas').zoom('fit-viewport')
+      this.zoom = this.modelerStore.canvas.zoom('fit-viewport')
       const bbox = document.querySelector('.flow-containers .viewport').getBBox()
-      const currentViewbox = this.modeler.get('canvas').viewbox()
+      const currentViewBox = this.modelerStore.canvas.viewbox()
       const elementMid = {
         x: bbox.x + bbox.width / 2 - 65,
         y: bbox.y + bbox.height / 2
       }
-      this.modeler.get('canvas').viewbox({
-        x: elementMid.x - currentViewbox.width / 2,
-        y: elementMid.y - currentViewbox.height / 2,
-        width: currentViewbox.width,
-        height: currentViewbox.height
+      this.modelerStore.canvas.viewbox({
+        x: elementMid.x - currentViewBox.width / 2,
+        y: elementMid.y - currentViewBox.height / 2,
+        width: currentViewBox.width,
+        height: currentViewBox.height
       })
-      this.zoom = bbox.width / currentViewbox.width * 1.8
+      this.zoom = bbox.width / currentViewBox.width * 1.8
+      this.loadCanvas = true;
     },
+
     // 放大缩小
     zoomViewport(zoomIn = true) {
-      this.zoom = this.modeler.get('canvas').zoom()
+      this.zoom = this.modelerStore.canvas.zoom()
       this.zoom += (zoomIn ? 0.1 : -0.1)
-      this.modeler.get('canvas').zoom(this.zoom)
+      this.modelerStore.canvas.zoom(this.zoom)
     },
-    async createNewDiagram(data) {
-      // 将字符串转换成图显示出来
-      // data = data.replace(/<!\[CDATA\[(.+?)]]>/g, '&lt;![CDATA[$1]]&gt;')
-      data = data.replace(/<!\[CDATA\[(.+?)]]>/g, function(match, str) {
-        return str.replace(/</g, '&lt;')
-      })
-      try {
-        await this.modeler.importXML(data)
-        // this.adjustPalette()
-        this.fitViewport()
-      } catch (err) {
-        console.error(err.message, err.warnings)
-      }
-    },
-    // 对外 api
+
+    // 获取流程基础信息
     getProcess() {
       const element = this.getProcessElement()
       return {
         id: element.id,
         name: element.name,
-        category: element.$attrs['flowable:processCategory']
+        category: element.processCategory
       }
     },
+
+    // 获取流程主面板节点
     getProcessElement() {
-      const rootElements = this.modeler.getDefinitions().rootElements
+      const rootElements = this.modelerStore.modeler.getDefinitions().rootElements
       for (let i = 0; i < rootElements.length; i++) {
         if (rootElements[i].$type === 'bpmn:Process') return rootElements[i]
       }
     },
-    async verifyXML(){
-      const linting = this.modeler.get('linting')
-      linting.toggle();
-    },
+
+    // 保存xml
     async saveXML(download = false) {
       try {
-        const { xml } = await this.modeler.saveXML({ format: true })
+        const {xml} = await this.modelerStore.modeler.saveXML({format: true})
         if (download) {
           this.downloadFile(`${this.getProcessElement().name}.bpmn20.xml`, xml, 'application/xml')
         }
@@ -202,17 +221,21 @@ export default {
         console.log(err)
       }
     },
+
+    // 在线查看xml
     async showXML() {
       try {
-        const xml = await this.saveXML()
-        this.$emit('showXML',xml)
+        const xmlStr = await this.saveXML()
+        this.$emit('showXML', xmlStr)
       } catch (err) {
         console.log(err)
       }
     },
+
+    // 保存流程图为svg
     async saveImg(type = 'svg', download = false) {
       try {
-        const { svg } = await this.modeler.saveSVG({ format: true })
+        const {svg} = await this.modelerStore.modeler.saveSVG({format: true})
         if (download) {
           this.downloadFile(this.getProcessElement().name, svg, 'image/svg+xml')
         }
@@ -221,14 +244,19 @@ export default {
         console.log(err)
       }
     },
+
+    // 保存流程图
     async save() {
       const process = this.getProcess()
       const xml = await this.saveXML()
       const svg = await this.saveImg()
-      const result = { process, xml, svg }
+      const result = {process, xml, svg}
       this.$emit('save', result)
       window.parent.postMessage(result, '*')
+      this.goBack();
     },
+
+    // 打开流程文件
     openBpmn(file) {
       const reader = new FileReader()
       reader.readAsText(file, 'utf-8')
@@ -237,6 +265,8 @@ export default {
       }
       return false
     },
+
+    // 下载流程文件
     downloadFile(filename, data, type) {
       const a = document.createElement('a');
       const url = window.URL.createObjectURL(new Blob([data], {type: type}));
@@ -244,6 +274,13 @@ export default {
       a.download = filename
       a.click()
       window.URL.revokeObjectURL(url)
+    },
+
+    /** 关闭当前标签页并返回上个页面 */
+    goBack() {
+      const obj = {path: "/flowable/definition", query: {t: Date.now()}};
+      this.$tab.closeOpenPage(obj);
+      this.toggleSideBar();
     },
   }
 }
@@ -267,20 +304,15 @@ export default {
     display: none;
   }
 }
+
 .flow-containers {
-  // background-color: #ffffff;
   width: 100%;
   height: 100%;
   .canvas {
+    min-height: 850px;
     width: 100%;
     height: 100%;
-    //flex: 1;
-    //position: relative;
-    //background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImEiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTTAgMTBoNDBNMTAgMHY0ME0wIDIwaDQwTTIwIDB2NDBNMCAzMGg0ME0zMCAwdjQwIiBmaWxsPSJub25lIiBzdHJva2U9IiNlMGUwZTAiIG9wYWNpdHk9Ii4yIi8+PHBhdGggZD0iTTQwIDBIMHY0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTBlMGUwIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2EpIi8+PC9zdmc+")
-    //repeat !important;
-    //div.toggle-mode {
-    //  display: none;
-    //}
+    background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImEiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTTAgMTBoNDBNMTAgMHY0ME0wIDIwaDQwTTIwIDB2NDBNMCAzMGg0ME0zMCAwdjQwIiBmaWxsPSJub25lIiBzdHJva2U9IiNlMGUwZTAiIG9wYWNpdHk9Ii4yIi8+PHBhdGggZD0iTTQwIDBIMHY0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTBlMGUwIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2EpIi8+PC9zdmc+")
   }
   .panel {
     position: absolute;
@@ -291,63 +323,30 @@ export default {
   .load {
     margin-right: 10px;
   }
-  .el-form-item__label{
-    font-size: 13px;
+  .normalPanel {
+    width: 460px;
+    height: 100%;
+    padding: 20px 20px;
   }
 
-  .djs-palette{
-    left: 0px!important;
-    top: 0px;
-    border-top: none;
+  .el-main {
+    position: relative;
+    padding: 0;
   }
 
-  .djs-container svg {
-    //min-height: 650px;
+  .el-main .button-group {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    width: auto;
+    height: auto;
+    top: 10px;
+    right: 10px;
   }
 
-   .highlight.djs-shape .djs-visual > :nth-child(1) {
-     fill: green !important;
-     stroke: green !important;
-     fill-opacity: 0.2 !important;
-   }
-   .highlight.djs-shape .djs-visual > :nth-child(2) {
-     fill: green !important;
-   }
-   .highlight.djs-shape .djs-visual > path {
-     fill: green !important;
-     fill-opacity: 0.2 !important;
-     stroke: green !important;
-   }
-   .highlight.djs-connection > .djs-visual > path {
-     stroke: green !important;
-   }
-   // .djs-connection > .djs-visual > path {
-   //   stroke: orange !important;
-   //   stroke-dasharray: 4px !important;
-   //   fill-opacity: 0.2 !important;
-   // }
-   // .djs-shape .djs-visual > :nth-child(1) {
-   //   fill: orange !important;
-   //   stroke: orange !important;
-   //   stroke-dasharray: 4px !important;
-   //   fill-opacity: 0.2 !important;
-   // }
-   .highlight-todo.djs-connection > .djs-visual > path {
-     stroke: orange !important;
-     stroke-dasharray: 4px !important;
-     fill-opacity: 0.2 !important;
-   }
-   .highlight-todo.djs-shape .djs-visual > :nth-child(1) {
-     fill: orange !important;
-     stroke: orange !important;
-     stroke-dasharray: 4px !important;
-     fill-opacity: 0.2 !important;
-   }
-   .overlays-div {
-     font-size: 10px;
-     color: red;
-     width: 100px;
-     top: -20px !important;
-   }
+  .button-group .el-button {
+    width: 100%;
+    margin: 0 0 5px;
+  }
 }
 </style>

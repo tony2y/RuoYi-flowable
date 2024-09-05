@@ -9,9 +9,7 @@
         <!--表单信息-->
         <el-tab-pane label="表单信息" name="1">
           <el-col :span="16" :offset="4">
-            <div class="test-form">
-                <parser :key="new Date().getTime()" :form-conf="variablesData" />
-            </div>
+            <v-form-render ref="vFormRef"/>
          </el-col>
         </el-tab-pane>
         <!--流程流转记录-->
@@ -62,7 +60,7 @@
         </el-tab-pane>
         <!--流程图-->
         <el-tab-pane label="流程图" name="3">
-          <flow :flowData="flowData"/>
+          <bpmn-viewer :flowData="flowData" :procInsId="taskForm.procInsId"/>
         </el-tab-pane>
     </el-tabs>
     </el-card>
@@ -71,16 +69,14 @@
 
 <script>
 import {flowRecord} from "@/api/flowable/finished";
-import Parser from '@/components/parser/Parser'
-import {getProcessVariables, readXml, getFlowViewer, getHighlight, flowXmlAndNode} from "@/api/flowable/definition";
-import flow from '@/views/flowable/task/myProcess/detail/flow'
+import {getProcessVariables, flowXmlAndNode} from "@/api/flowable/definition";
+import BpmnViewer from '@/components/Process/viewer';
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   name: "Record",
   components: {
-    Parser,
-    flow
+    BpmnViewer
   },
   props: {},
   data() {
@@ -89,9 +85,7 @@ export default {
       flowData: {},
       activeName: '1',
       // 查询参数
-      queryParams: {
-        deptId: undefined
-      },
+      queryParams: {},
       // 遮罩层
       loading: true,
       flowRecordList: [], // 流程流转数据
@@ -104,14 +98,12 @@ export default {
         taskId: "" ,// 流程任务编号
         procDefId: "",  // 流程编号
       },
-      variablesData: {}, // 流程变量数据
     };
   },
   created() {
     this.taskForm.deployId = this.$route.query && this.$route.query.deployId;
     this.taskForm.taskId  = this.$route.query && this.$route.query.taskId;
     this.taskForm.procInsId = this.$route.query && this.$route.query.procInsId;
-    // 回显流程记录
     // 流程任务重获取变量表单
     this.processVariables( this.taskForm.taskId)
     this.getFlowRecordList(this.taskForm.procInsId, this.taskForm.deployId);
@@ -123,11 +115,6 @@ export default {
           this.flowData = res.data;
         })
       }
-    },
-    getFlowViewer(procInsId,executionId) {
-      getFlowViewer(procInsId,executionId).then(res => {
-        this.taskList = res.data
-      })
     },
     setIcon(val) {
       if (val) {
@@ -153,31 +140,23 @@ export default {
         this.goBack();
       })
     },
-    fillFormData(form, data) {
-      form.fields.forEach((item) => {
-        const vModel = item.__vModel__;
-        const val = data[item.__vModel__];
-
-        // 特殊处理el-upload，回显图片
-        if (item.__config__.tag === "el-upload") {
-          // 回显图片
-          item["file-list"] = (val || []).map((url) => ({
-            name: `${vModel}${i}`,
-            url,
-          }));
-        }
-
-        if (val) {
-          item.__config__.defaultValue = val;
-        }
-      });
-    },
     /** 获取流程变量内容 */
     processVariables(taskId) {
       if (taskId) {
         // 提交流程申请时填写的表单存入了流程变量中后续任务处理时需要展示
         getProcessVariables(taskId).then(res => {
-          this.variablesData = res.data.variables;
+          this.$nextTick(() => {
+            // 回显表单
+            this.$refs.vFormRef.setFormJson(res.data.formJson);
+            this.$nextTick(() => {
+              // 加载表单填写的数据
+              this.$refs.vFormRef.setFormData(res.data);
+              this.$nextTick(() => {
+                // 表单禁用
+                this.$refs.vFormRef.disableForm();
+              })
+            })
+          })
         });
       }
     },

@@ -1,12 +1,8 @@
 <template>
   <div>
-    <bpmn-modeler
-      ref="refNode"
+    <bpmn-model
+      v-if="dataExit"
       :xml="xml"
-      :users="users"
-      :groups="groups"
-      :categorys="categorys"
-      :exps="exps"
       :is-view="false"
       @save="save"
       @showXML="showXML"
@@ -22,15 +18,14 @@
 </template>
 <script>
 import {readXml, roleList, saveXml, userList,expList} from "@/api/flowable/definition";
-import bpmnModeler from '@/components/Process/index'
+import BpmnModel from '@/components/Process'
 import vkBeautify from 'vkbeautify'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atelier-savanna-dark.css'
-
 export default {
   name: "Model",
   components: {
-    bpmnModeler,
+    BpmnModel,
     vkBeautify
   },
   // 自定义指令
@@ -68,14 +63,10 @@ export default {
     return {
       xml: "", // 后端查询到的xml
       modeler:"",
+      dataExit: false,
       xmlOpen: false,
       xmlTitle: '',
       xmlData: '',
-      users: [],
-      groups: [],
-      categorys: [],
-      exps: [],
-
     };
   },
   created () {
@@ -84,9 +75,6 @@ export default {
     if (deployId) {
       this.getXmlData(deployId);
     }
-    this.getDicts("sys_process_category").then(res => {
-      this.categorys = res.data;
-    });
     this.getDataList()
   },
   methods: {
@@ -114,22 +102,15 @@ export default {
     },
     /** 指定流程办理人员列表 */
     getDataList() {
-      userList().then(res =>{
-        res.data.forEach(val =>{
-          val.userId = val.userId.toString();
-        })
-        this.users = res.data;
-        // let arr = {nickName: "流程发起人", userId: "${INITIATOR}"}
-        // this.users.push(arr)
-      });
-      roleList().then(res =>{
-        res.data.forEach(val =>{
-          val.roleId = val.roleId.toString();
-        })
-        this.groups = res.data;
-      });
-      expList().then(res =>{
-        this.exps = res.data;
+      userList().then(res => {
+        this.modelerStore.userList = res.data;
+      })
+      roleList().then(res => {
+        this.modelerStore.roleList = res.data;
+      })
+      expList().then(res => {
+        this.modelerStore.expList = res.data;
+        this.dataExit = true;
       });
     },
     /** 展示xml */

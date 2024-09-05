@@ -3,9 +3,6 @@ package com.ruoyi.flowable.service;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.flowable.domain.vo.FlowTaskVo;
 import org.flowable.engine.history.HistoricProcessInstance;
-import org.flowable.task.api.Task;
-
-import java.util.List;
 import java.util.Map;
 
 /**

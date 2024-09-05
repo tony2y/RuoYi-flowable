@@ -24,19 +24,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['flowable:form:add']"
         >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['flowable:form:edit']"
-        >修改</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -48,16 +36,6 @@
           @click="handleDelete"
           v-hasPermi="['flowable:form:remove']"
         >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['flowable:form:export']"
-        >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -120,10 +98,40 @@
       </div>
     </el-dialog>
 
-    <!--表单配置详情-->
-    <el-dialog :title="formTitle" :visible.sync="formConfOpen" width="60%" append-to-body>
-      <div class="test-form">
-        <parser :key="new Date().getTime()"  :form-conf="formConf" />
+    <!--表单详情-->
+    <el-dialog :title="formTitle" :visible.sync="formRenderOpen" width="60%" append-to-body>
+        <v-form-render :form-data="formData" ref="vFormRef"/>
+    </el-dialog>
+
+    <!--表单设计器-->
+    <el-dialog
+      custom-class="dialogClass"
+      :visible.sync="dialogVisible"
+      :close-on-press-escape="false"
+      :fullscreen=true
+      :before-close="handleClose"
+      append-to-body>
+      <v-form-designer ref="vfDesigner" :designer-config="designerConfig">
+        <!-- 自定义按钮插槽演示 -->
+        <template #customSaveButton>
+          <el-button type="text" @click="saveFormJson"><i class="el-icon-s-promotion" />保存</el-button>
+        </template>
+      </v-form-designer>
+    </el-dialog>
+
+    <!--系统表单信息-->
+    <el-dialog :title="formTitle" :visible.sync="formOpen" width="500px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="表单名称" prop="formName">
+          <el-input v-model="form.formName" placeholder="请输入表单名称" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" placeholder="请输入备注" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -132,17 +140,19 @@
 <script>
 import { listForm, getForm, delForm, addForm, updateForm, exportForm } from "@/api/flowable/form";
 import Editor from '@/components/Editor';
-import Parser from '@/components/parser/Parser'
 export default {
   name: "Form",
   components: {
-    Editor,
-    Parser
+    Editor
   },
   data() {
     return {
       // 遮罩层
       loading: true,
+      dialogVisible: false,
+      designerConfig: {
+        exportCodeButton: false,  //是否显示导出代码按钮
+      },
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -157,9 +167,9 @@ export default {
       formList: [],
       // 弹出层标题
       title: "",
-      formConf: {}, // 默认表单数据
-      formConfOpen: false,
+      formRenderOpen: false,
       formTitle: "",
+      formOpen: false,
       // 是否显示弹出层
       open: false,
       // 查询参数
@@ -170,14 +180,25 @@ export default {
         formContent: null,
       },
       // 表单参数
-      form: {},
+      form: {
+        formId: null,
+        formName: null,
+        formContent: null,
+        remark: null
+      },
       // 表单校验
-      rules: {
-      }
+      rules: {},
+      formData: {},
     };
   },
   created() {
     this.getList();
+  },
+  activated() {
+    const time = this.$route.query.t;
+    if (time != null) {
+      this.getList();
+    }
   },
   methods: {
     /** 查询流程表单列表 */
@@ -188,11 +209,6 @@ export default {
         this.total = response.total;
         this.loading = false;
       });
-    },
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.reset();
     },
     // 表单重置
     reset() {
@@ -225,28 +241,57 @@ export default {
       this.multiple = !selection.length
     },
     /** 表单配置信息 */
-    handleDetail(row){
-      this.formConfOpen = true;
-      this.formTitle = "流程表单配置详细";
-      this.formConf = JSON.parse(row.formContent)
+    handleDetail(row) {
+      this.formRenderOpen = true;
+      this.formTitle = "表单详情";
+      this.$nextTick(() => {
+        // 回显数据
+        this.$refs.vFormRef.setFormJson(JSON.parse(row.formContent))
+        this.$nextTick(() => {
+          // 表单禁用
+          this.$refs.vFormRef.disableForm();
+        })
+      })
     },
     /** 新增按钮操作 */
     handleAdd() {
-      // this.reset();
-      // this.open = true;
-      // this.title = "添加流程表单";
-      this.$router.push({ path: '/tool/build/index', query: {formId: null }})
+      // this.dialogVisible = true;
+      this.$router.push({ path: '/flowable/task/flowForm/index'})
+    },
+    // 保存表单数据
+    saveFormJson() {
+      let formJson = this.$refs.vfDesigner.getFormJson()
+      this.form.formContent = JSON.stringify(formJson);
+      this.formOpen = true;
+    },
+    // 取消按钮
+    cancel() {
+      this.formOpen = false;
+      this.reset();
+    },
+    handleClose(done) {
+      this.$confirm('确定要关闭吗？关闭未保存的修改都会丢失？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        done();
+      }).catch(() => {});
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      // this.reset();
-      // const formId = row.formId || this.ids
-      // getForm(formId).then(response => {
-      //   this.form = response.data;
-      //   this.open = true;
-      //   this.title = "修改流程表单";
-      // });
-      this.$router.push({ path: '/tool/build/index', query: {formId: row.formId }})
+      // this.form = row;
+      // this.dialogVisible = true;
+      // this.$nextTick(() => {
+      //   // 加载表单json数据
+      //   this.$refs.vfDesigner.setFormJson(JSON.parse(row.formContent))
+      // })
+      this.$router.push({ path: '/flowable/task/flowForm/index', query: {formId: row.formId }})
+
+    },
+    /** 重置表单 */
+    resetFormData() {
+      this.$refs.vFormRef.resetForm();
     },
     /** 提交按钮 */
     submitForm() {
@@ -255,23 +300,34 @@ export default {
           if (this.form.formId != null) {
             updateForm(this.form).then(response => {
              this.$modal.msgSuccess("修改成功");
-              this.open = false;
+              this.formOpen = false;
               this.getList();
             });
           } else {
             addForm(this.form).then(response => {
              this.$modal.msgSuccess("新增成功");
-              this.open = false;
+              this.formOpen = false;
               this.getList();
             });
           }
+          this.dialogVisible = false;
         }
       });
+    },
+    /** 提交按钮 */
+    submitFormData() {
+      this.$refs.vFormRef.getFormData().then(formData => {
+        // Form Validation OK
+        console.log(JSON.stringify(formData))
+      }).catch(error => {
+        // Form Validation failed
+        this.$modal.msgError(error)
+      })
     },
     /** 删除按钮操作 */
     handleDelete(row) {
       const formIds = row.formId || this.ids;
-      this.$confirm('是否确认删除流程表单编号为"' + formIds + '"的数据项?', "警告", {
+      this.$confirm('是否确认删除表单编号为"' + formIds + '"的数据项?', "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
@@ -282,27 +338,20 @@ export default {
        this.$modal.msgSuccess("删除成功");
       })
     },
-    /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams;
-      this.$confirm('是否确认导出所有流程表单数据项?', "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(function() {
-        return exportForm(queryParams);
-      }).then(response => {
-        this.download(response.msg);
-      })
-    }
   }
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .test-form {
   margin: 15px auto;
   width: 800px;
   padding: 15px;
+}
+/deep/ .dialogClass .el-dialog__header {
+  padding: 0;
+}
+/deep/ .dialogClass .el-dialog__body {
+  padding: 0;
 }
 </style>

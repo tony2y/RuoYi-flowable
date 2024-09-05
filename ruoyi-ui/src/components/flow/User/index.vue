@@ -39,15 +39,6 @@
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="手机号码" prop="phonenumber">
-            <el-input
-              v-model="queryParams.phonenumber"
-              placeholder="请输入手机号码"
-              clearable
-              style="width: 150px"
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
             <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -77,6 +68,7 @@
           v-show="total>0"
           :total="total"
           :page-sizes="[5,10]"
+          layout="prev, pager, next"
           :page.sync="queryParams.pageNum"
           :limit.sync="queryParams.pageSize"
           @pagination="getList"
@@ -90,7 +82,7 @@
 import { listUser, deptTreeSelect } from "@/api/system/user";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import {StrUtil} from "@/utils/StrUtil";
+import {StrUtil} from '@/utils/StrUtil'
 
 export default {
   name: "FlowUser",
@@ -160,7 +152,7 @@ export default {
         { key: 5, label: `状态`, visible: true },
         { key: 6, label: `创建时间`, visible: true }
       ],
-      radioSelected: null, // 单选框传值
+      radioSelected: 0, // 单选框传值
       selectUserList: [] // 回显数据传值
     };
   },
@@ -183,19 +175,18 @@ export default {
     },
     userList: {
       handler(newVal) {
-        if (StrUtil.isNotBlank(newVal)  && this.selectUserList.length > 0) {
-          this.$nextTick(() => {
-            this.$refs.dataTable.clearSelection();
-            this.selectUserList?.split(',').forEach(key => {
-              this.$refs.dataTable.toggleRowSelection(newVal.find(
-                item => key == item.userId
-              ), true)
+        debugger
+        if (StrUtil.isNotBlank(newVal) && this.selectUserList.length > 0) {
+            this.$nextTick(() => {
+              this.$refs.dataTable.clearSelection();
+              this.selectUserList?.split(',').forEach(key => {
+                this.$refs.dataTable.toggleRowSelection(newVal.find(
+                  item => key == item.userId
+                ), true)
+              });
             });
-          });
         }
-      },
-      immediate: true, // 立即生效
-      deep: true  //监听对象或数组的时候，要用到深度监听
+      }
     }
   },
   created() {

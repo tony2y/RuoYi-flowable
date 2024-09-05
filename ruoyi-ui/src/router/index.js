@@ -154,6 +154,19 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/flowable',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'task/flowForm/index',
+        component: () => import('@/views/flowable/task/flowForm/index'),
+        name: 'FlowForm',
+        meta: { title: '流程表单', icon: '' }
+      }
+    ]
+  },
+  {
     path: '/tool',
     component: Layout,
     hidden: true,

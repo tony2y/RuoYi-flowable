@@ -188,6 +188,7 @@
                 <artifactId>ruoyi-flowable</artifactId>
                 <version>${ruoyi.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.flowable</groupId>
                 <artifactId>flowable-spring-boot-starter</artifactId>

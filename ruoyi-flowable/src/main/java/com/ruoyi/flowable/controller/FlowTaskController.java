@@ -1,6 +1,9 @@
 package com.ruoyi.flowable.controller;
 
+import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.flowable.domain.dto.FlowTaskDto;
 import com.ruoyi.flowable.domain.vo.FlowQueryVo;
 import com.ruoyi.flowable.domain.vo.FlowTaskVo;
@@ -29,7 +32,7 @@ import java.io.OutputStream;
 @Api(tags = "工作流流程任务管理")
 @RestController
 @RequestMapping("/flowable/task")
-public class FlowTaskController {
+public class FlowTaskController extends BaseController {
 
     @Autowired
     private IFlowTaskService flowTaskService;
@@ -41,12 +44,14 @@ public class FlowTaskController {
     }
 
     @ApiOperation(value = "取消申请", response = FlowTaskDto.class)
+    @Log(title = "取消申请", businessType = BusinessType.UPDATE)
     @PostMapping(value = "/stopProcess")
     public AjaxResult stopProcess(@RequestBody FlowTaskVo flowTaskVo) {
         return flowTaskService.stopProcess(flowTaskVo);
     }
 
     @ApiOperation(value = "撤回流程", response = FlowTaskDto.class)
+    @Log(title = "撤回流程", businessType = BusinessType.UPDATE)
     @PostMapping(value = "/revokeProcess")
     public AjaxResult revokeProcess(@RequestBody FlowTaskVo flowTaskVo) {
         return flowTaskService.revokeProcess(flowTaskVo);
@@ -71,6 +76,12 @@ public class FlowTaskController {
         return flowTaskService.flowRecord(procInsId, deployId);
     }
 
+    @ApiOperation(value = "根据任务ID查询挂载的表单信息")
+    @GetMapping(value = "/getTaskForm")
+    public AjaxResult getTaskForm(String taskId) {
+        return flowTaskService.getTaskForm(taskId);
+    }
+
 
     @ApiOperation(value = "流程初始化表单", response = FlowTaskDto.class)
     @GetMapping(value = "/flowFormData")
@@ -85,12 +96,14 @@ public class FlowTaskController {
     }
 
     @ApiOperation(value = "审批任务")
+    @Log(title = "审批任务", businessType = BusinessType.UPDATE)
     @PostMapping(value = "/complete")
     public AjaxResult complete(@RequestBody FlowTaskVo flowTaskVo) {
         return flowTaskService.complete(flowTaskVo);
     }
 
     @ApiOperation(value = "驳回任务")
+    @Log(title = "驳回任务", businessType = BusinessType.UPDATE)
     @PostMapping(value = "/reject")
     public AjaxResult taskReject(@RequestBody FlowTaskVo flowTaskVo) {
         flowTaskService.taskReject(flowTaskVo);
@@ -98,6 +111,7 @@ public class FlowTaskController {
     }
 
     @ApiOperation(value = "退回任务")
+    @Log(title = "退回任务", businessType = BusinessType.UPDATE)
     @PostMapping(value = "/return")
     public AjaxResult taskReturn(@RequestBody FlowTaskVo flowTaskVo) {
         flowTaskService.taskReturn(flowTaskVo);
@@ -111,6 +125,7 @@ public class FlowTaskController {
     }
 
     @ApiOperation(value = "删除任务")
+    @Log(title = "删除任务", businessType = BusinessType.DELETE)
     @DeleteMapping(value = "/delete")
     public AjaxResult delete(@RequestBody FlowTaskVo flowTaskVo) {
         flowTaskService.deleteTask(flowTaskVo);
@@ -243,6 +258,20 @@ public class FlowTaskController {
     @GetMapping("/flowTaskForm")
     public AjaxResult flowTaskForm(@RequestParam(value = "taskId", required = false) String taskId) throws Exception {
         return flowTaskService.flowTaskForm(taskId);
+    }
+
+
+    /**
+     * 流程节点信息
+     *
+     * @param procInsId 流程实例编号
+     * @param elementId 流程节点编号
+     * @return
+     */
+    @GetMapping("/flowTaskInfo")
+    public AjaxResult flowTaskInfo(@RequestParam(value = "procInsId") String procInsId,
+                                   @RequestParam(value = "elementId") String elementId){
+        return flowTaskService.flowTaskInfo(procInsId,elementId);
     }
 
 }

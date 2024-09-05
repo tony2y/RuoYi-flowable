@@ -1,3 +1,6 @@
+/**
+ * 自定义左侧工具栏
+ */
 import { assign } from "min-dash";
 
 export default function CustomPalette(

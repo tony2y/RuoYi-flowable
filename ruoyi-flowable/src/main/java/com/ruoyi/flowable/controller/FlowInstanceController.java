@@ -1,7 +1,10 @@
 package com.ruoyi.flowable.controller;
 
 
+import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.flowable.domain.vo.FlowTaskVo;
 import com.ruoyi.flowable.service.IFlowInstanceService;
 import io.swagger.annotations.Api;
@@ -23,7 +26,7 @@ import java.util.Map;
 @Api(tags = "工作流流程实例管理")
 @RestController
 @RequestMapping("/flowable/instance")
-public class FlowInstanceController {
+public class FlowInstanceController extends BaseController {
 
     @Autowired
     private IFlowInstanceService flowInstanceService;
@@ -35,7 +38,6 @@ public class FlowInstanceController {
         return flowInstanceService.startProcessInstanceById(procDefId, variables);
 
     }
-
 
     @ApiOperation(value = "激活或挂起流程实例")
     @PostMapping(value = "/updateState")
@@ -53,6 +55,7 @@ public class FlowInstanceController {
     }
 
     @ApiOperation(value = "删除流程实例")
+    @Log(title = "删除任务", businessType = BusinessType.DELETE)
     @DeleteMapping(value = "/delete/{instanceIds}")
     public AjaxResult delete(@ApiParam(value = "流程实例ID", required = true) @PathVariable String[] instanceIds,
                              @ApiParam(value = "删除原因") @RequestParam(required = false) String deleteReason) {

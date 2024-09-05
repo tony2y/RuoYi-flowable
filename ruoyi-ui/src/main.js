@@ -38,12 +38,15 @@ import VueMeta from 'vue-meta'
 // 字典数据组件
 import DictData from '@/components/DictData'
 
-import Tinymce from '@/components/tinymce/index.vue'
+// vform 表单设计器
+import vform from '@/components/vform/VFormDesigner.umd.min.js'
+import '@/components/vform/VFormDesigner.css'
 
-
+import modelerStore from '@/components/Process/common/global'
 
 
 // 全局方法挂载
+Vue.prototype.modelerStore = modelerStore
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey
 Vue.prototype.parseTime = parseTime
@@ -62,7 +65,9 @@ Vue.component('Editor', Editor)
 Vue.component('FileUpload', FileUpload)
 Vue.component('ImageUpload', ImageUpload)
 Vue.component('ImagePreview', ImagePreview)
-Vue.component('tinymce', Tinymce)
+
+//同时注册了v-form-designer、v-form-render等组件
+Vue.use(vform)
 
 Vue.use(directive)
 Vue.use(plugins)

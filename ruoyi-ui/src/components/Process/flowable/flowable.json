@@ -91,56 +91,6 @@
       ]
     },
     {
-      "name": "flowable:in",
-      "superClass": ["Element"],
-      "properties": [
-        {
-          "name": "source",
-          "type": "string",
-          "isAttr": true
-        },
-        {
-          "name": "target",
-          "type": "string",
-          "isAttr": true
-        }
-      ]
-    },
-    {
-      "name": "flowable:out",
-      "superClass": ["Element"],
-      "properties": [
-        {
-          "name": "source",
-          "type": "string",
-          "isAttr": true
-        },
-        {
-          "name": "target",
-          "type": "string",
-          "isAttr": true
-        }
-      ]
-    },
-    {
-      "name": "BoundaryEvent",
-      "superClass": ["CatchEvent"],
-      "properties": [
-        {
-          "name": "cancelActivity",
-          "default": true,
-          "isAttr": true,
-          "type": "Boolean"
-        },
-        {
-          "name": "attachedToRef",
-          "type": "Activity",
-          "isAttr": true,
-          "isReference": true
-        }
-      ]
-    },
-    {
       "name": "JobPriorized",
       "isAbstract": true,
       "extends": ["bpmn:Process", "flowable:AsyncCapable"],
@@ -205,32 +155,6 @@
       ]
     },
     {
-      "name": "UserTask",
-      "isAbstract": true,
-      "extends": ["bpmn:UserTask"],
-      "properties": [
-        {
-          "name": "timerEventDefinition",
-          "type": "Expression"
-        },
-        {
-          "name": "multiInstanceLoopCharacteristics",
-          "type": "MultiInstanceLoopCharacteristics"
-        }
-      ]
-    },
-    {
-      "name": "StartEvent",
-      "isAbstract": true,
-      "extends": ["bpmn:StartEvent"],
-      "properties": [
-        {
-          "name": "timerEventDefinition",
-          "type": "Expression"
-        }
-      ]
-    },
-    {
       "name": "FormSupported",
       "isAbstract": true,
       "extends": ["bpmn:StartEvent", "bpmn:UserTask"],
@@ -244,6 +168,23 @@
           "name": "formKey",
           "isAttr": true,
           "type": "String"
+        },
+        {
+          "name": "formType",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "formReadOnly",
+          "isAttr": true,
+          "type": "Boolean",
+          "default": false
+        },
+        {
+          "name": "formInit",
+          "isAttr": true,
+          "type": "Boolean",
+          "default": true
         }
       ]
     },
@@ -318,6 +259,11 @@
           "isAttr": true,
           "type": "Boolean",
           "default": true
+        },
+        {
+          "name": "processCategory",
+          "isAttr": true,
+          "type": "String"
         }
       ]
     },
@@ -350,6 +296,16 @@
       "extends": ["bpmn:UserTask"],
       "properties": [
         {
+          "name": "assignee",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "candidateUsers",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
           "name": "candidateGroups",
           "isAttr": true,
           "type": "String"
@@ -368,6 +324,40 @@
           "name": "priority",
           "isAttr": true,
           "type": "String"
+        },
+        {
+          "name": "userType",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "dataType",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "expId",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "Assignee",
+      "supperClass": "Element",
+      "meta": {
+        "allowedIn": ["*"]
+      },
+      "properties": [
+        {
+          "name": "label",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "viewId",
+          "type": "Number",
+          "isAttr": true
         }
       ]
     },
@@ -455,18 +445,6 @@
         },
         {
           "name": "resultVariable",
-          "isAttr": true,
-          "type": "String"
-        }
-      ]
-    },
-    {
-      "name": "ExclusiveGateway",
-      "isAbstract": true,
-      "extends": ["bpmn:ExclusiveGateway"],
-      "properties": [
-        {
-          "name": "serviceClass",
           "isAttr": true,
           "type": "String"
         }
@@ -563,6 +541,100 @@
         {
           "name": "value",
           "type": "String",
+          "isAttr": true
+        }
+      ]
+    },
+    {
+      "name": "Buttons",
+      "superClass": ["Element"],
+      "meta": {
+        "allowedIn": ["*"]
+      },
+      "properties": [
+        {
+          "name": "values",
+          "type": "Button",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "Button",
+      "superClass": ["Element"],
+      "properties": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "isAttr": true
+        },
+        {
+          "name": "label",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "code",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "icon",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "type",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "size",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "click",
+          "type": "String",
+          "isAttr": true
+        }
+      ]
+    },
+    {
+      "name": "Assignee",
+      "superClass": ["Element"],
+      "meta": {
+        "allowedIn": ["bpmn:UserTask"]
+      },
+      "properties": [
+        {
+          "name": "id",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "type",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "value",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "condition",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "operationType",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "sort",
+          "type": "Integer",
           "isAttr": true
         }
       ]
@@ -724,7 +796,8 @@
         "allowedIn": [
           "flowable:ServiceTaskLike",
           "flowable:ExecutionListener",
-          "flowable:TaskListener"
+          "flowable:TaskListener",
+          "bpmn:ServiceTask"
         ]
       },
       "properties": [
@@ -735,49 +808,81 @@
         },
         {
           "name": "expression",
-          "isAttr": true,
-          "type": "expression"
-        },
-        {
-          "name": "string",
-          "type": "string"
+          "type": "String"
         },
         {
           "name": "stringValue",
           "isAttr": true,
           "type": "String"
+        },
+        {
+          "name": "string",
+          "type": "String"
+        },
+        {
+          "name": "htmlVar",
+          "type": "Expression"
         }
       ]
     },
     {
-      "name": "string",
+      "name": "ChildField",
       "superClass": ["Element"],
-      "meta": {
-        "allowedIn": [
-          "flowable:Field"
-        ]
-      },
       "properties": [
         {
-          "name": "body",
-          "isBody": true,
-          "type": "String"
-        }
-      ]
-    },
-    {
-      "name": "expression",
-      "superClass": ["Element"],
-      "meta": {
-        "allowedIn": [
-          "flowable:Field"
-        ]
-      },
-      "properties": [
+          "name": "id",
+          "type": "String",
+          "isAttr": true
+        },
         {
-          "name": "body",
-          "isBody": true,
-          "type": "String"
+          "name": "name",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "type",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "required",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "readable",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "writable",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "variable",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "expression",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "datePattern",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "default",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "values",
+          "type": "Value",
+          "isMany": true
         }
       ]
     },
@@ -808,110 +913,13 @@
       ]
     },
     {
-      "name": "SequenceFlow",
-      "superClass": ["FlowElement"],
-      "properties": [
-        {
-          "name": "isImmediate",
-          "isAttr": true,
-          "type": "Boolean"
-        },
-        {
-          "name": "conditionExpression",
-          "type": "Expression"
-        },
-        {
-          "name": "sourceRef",
-          "type": "FlowNode",
-          "isAttr": true,
-          "isReference": true
-        },
-        {
-          "name": "targetRef",
-          "type": "FlowNode",
-          "isAttr": true,
-          "isReference": true
-        }
-      ]
-    },
-    {
-      "name": "MultiInstanceLoopCharacteristics",
-      "superClass": ["LoopCharacteristics"],
-      "properties": [
-        {
-          "name": "isSequential",
-          "default": false,
-          "isAttr": true,
-          "type": "Boolean"
-        },
-        {
-          "name": "behavior",
-          "type": "MultiInstanceBehavior",
-          "default": "All",
-          "isAttr": true
-        },
-        {
-          "name": "loopCardinality",
-          "type": "Expression",
-          "xml": {
-            "serialize": "xsi:type"
-          }
-        },
-        {
-          "name": "loopDataInputRef",
-          "type": "ItemAwareElement",
-          "isReference": true
-        },
-        {
-          "name": "loopDataOutputRef",
-          "type": "ItemAwareElement",
-          "isReference": true
-        },
-        {
-          "name": "inputDataItem",
-          "type": "DataInput",
-          "xml": {
-            "serialize": "property"
-          }
-        },
-        {
-          "name": "outputDataItem",
-          "type": "DataOutput",
-          "xml": {
-            "serialize": "property"
-          }
-        },
-        {
-          "name": "complexBehaviorDefinition",
-          "type": "ComplexBehaviorDefinition",
-          "isMany": true
-        },
-        {
-          "name": "completionCondition",
-          "type": "Expression",
-          "xml": {
-            "serialize": "xsi:type"
-          }
-        },
-        {
-          "name": "oneBehaviorEventRef",
-          "type": "EventDefinition",
-          "isAttr": true,
-          "isReference": true
-        },
-        {
-          "name": "noneBehaviorEventRef",
-          "type": "EventDefinition",
-          "isAttr": true,
-          "isReference": true
-        }
-      ]
-    },
-    {
       "name": "FailedJobRetryTimeCycle",
       "superClass": ["Element"],
       "meta": {
-        "allowedIn": ["flowable:AsyncCapable", "bpmn:MultiInstanceLoopCharacteristics"]
+        "allowedIn": [
+          "flowable:AsyncCapable",
+          "bpmn:MultiInstanceLoopCharacteristics"
+        ]
       },
       "properties": [
         {
@@ -945,8 +953,7 @@
           "bpmn:BoundaryEvent",
           "bpmn:CallActivity",
           "bpmn:SubProcess",
-          "bpmn:Process",
-          "bpmn:Signal"
+          "bpmn:Process"
         ]
       },
       "properties": [
@@ -957,6 +964,11 @@
         },
         {
           "name": "class",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "listenerType",
           "isAttr": true,
           "type": "String"
         },
@@ -1080,6 +1092,16 @@
           "name": "values",
           "type": "Value",
           "isMany": true
+        },
+        {
+          "name": "children",
+          "type": "ChildField",
+          "isMany": true
+        },
+        {
+          "name": "extensionElements",
+          "type": "bpmn:ExtensionElements",
+          "isMany": true
         }
       ]
     },
@@ -1187,6 +1209,45 @@
           "name": "variableEvent",
           "isAttr": true,
           "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "Condition",
+      "superClass": ["Element"],
+      "meta": {
+        "allowedIn": ["bpmn:SequenceFlow"]
+      },
+      "properties": [
+        {
+          "name": "id",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "field",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "compare",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "value",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "logic",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "sort",
+          "type": "Integer",
+          "isAttr": true
         }
       ]
     }
