@@ -92,16 +92,22 @@ public class DataScopeAspect
     {
         StringBuilder sqlString = new StringBuilder();
         List<String> conditions = new ArrayList<String>();
+        List<String> scopeCustomIds = new ArrayList<String>();
+        user.getRoles().forEach(role -> {
+            if (DATA_SCOPE_CUSTOM.equals(role.getDataScope()) && StringUtils.containsAny(role.getPermissions(), Convert.toStrArray(permission)))
+            {
+                scopeCustomIds.add(Convert.toStr(role.getRoleId()));
+            }
+        });
 
         for (SysRole role : user.getRoles())
         {
             String dataScope = role.getDataScope();
-            if (!DATA_SCOPE_CUSTOM.equals(dataScope) && conditions.contains(dataScope))
+            if (conditions.contains(dataScope))
             {
                 continue;
             }
-            if (StringUtils.isNotEmpty(permission) && StringUtils.isNotEmpty(role.getPermissions())
-                    && !StringUtils.containsAny(role.getPermissions(), Convert.toStrArray(permission)))
+            if (!StringUtils.containsAny(role.getPermissions(), Convert.toStrArray(permission)))
             {
                 continue;
             }
@@ -113,9 +119,15 @@ public class DataScopeAspect
             }
             else if (DATA_SCOPE_CUSTOM.equals(dataScope))
             {
-                sqlString.append(StringUtils.format(
-                        " OR {}.dept_id IN ( SELECT dept_id FROM sys_role_dept WHERE role_id = {} ) ", deptAlias,
-                        role.getRoleId()));
+                if (scopeCustomIds.size() > 1)
+                {
+                    // 多个自定数据权限使用in查询，避免多次拼接。
+                    sqlString.append(StringUtils.format(" OR {}.dept_id IN ( SELECT dept_id FROM sys_role_dept WHERE role_id in ({}) ) ", deptAlias, String.join(",", scopeCustomIds)));
+                }
+                else
+                {
+                    sqlString.append(StringUtils.format(" OR {}.dept_id IN ( SELECT dept_id FROM sys_role_dept WHERE role_id = {} ) ", deptAlias, role.getRoleId()));
+                }
             }
             else if (DATA_SCOPE_DEPT.equals(dataScope))
             {
@@ -123,9 +135,7 @@ public class DataScopeAspect
             }
             else if (DATA_SCOPE_DEPT_AND_CHILD.equals(dataScope))
             {
-                sqlString.append(StringUtils.format(
-                        " OR {}.dept_id IN ( SELECT dept_id FROM sys_dept WHERE dept_id = {} or find_in_set( {} , ancestors ) )",
-                        deptAlias, user.getDeptId(), user.getDeptId()));
+                sqlString.append(StringUtils.format(" OR {}.dept_id IN ( SELECT dept_id FROM sys_dept WHERE dept_id = {} or find_in_set( {} , ancestors ) )", deptAlias, user.getDeptId(), user.getDeptId()));
             }
             else if (DATA_SCOPE_SELF.equals(dataScope))
             {
@@ -142,7 +152,7 @@ public class DataScopeAspect
             conditions.add(dataScope);
         }
 
-        // 多角色情况下，所有角色都不包含传递过来的权限字符，这个时候sqlString也会为空，所以要限制一下,不查询任何数据
+        // 角色都不包含传递过来的权限字符，这个时候sqlString也会为空，所以要限制一下,不查询任何数据
         if (StringUtils.isEmpty(conditions))
         {
             sqlString.append(StringUtils.format(" OR {}.dept_id = 0 ", deptAlias));

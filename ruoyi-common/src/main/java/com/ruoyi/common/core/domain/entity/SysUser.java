@@ -22,7 +22,7 @@ public class SysUser extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 用户ID */
-    @Excel(name = "用户序号", cellType = ColumnType.NUMERIC, prompt = "用户编号")
+    @Excel(name = "用户序号", type = Type.EXPORT, cellType = ColumnType.NUMERIC, prompt = "用户编号")
     private Long userId;
 
     /** 部门ID */
@@ -42,7 +42,7 @@ public class SysUser extends BaseEntity
     private String email;
 
     /** 手机号码 */
-    @Excel(name = "手机号码")
+    @Excel(name = "手机号码", cellType = ColumnType.TEXT)
     private String phonenumber;
 
     /** 用户性别 */
