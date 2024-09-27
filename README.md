@@ -88,6 +88,4 @@
 ## 推荐
 大家在使用本项目时，推荐结合贺波老师的书
 《深入Flowable流程引擎：核心原理与高阶实战》（https://item.jd.com/14804836.html）学习。这本书得到了Flowable创始人Tijs Rademakers亲笔作序推荐，对系统学习和深入掌握Flowable的用法非常有帮助。
-<img src="https://foruda.gitee.com/images/1727432593738798662/46c08088_2042292.png" width="400" height="400"/>
-
-
+<img src="https://foruda.gitee.com/images/1727432593738798662/46c08088_2042292.png" width="800" height="500"/>
