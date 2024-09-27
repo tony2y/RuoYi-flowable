@@ -86,7 +86,7 @@
 </table>
 
 ## 推荐
-大家在使用本项目时，推荐结合贺波老师的书[《深入Activiti流程引擎：核心原理与高阶实战》](https://item.jd.com/13928958.html)，这本书对系统学习和深入掌握Activiti/Flowable的用法非常有帮助。
+大家在使用本项目时，推荐结合贺波老师的书[《深入Flowable流程引擎：核心原理与高阶实战》](https://item.jd.com/14804836.html)，这本书对系统学习和深入掌握Activiti/Flowable的用法非常有帮助。
 
-![输入图片说明](https://foruda.gitee.com/images/1699658576150803044/9bdfb7f1_2042292.png "")
+![输入图片说明](https://foruda.gitee.com/images/1727432593738798662/46c08088_2042292.png "")
 

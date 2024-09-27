@@ -23,9 +23,9 @@
       <el-form-item v-if="bpmnFormData.$type === 'bpmn:SubProcess'" label="状态">
         <el-switch v-model="bpmnFormData.isExpanded" active-text="展开" inactive-text="折叠" @change="updateElementTask('isExpanded')" />
       </el-form-item>
-      <el-form-item label="节点描述">
-        <el-input :rows="2" type="textarea" v-model="bpmnFormData.documentation" @change="updateElementTask('documentation')"/>
-      </el-form-item>
+<!--      <el-form-item label="节点描述">-->
+<!--        <el-input :rows="2" type="textarea" v-model="bpmnFormData.documentation" @change="updateElementTask('documentation')"/>-->
+<!--      </el-form-item>-->
   </el-form>
   </div>
 </template>
