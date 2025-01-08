@@ -7,6 +7,7 @@
       <el-form-item :label="bpmnFormData.$type === 'bpmn:Process'? '流程名称': '节点名称'" prop="name">
         <el-input v-model="bpmnFormData.name"  @change="updateElementTask('name')"/>
       </el-form-item>
+
       <!--流程的基础属性-->
       <template v-if="bpmnFormData.$type === 'bpmn:Process'">
         <el-form-item label="流程分类" prop="processCategory">
@@ -23,9 +24,14 @@
       <el-form-item v-if="bpmnFormData.$type === 'bpmn:SubProcess'" label="状态">
         <el-switch v-model="bpmnFormData.isExpanded" active-text="展开" inactive-text="折叠" @change="updateElementTask('isExpanded')" />
       </el-form-item>
-<!--      <el-form-item label="节点描述">-->
-<!--        <el-input :rows="2" type="textarea" v-model="bpmnFormData.documentation" @change="updateElementTask('documentation')"/>-->
-<!--      </el-form-item>-->
+      <el-form-item label="节点描述">
+        <el-input
+          :rows="2"
+          type="textarea"
+          v-model="bpmnFormData.documentationValue"
+          @change="updateDocumentation"
+        />
+      </el-form-item>
   </el-form>
   </div>
 </template>
@@ -69,16 +75,56 @@ export default {
   },
 
   created() {
-
   },
   methods: {
     resetTaskForm() {
-      this.bpmnFormData = JSON.parse(JSON.stringify(this.modelerStore.element.businessObject));
+      // this.bpmnFormData = JSON.parse(JSON.stringify(this.modelerStore.element.businessObject));
+      this.bpmnFormData = Object.assign({}, this.modelerStore.element.businessObject);
+
+      // 使用 $set 确保 documentationValue 是响应式的
+      this.$set(this.bpmnFormData, 'documentationValue', this.modelerStore.element.businessObject.documentation?.[0]?.text || '');
     },
     updateElementTask(key) {
       const taskAttr = Object.create(null);
       taskAttr[key] = this.bpmnFormData[key] || null;
       this.modelerStore.modeling.updateProperties(this.modelerStore.element, taskAttr);
+    },
+    updateDocumentation() {
+      // 确保 modelerStore 是 BPMN.js 的 Modeler 实例
+      const modeler = this.modelerStore.modeler; // 获取实际的 modeler 实例
+      const moddle = modeler.get('moddle');      // 通过 modeler 获取 moddle
+      const modeling = modeler.get('modeling');  // 通过 modeler 获取 modeling
+
+      // 创建新的文档对象
+      const documentation = moddle.create('bpmn:Documentation', {
+        text: this.bpmnFormData.documentationValue
+      });
+
+      // 获取当前元素的扩展元素
+      let extensionElements = this.modelerStore.element.businessObject.extensionElements;
+
+      if (!extensionElements) {
+        // 如果没有扩展元素，创建一个新的
+        extensionElements = moddle.create('bpmn:ExtensionElements', {
+          values: []
+        });
+      }
+
+      // 更新文档
+      modeling.updateProperties(this.modelerStore.element, {
+        documentation: [documentation],
+        extensionElements: extensionElements
+      });
+
+      // 强制更新模型
+      this.modelerStore.modeler.get('commandStack').execute('element.updateProperties', {
+        element: this.modelerStore.element,
+        properties: {
+          documentation: [documentation]
+        }
+      });
+
+      this.$emit('save');
     }
   }
 }
