@@ -14,7 +14,7 @@
     </template>
 
     <!-- 顶部菜单超出数量折叠 -->
-    <el-submenu :style="{'--theme': theme}" index="more" v-if="topMenus.length > visibleNumber">
+    <el-submenu :style="{'--theme': theme}" index="more" :key="visibleNumber" v-if="topMenus.length > visibleNumber">
       <template slot="title">更多菜单</template>
       <template v-for="(item, index) in topMenus">
         <el-menu-item
@@ -33,6 +33,7 @@
 
 <script>
 import { constantRoutes } from "@/router";
+import { isHttp } from "@/utils/validate";
 
 // 隐藏侧边栏路由
 const hideList = ['/index', '/user/profile'];
@@ -78,7 +79,7 @@ export default {
             if(router.path === "/") {
               router.children[item].path = "/" + router.children[item].path;
             } else {
-              if(!this.ishttp(router.children[item].path)) {
+              if(!isHttp(router.children[item].path)) {
                 router.children[item].path = router.path + "/" + router.children[item].path;
               }
             }
@@ -95,8 +96,8 @@ export default {
       let activePath = path;
       if (path !== undefined && path.lastIndexOf("/") > 0 && hideList.indexOf(path) === -1) {
         const tmpPath = path.substring(1, path.length);
-        activePath = "/" + tmpPath.substring(0, tmpPath.indexOf("/"));
         if (!this.$route.meta.link) {
+          activePath = "/" + tmpPath.substring(0, tmpPath.indexOf("/"));
           this.$store.dispatch('app/toggleSideBarHide', false);
         }
       } else if(!this.$route.children) {
@@ -126,7 +127,7 @@ export default {
     handleSelect(key, keyPath) {
       this.currentIndex = key;
       const route = this.routers.find(item => item.path === key);
-      if (this.ishttp(key)) {
+      if (isHttp(key)) {
         // http(s):// 路径新窗口打开
         window.open(key, "_blank");
       } else if (!route || !route.children) {
@@ -160,9 +161,6 @@ export default {
       } else {
         this.$store.dispatch('app/toggleSideBarHide', true);
       }
-    },
-    ishttp(url) {
-      return url.indexOf('http://') !== -1 || url.indexOf('https://') !== -1
     }
   },
 };

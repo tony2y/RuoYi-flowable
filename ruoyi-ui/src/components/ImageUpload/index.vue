@@ -44,6 +44,7 @@
 
 <script>
 import { getToken } from "@/utils/auth";
+import { isExternal } from "@/utils/validate";
 
 export default {
   props: {
@@ -93,7 +94,7 @@ export default {
           // 然后将数组转为对象数组
           this.fileList = list.map(item => {
             if (typeof item === "string") {
-              if (item.indexOf(this.baseUrl) === -1) {
+              if (item.indexOf(this.baseUrl) === -1 && !isExternal(item)) {
                   item = { name: this.baseUrl + item, url: this.baseUrl + item };
               } else {
                   item = { name: item, url: item };
@@ -135,7 +136,11 @@ export default {
       }
 
       if (!isImg) {
-        this.$modal.msgError(`文件格式不正确, 请上传${this.fileType.join("/")}图片格式文件!`);
+        this.$modal.msgError(`文件格式不正确，请上传${this.fileType.join("/")}图片格式文件!`);
+        return false;
+      }
+      if (file.name.includes(',')) {
+        this.$modal.msgError('文件名不正确，不能包含英文逗号!');
         return false;
       }
       if (this.fileSize) {

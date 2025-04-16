@@ -541,7 +541,7 @@ public class Convert
 
     /**
      * 转换为boolean<br>
-     * String支持的值为：true、false、yes、ok、no，1,0 如果给定的值为空，或者转换失败，返回默认值<br>
+     * String支持的值为：true、false、yes、ok、no、1、0、是、否, 如果给定的值为空，或者转换失败，返回默认值<br>
      * 转换失败不会报错
      *
      * @param value 被转换的值
@@ -570,10 +570,12 @@ public class Convert
             case "yes":
             case "ok":
             case "1":
+            case "是":
                 return true;
             case "false":
             case "no":
             case "0":
+            case "否":
                 return false;
             default:
                 return defaultValue;
@@ -796,14 +798,23 @@ public class Convert
         {
             return (String) obj;
         }
-        else if (obj instanceof byte[])
+        else if (obj instanceof byte[] || obj instanceof Byte[])
         {
-            return str((byte[]) obj, charset);
-        }
-        else if (obj instanceof Byte[])
-        {
-            byte[] bytes = ArrayUtils.toPrimitive((Byte[]) obj);
-            return str(bytes, charset);
+            if (obj instanceof byte[])
+            {
+                return str((byte[]) obj, charset);
+            }
+            else
+            {
+                Byte[] bytes = (Byte[]) obj;
+                int length = bytes.length;
+                byte[] dest = new byte[length];
+                for (int i = 0; i < length; i++)
+                {
+                    dest[i] = bytes[i];
+                }
+                return str(dest, charset);
+            }
         }
         else if (obj instanceof ByteBuffer)
         {
@@ -959,9 +970,7 @@ public class Convert
                 c[i] = (char) (c[i] - 65248);
             }
         }
-        String returnString = new String(c);
-
-        return returnString;
+        return new String(c);
     }
 
     /**
