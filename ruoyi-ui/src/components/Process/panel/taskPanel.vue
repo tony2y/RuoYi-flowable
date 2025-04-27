@@ -269,7 +269,7 @@ export default {
     // 获取人员信息
     getUserList(val, key) {
       if (StrUtil.isNotBlank(val)) {
-        const newArr = this.modelerStore.userList?.filter(i => val.split(',').includes(i.userId.toString()))
+        const newArr = this.modelerStore.userList?.filter(i => val.toString().split(',').includes(i.userId.toString()))
         this.bpmnFormData[key] = newArr.map(item => item.nickName).join(',');
         if ('assignee' === key) {
           this.selectData[key] = newArr.find(item => item.userId.toString() === val).userId;
