@@ -272,7 +272,7 @@ export default {
         const newArr = this.modelerStore.userList?.filter(i => val.toString().split(',').includes(i.userId.toString()))
         this.bpmnFormData[key] = newArr.map(item => item.nickName).join(',');
         if ('assignee' === key) {
-          this.selectData[key] = newArr.find(item => item.userId.toString() === val).userId;
+          this.selectData[key] = newArr.find(item => item.userId.toString() === val.toString()).userId;
         } else {
           this.selectData[key] = newArr.map(item => item.userId);
         }
