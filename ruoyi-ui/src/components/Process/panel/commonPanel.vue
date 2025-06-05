@@ -1,8 +1,8 @@
 <template>
   <div>
   <el-form :model="bpmnFormData" label-width="80px" :rules="rules"  size="small">
-      <el-form-item :label="bpmnFormData.$type === 'bpmn:Process'? '流程标识': '节点ID'" prop="id" @change="updateElementTask('id')">
-        <el-input v-model="bpmnFormData.id"/>
+      <el-form-item :label="bpmnFormData.$type === 'bpmn:Process'? '流程标识': '节点ID'" prop="id">
+        <el-input v-model="bpmnFormData.id" @change="updateElementTask('id')"/>
       </el-form-item>
       <el-form-item :label="bpmnFormData.$type === 'bpmn:Process'? '流程名称': '节点名称'" prop="name">
         <el-input v-model="bpmnFormData.name"  @change="updateElementTask('name')"/>
