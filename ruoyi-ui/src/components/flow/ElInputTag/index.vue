@@ -6,7 +6,7 @@
     <el-tag
         v-for="(tag, idx) in innerTags"
         v-bind="$attrs"
-        :key="tag"
+        :key="idx"
         :size="size"
         effect="dark"
         closable
