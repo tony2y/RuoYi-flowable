@@ -280,7 +280,6 @@ export default {
     goBack() {
       const obj = {path: "/flowable/definition", query: {t: Date.now()}};
       this.$tab.closeOpenPage(obj);
-      this.toggleSideBar();
     },
   }
 }

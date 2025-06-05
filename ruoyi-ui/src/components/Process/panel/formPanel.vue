@@ -31,7 +31,9 @@ export default {
   data() {
     return {
       formList: [], // 表单数据
-      bpmnFormData: {}
+      bpmnFormData: {
+          formKey: ''
+      }
     }
   },
 
